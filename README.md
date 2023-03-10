@@ -89,7 +89,7 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 }
 ~~~
 
-Resiliency for PostgresSQL database client calls is provided by an [Actuator][actuatorcall] function call that is initialized by the host on startup:
+Resiliency for PostgresSQL database client calls is provided by an [Controller][controllercall] function call that is initialized by the host on startup:
 ~~~
 var actuatorApply messaging.ActuatorApply
 
@@ -99,4 +99,4 @@ defer fn()
 
 [pgxdmlpkg]: <https://pkg.go.dev/github.com/idiomatic-go/postgresql/pgxdml/http>
 [pgxsqlpkg]: <https://pkg.go.dev/github.com/idiomatic-go/postgresql/pgxsql>
-[actuatorcall]: <https://pkg.go.dev/github.com/idiomatic-go/resiliency/actuator#EgressApply>
+[controllercall]: <https://pkg.go.dev/github.com/idiomatic-go/resiliency/controller#EgressApply>
