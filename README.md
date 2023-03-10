@@ -75,8 +75,7 @@ func BuildDeleteUri(resource string) string {
 
 ~~~
 
-Scanning of PostgreSQL rows into application types utilizes a templated interface, and corresponding templated Scan function. Care was taken to not leak
-any direct references to PostgresSQL specific packages.
+Scanning of PostgreSQL rows into application types utilizes a templated interface, and corresponding templated Scan function.
 
 ~~~
 // Scanner - templated interface for scanning rows
