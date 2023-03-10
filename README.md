@@ -99,4 +99,4 @@ defer fn()
 
 [pgxdmlpkg]: <https://pkg.go.dev/github.com/idiomatic-go/postgresql/pgxdml/http>
 [pgxsqlpkg]: <https://pkg.go.dev/github.com/idiomatic-go/postgresql/pgxsql>
-[controllercall]: <https://pkg.go.dev/github.com/idiomatic-go/resiliency/controller#EgressApply>
+[controllercall]: <https://pkg.go.dev/github.com/gotemplates/host/controller#EgressApply>
