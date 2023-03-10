@@ -97,6 +97,6 @@ fn, ctx, limited = actuatorApply(ctx, statusCode func() int, req.Uri, runtime.Co
 defer fn()
 ~~~
 
-[pgxdmlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxdml/http>
+[pgxdmlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxdml>
 [pgxsqlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxsql>
 [controllercall]: <https://pkg.go.dev/github.com/gotemplates/host/controller#EgressApply>
