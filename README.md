@@ -1,6 +1,6 @@
 # postgresql
 
-The LEGO® reference is here: [Robert Griesemer - The Evolution of Go][rgriesemer]. 
+The LEGO® reference is here: [Robert Griesemer - The Evolution of Go][rgriesemer] @4:00.
 
 ## pgxdml
 
