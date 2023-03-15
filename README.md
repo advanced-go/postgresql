@@ -1,5 +1,7 @@
 # postgresql
 
+The LEGO® reference is here: [Robert Griesemer - The Evolution of Go][rgriesemer]. 
+
 ## pgxdml
 
 [PostgresDML][pgxdmlpkg] implements types that build SQL statements based on the configured attributes. Support is also available for selecting
