@@ -99,6 +99,7 @@ fn, ctx, limited = controlerApply(ctx, statusCode func() int, req.Uri, runtime.C
 defer fn()
 ~~~
 
+[rgriesemer]: <https://www.youtube.com/watch?v=0ReKdcpNyQg>
 [pgxdmlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxdml>
 [pgxsqlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxsql>
 [controllercall]: <https://pkg.go.dev/github.com/gotemplates/host/controller#EgressApply>
