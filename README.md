@@ -1,4 +1,4 @@
-# go-templates/postgresql
+# postgresql
 
 ## pgxdml
 
