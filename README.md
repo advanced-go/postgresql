@@ -91,9 +91,9 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 
 Resiliency for PostgresSQL database client calls is provided by an [Controller][controllercall] function call that is initialized by the host on startup:
 ~~~
-var actuatorApply messaging.ActuatorApply
+var controller messaging.ControllerApply
 
-fn, ctx, limited = actuatorApply(ctx, statusCode func() int, req.Uri, runtime.ContextRequestId(ctx), "GET")
+fn, ctx, limited = controlerApply(ctx, statusCode func() int, req.Uri, runtime.ContextRequestId(ctx), "GET")
 defer fn()
 ~~~
 
