@@ -1,17 +1,19 @@
 package pgxsql
 
-import "context"
+func findExecProxy(proxies []any) func(*Request) (CommandTag, error) {
+	for _, p := range proxies {
+		if fn, ok := p.(func(*Request) (CommandTag, error)); ok {
+			return fn
+		}
+	}
+	return nil
+}
 
-// ContextWithValue - create a new context with a value, updating the context if it is an ExecExchange or QueryExchange context
-func ContextWithValue(ctx context.Context, key any, val any) context.Context {
-	if ctx == nil {
-		return nil
+func findQueryProxy(proxies []any) func(*Request) (Rows, error) {
+	for _, p := range proxies {
+		if fn, ok := p.(func(*Request) (Rows, error)); ok {
+			return fn
+		}
 	}
-	if curr, ok := any(ctx).(execWithValue); ok {
-		return curr.execWithValue(key, val)
-	}
-	if curr, ok := any(ctx).(queryWithValue); ok {
-		return curr.queryWithValue(key, val)
-	}
-	return context.WithValue(ctx, key, val)
+	return nil
 }

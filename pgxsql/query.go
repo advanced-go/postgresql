@@ -24,10 +24,13 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...an
 	if limited {
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
-	if q, ok := queryExchangeCast(ctx); ok {
-		var err error
-		result, err = q.Query(req)
-		return result, e.HandleWithContext(ctx, execLoc, err)
+	//if q, ok := queryExchangeCast(ctx); ok {
+	if proxies, ok := runtime.IsProxyable(ctx); ok {
+		if pQuery := findQueryProxy(proxies); pQuery != nil {
+			var err error
+			result, err = pQuery(req)
+			return result, e.HandleWithContext(ctx, execLoc, err)
+		}
 	}
 	if dbClient == nil {
 		return nil, e.HandleWithContext(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(runtime.StatusInvalidArgument)

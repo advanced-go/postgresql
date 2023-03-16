@@ -40,7 +40,7 @@ const (
 	queryRowsRsc         = "rows"
 )
 
-var queryTestExchange = ContextWithQuery(nil, queryTestProxy)
+var queryTestExchange = runtime.ContextWithProxy(nil, queryTestProxy)
 
 func queryTestProxy(req *Request) (Rows, error) {
 	switch req.Uri {
@@ -59,7 +59,7 @@ func ExampleQuery_TestError() {
 	fmt.Printf("test: Query[runtime.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
-	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [pgxsql query error]]
+	//[[] github.com/gotemplates/postgresql/pgxsql/exec [pgxsql query error]]
 	//test: Query[runtime.DebugError](ctx,select * from test) -> [rows:<nil>] [status:Internal]
 
 }
@@ -92,7 +92,7 @@ func ExampleQuery_Conditions_Error() {
 	}
 
 	//Output:
-	//[[] github.com/idiomatic-go/postgresql/pgxsql/query [serverity:ERROR, code:42703, message:column "test" does not exist, position:8, SQLState:42703]]
+	//[[] github.com/gotemplates/postgresql/pgxsql/query [serverity:ERROR, code:42703, message:column "test" does not exist, position:8, SQLState:42703]]
 	//test: Query[runtime.DebugError](nil,select test,test2 from conditions) -> [status:Internal]
 
 }

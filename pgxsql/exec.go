@@ -31,9 +31,12 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req 
 	if limited {
 		return tag, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
-	if exec, ok := execExchangeCast(ctx); ok {
-		result, err := exec.Exec(req)
-		return result, e.HandleWithContext(ctx, execLoc, err)
+	//if exec, ok := execExchangeCast(ctx); ok {
+	if proxies, ok := runtime.IsProxyable(ctx); ok {
+		if pExec := findExecProxy(proxies); pExec != nil {
+			result, err := pExec(req)
+			return result, e.HandleWithContext(ctx, execLoc, err)
+		}
 	}
 	if dbClient == nil {
 		return tag, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)

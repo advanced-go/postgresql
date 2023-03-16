@@ -1,7 +1,6 @@
 package pgxsql
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"github.com/gotemplates/core/runtime"
@@ -46,8 +45,8 @@ func execTestProxy(req *Request) (tag CommandTag, err error) {
 	return tag, nil
 }
 
-func ExampleExecExchange() {
-	ctx := ContextWithExec(context.Background(), execTestProxy)
+func ExampleExec_Proxy() {
+	ctx := runtime.ContextWithProxy(nil, execTestProxy)
 
 	cmd, status := Exec[runtime.DebugError](ctx, NullCount, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec[DebugError](%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)
@@ -56,7 +55,7 @@ func ExampleExecExchange() {
 	fmt.Printf("test: Exec[DebugError](%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
 
 	//Output:
-	//[[] github.com/idiomatic-go/postgresql/pgxsql/exec [exec error]]
+	//[[] github.com/gotemplates/postgresql/pgxsql/exec [exec error]]
 	//test: Exec[DebugError](update test) -> Internal [cmd:{ 0 false false false false}]
 	//test: Exec[DebugError](insert test) -> OK [cmd:{INSERT 1 1234 true false false false}]
 
