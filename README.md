@@ -1,5 +1,7 @@
 # postgresql
 
+The LEGO® reference is here: [Robert Griesemer - The Evolution of Go][rgriesemer] @ 4:00 minutes.
+
 ## pgxdml
 
 [PostgresDML][pgxdmlpkg] implements types that build SQL statements based on the configured attributes. Support is also available for selecting
@@ -97,6 +99,7 @@ fn, ctx, limited = controlerApply(ctx, statusCode func() int, req.Uri, runtime.C
 defer fn()
 ~~~
 
+[rgriesemer]: <https://www.youtube.com/watch?v=0ReKdcpNyQg>
 [pgxdmlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxdml>
 [pgxsqlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxsql>
 [controllercall]: <https://pkg.go.dev/github.com/gotemplates/host/controller#EgressApply>
