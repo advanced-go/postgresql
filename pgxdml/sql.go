@@ -23,6 +23,6 @@ type Function string
 var tokens = []string{"drop table", "delete from", "--", ";", "/*", "*/", "select * from"}
 
 type Attr struct {
-	Name string
-	Val  any
+	Key string
+	Val any
 }

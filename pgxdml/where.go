@@ -12,7 +12,7 @@ func BuildWhere(values map[string][]string) []Attr {
 	}
 	var where []Attr
 	for k, v := range values {
-		where = append(where, Attr{Name: k, Val: v[0]})
+		where = append(where, Attr{Key: k, Val: v[0]})
 	}
 	return where
 }

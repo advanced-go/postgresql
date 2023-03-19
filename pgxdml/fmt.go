@@ -44,12 +44,12 @@ func FmtValue(v any) (string, error) {
 
 // FmtAttr - format a name, value pair for a SQL statement
 func FmtAttr(attr Attr) (string, error) {
-	if attr.Name == "" {
+	if attr.Key == "" {
 		return "", errors.New("invalid attribute argument, attribute name is empty")
 	}
 	s, err := FmtValue(attr.Val)
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf(attrFmt, attr.Name, s), nil
+	return fmt.Sprintf(attrFmt, attr.Key, s), nil
 }
