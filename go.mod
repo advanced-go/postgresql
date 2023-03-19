@@ -3,8 +3,8 @@ module github.com/gotemplates/postgresql
 go 1.18
 
 require (
-	github.com/gotemplates/core v0.0.0-20230315175017-da0fd6576946
-	github.com/gotemplates/host v0.0.0-20230315124507-0d32d561fb8a
+	github.com/gotemplates/core v0.0.0-20230317161920-681c26ee58d8
+	github.com/gotemplates/host v0.0.0-20230319133415-eb9f20f0aaae
 	github.com/jackc/pgx/v5 v5.2.0
 )
 
