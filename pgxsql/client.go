@@ -7,8 +7,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/gotemplates/core/runtime"
-	"github.com/gotemplates/host/messaging"
+	"github.com/go-sre/core/runtime"
+	"github.com/go-sre/host/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )

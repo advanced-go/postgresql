@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/gotemplates/core/runtime"
-	"github.com/gotemplates/host/messaging"
+	"github.com/go-sre/core/runtime"
+	"github.com/go-sre/host/messaging"
 )
 
 // Query - templated function for a Query

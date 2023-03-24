@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/gotemplates/postgresql/pgxdml"
+	"github.com/go-sre/postgresql/pgxdml"
 )
 
 const (

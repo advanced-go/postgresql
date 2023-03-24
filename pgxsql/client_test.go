@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/gotemplates/host/messaging"
+	"github.com/go-sre/host/messaging"
 )
 
 func ExampleClientStartup() {

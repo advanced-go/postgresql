@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/gotemplates/core/runtime"
-	"github.com/gotemplates/host/messaging"
+	"github.com/go-sre/core/runtime"
+	"github.com/go-sre/host/messaging"
 	"time"
 )
 
