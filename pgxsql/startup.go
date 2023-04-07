@@ -17,6 +17,8 @@ var (
 	pkgPath         = reflect.TypeOf(any(pkg{})).PkgPath()
 	started         int64
 	controllerApply messaging.ControllerApply
+	zone            = "zone"
+	region          = "region"
 )
 
 // IsStarted - returns status of startup

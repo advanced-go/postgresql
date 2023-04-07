@@ -17,8 +17,8 @@ func ExampleBuildRequest() {
 	fmt.Printf("test: BuildQueryUri(%v) -> %v\n", rsc, uri)
 
 	//Output:
-	//test: BuildInsertUri(exec-test-resource.dev) -> urn:postgres:insert.exec-test-resource.dev
-	//test: BuildQueryUri(query-test-resource.prod) -> urn:postgres:query.query-test-resource.prod
+	//test: BuildInsertUri(exec-test-resource.dev) -> urn:postgresql.region.zone:insert.exec-test-resource.dev
+	//test: BuildQueryUri(query-test-resource.prod) -> urn:postgresql.region.zone:query.query-test-resource.prod
 
 }
 

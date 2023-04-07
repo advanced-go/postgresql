@@ -23,7 +23,7 @@ func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *run
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
 	if dbClient == nil {
-		return nil, e.HandleWithContext(ctx, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
+		return nil, e.Handle(ctx, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
 	return dbClient.Stat(), runtime.NewStatusOK()
 }

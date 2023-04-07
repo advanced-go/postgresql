@@ -17,7 +17,7 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...an
 		ctx = context.Background()
 	}
 	if req == nil {
-		return nil, e.HandleWithContext(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(runtime.StatusInvalidArgument)
+		return nil, e.Handle(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
 	fn, ctx, limited = controllerApply(ctx, messaging.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
@@ -29,15 +29,15 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...an
 		if pQuery := findQueryProxy(proxies); pQuery != nil {
 			var err error
 			result, err = pQuery(req)
-			return result, e.HandleWithContext(ctx, execLoc, err)
+			return result, e.Handle(ctx, execLoc, err)
 		}
 	}
 	if dbClient == nil {
-		return nil, e.HandleWithContext(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
+		return nil, e.Handle(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
 	pgxRows, err := dbClient.Query(ctx, req.BuildSql(), args...)
 	if err != nil {
-		return nil, e.HandleWithContext(ctx, queryLoc, recast(err))
+		return nil, e.Handle(ctx, queryLoc, recast(err))
 	}
 	return &proxyRows{pgxRows: pgxRows, fd: createFieldDescriptions(pgxRows.FieldDescriptions())}, runtime.NewStatusOK()
 }

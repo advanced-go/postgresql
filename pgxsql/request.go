@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	PostgresNID = "postgres"
+	PostgresNID = "postgresql"
 	QueryNSS    = "query"
 	InsertNSS   = "insert"
 	UpdateNSS   = "update"
@@ -27,7 +27,7 @@ const (
 )
 
 func buildUri(nsid, nss, resource string) string {
-	return fmt.Sprintf("urn:%v:%v.%v", nsid, nss, resource)
+	return fmt.Sprintf("urn:%v.%v.%v:%v.%v", nsid, region, zone, nss, resource)
 }
 
 // BuildQueryUri - build an uri with the Query NSS

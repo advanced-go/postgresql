@@ -26,7 +26,7 @@ func Ping[E runtime.ErrorHandler](ctx context.Context) (status *runtime.Status) 
 		return runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
 	if dbClient == nil {
-		return e.HandleWithContext(ctx, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
+		return e.Handle(ctx, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	return e.HandleWithContext(ctx, pingLoc, dbClient.Ping(ctx))
+	return e.Handle(ctx, pingLoc, dbClient.Ping(ctx))
 }
