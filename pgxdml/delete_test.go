@@ -1,13 +1,16 @@
 package pgxdml
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/go-sre/core/sql"
+)
 
 const (
 	deleteTestEntryStmt = "DELETE test_entry"
 )
 
 func ExampleWriteDelete() {
-	where := []Attr{{Key: "customer_id", Val: "customer1"}, {Key: "created_ts", Val: "2022/11/30 15:48:54.049496"}} //time.Now()}}
+	where := []sql.Attr{{Key: "customer_id", Val: "customer1"}, {Key: "created_ts", Val: "2022/11/30 15:48:54.049496"}} //time.Now()}}
 
 	sql, err := WriteDelete(deleteTestEntryStmt, where)
 	fmt.Printf("test: WriteDelete() -> [error:%v] [stmt:%v]\n", err, NilEmpty(sql))

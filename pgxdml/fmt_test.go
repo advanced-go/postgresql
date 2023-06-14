@@ -2,6 +2,7 @@ package pgxdml
 
 import (
 	"fmt"
+	"github.com/go-sre/core/sql"
 	"time"
 )
 
@@ -73,19 +74,19 @@ func ExampleFmtSqlValues() {
 }
 
 func ExampleFmtAttr() {
-	s, err := FmtAttr(Attr{})
+	s, err := FmtAttr(sql.Attr{})
 	fmt.Printf("Name  [\"\"]  : %v\n", NilEmpty(s))
 	fmt.Printf("Error       : %v\n", err)
 
-	s, err = FmtAttr(Attr{Key: "attr_name_1"})
+	s, err = FmtAttr(sql.Attr{Key: "attr_name_1"})
 	fmt.Printf("Name  [attr_name]  : %v\n", NilEmpty(s))
 	fmt.Printf("Error              : %v\n", err)
 
-	s, err = FmtAttr(Attr{Key: "attr_name_2", Val: 1234})
+	s, err = FmtAttr(sql.Attr{Key: "attr_name_2", Val: 1234})
 	fmt.Printf("Name  [attr_name]  : %v\n", NilEmpty(s))
 	fmt.Printf("Error              : %v\n", err)
 
-	s, err = FmtAttr(Attr{Key: "attr_name_3", Val: false})
+	s, err = FmtAttr(sql.Attr{Key: "attr_name_3", Val: false})
 	fmt.Printf("Name  [attr_name]  : %v\n", NilEmpty(s))
 	fmt.Printf("Error              : %v\n", err)
 
@@ -94,11 +95,11 @@ func ExampleFmtAttr() {
 	//fmt.Printf("Name  [attr_name]  : %v\n", NilEmpty(s))
 	//fmt.Printf("Error              : %v\n", err)
 
-	s, err = FmtAttr(Attr{Key: "attr_name_5", Val: "value string"})
+	s, err = FmtAttr(sql.Attr{Key: "attr_name_5", Val: "value string"})
 	fmt.Printf("Name  [attr_name]  : %v\n", NilEmpty(s))
 	fmt.Printf("Error              : %v\n", err)
 
-	s, err = FmtAttr(Attr{Key: "attr_name_6", Val: Function("now()")})
+	s, err = FmtAttr(sql.Attr{Key: "attr_name_6", Val: Function("now()")})
 	fmt.Printf("Name  [attr_name]  : %v\n", NilEmpty(s))
 	fmt.Printf("Error              : %v\n", err)
 

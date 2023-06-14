@@ -1,9 +1,12 @@
 package pgxdml
 
-import "strings"
+import (
+	"github.com/go-sre/core/sql"
+	"strings"
+)
 
 // WriteDelete - build a SQL delete statement with a WHERE clause
-func WriteDelete(sql string, where []Attr) (string, error) {
+func WriteDelete(sql string, where []sql.Attr) (string, error) {
 	var sb strings.Builder
 
 	sb.WriteString(sql)

@@ -4,6 +4,8 @@ github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a h1:v6zMvHuY9
 github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a/go.mod h1:I79BieaU4fxrw4LMXby6q5OS9XnoR9UIKLOzDFjUmuw=
 github.com/go-sre/core v0.0.0-20230403183745-a454c738cec2 h1:YP49NJhqrghmNmFhxmEtGWQ6DUu1rn4BzdZBBtVxpcA=
 github.com/go-sre/core v0.0.0-20230403183745-a454c738cec2/go.mod h1:OVoGBu0ZwcDqFzawayVvY3LO/3g7xW61Ggra39vqQhQ=
+github.com/go-sre/core v0.0.0-20230614121137-46bf71d5302e h1:q6an/EkpsfzKf3oyoG60FpE0ZFH8LKuxNUPP4bTYxkY=
+github.com/go-sre/core v0.0.0-20230614121137-46bf71d5302e/go.mod h1:OVoGBu0ZwcDqFzawayVvY3LO/3g7xW61Ggra39vqQhQ=
 github.com/go-sre/host v0.0.0-20230407132048-2d1598e803d4 h1:U7aX2b1t/NBSSOrErMT7fTv25xBWX0pxUe5BmLxCEDk=
 github.com/go-sre/host v0.0.0-20230407132048-2d1598e803d4/go.mod h1:usmAlFUARPvq31GyTy+TBdqw01s4Pk+ARD5LYqj+19U=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=

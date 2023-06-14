@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
+	"github.com/go-sre/core/sql"
 	"github.com/go-sre/postgresql/pgxdml"
 )
 
@@ -56,8 +57,8 @@ type Request struct {
 	Uri      string
 	Template string
 	Values   [][]any
-	Attrs    []pgxdml.Attr
-	Where    []pgxdml.Attr
+	Attrs    []sql.Attr
+	Where    []sql.Attr
 	Error    error
 }
 
@@ -120,7 +121,7 @@ func (r *Request) BuildSql() string {
 	return sql
 }
 
-func NewQueryRequest(resource, template string, where []pgxdml.Attr) *Request {
+func NewQueryRequest(resource, template string, where []sql.Attr) *Request {
 	return &Request{cmd: selectCmd, Uri: BuildQueryUri(resource), Template: template, Where: where}
 }
 
@@ -132,10 +133,10 @@ func NewInsertRequest(resource, template string, values [][]any) *Request {
 	return &Request{cmd: insertCmd, Uri: BuildInsertUri(resource), Template: template, Values: values}
 }
 
-func NewUpdateRequest(resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr) *Request {
+func NewUpdateRequest(resource, template string, attrs []sql.Attr, where []sql.Attr) *Request {
 	return &Request{cmd: updateCmd, Uri: BuildUpdateUri(resource), Template: template, Attrs: attrs, Where: where}
 }
 
-func NewDeleteRequest(resource, template string, where []pgxdml.Attr) *Request {
+func NewDeleteRequest(resource, template string, where []sql.Attr) *Request {
 	return &Request{cmd: deleteCmd, Uri: BuildDeleteUri(resource), Template: template, Attrs: nil, Where: where}
 }
