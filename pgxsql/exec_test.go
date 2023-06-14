@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-sre/core/runtime"
+	"github.com/go-sre/core/sql"
 	"github.com/go-sre/postgresql/pgxdml"
 	"time"
 )
@@ -28,7 +29,7 @@ const (
 	execDeleteConditions = "DELETE FROM conditions"
 )
 
-func execTestProxy(req *Request) (tag CommandTag, err error) {
+func execTestProxy(req *sql.Request) (tag CommandTag, err error) {
 	switch req.Uri {
 	case BuildUpdateUri(execUpdateRsc):
 		return tag, errors.New("exec error")
@@ -55,7 +56,7 @@ func ExampleExec_Proxy() {
 	fmt.Printf("test: Exec[DebugError](%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
 
 	//Output:
-	//[[] github.com/gotemplates/postgresql/pgxsql/exec [exec error]]
+	//[[] github.com/go-sre/postgresql/pgxsql/exec [exec error]]
 	//test: Exec[DebugError](update test) -> Internal [cmd:{ 0 false false false false}]
 	//test: Exec[DebugError](insert test) -> OK [cmd:{INSERT 1 1234 true false false false}]
 
@@ -93,8 +94,8 @@ func ExampleExec_Update() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		attrs := []pgxdml.Attr{{"Temperature", 45.1234}}
-		where := []pgxdml.Attr{{"Location", "plano"}}
+		attrs := []sql.Attr{{"Temperature", 45.1234}}
+		where := []sql.Attr{{"Location", "plano"}}
 		req := NewUpdateRequest(execUpdateRsc, execUpdateConditions, attrs, where)
 
 		results, status := Exec[runtime.DebugError](nil, NullCount, req)
@@ -116,7 +117,7 @@ func ExampleExec_Delete() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		where := []pgxdml.Attr{{"Location", "plano"}}
+		where := []sql.Attr{{"Location", "plano"}}
 		req := NewDeleteRequest(execDeleteRsc, execDeleteConditions, where)
 
 		results, status := Exec[runtime.DebugError](nil, NullCount, req)

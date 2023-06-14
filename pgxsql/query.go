@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"github.com/go-sre/core/runtime"
+	"github.com/go-sre/core/sql"
 	"github.com/go-sre/host/messaging"
 )
 
 // Query - templated function for a Query
-func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *runtime.Status) {
+func Query[E runtime.ErrorHandler](ctx context.Context, req *sql.Request, args ...any) (result Rows, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()
@@ -35,7 +36,7 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...an
 	if dbClient == nil {
 		return nil, e.Handle(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	pgxRows, err := dbClient.Query(ctx, req.BuildSql(), args...)
+	pgxRows, err := dbClient.Query(ctx, BuildSql(req), args...)
 	if err != nil {
 		return nil, e.Handle(ctx, queryLoc, recast(err))
 	}

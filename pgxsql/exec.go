@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-sre/core/runtime"
+	"github.com/go-sre/core/sql"
 	"github.com/go-sre/host/messaging"
 )
 
@@ -15,7 +16,7 @@ const (
 var execLoc = pkgPath + "/exec"
 
 // Exec - templated function for executing a SQL statement
-func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (tag CommandTag, status *runtime.Status) {
+func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req *sql.Request, args ...any) (tag CommandTag, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()
@@ -46,7 +47,7 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req 
 	if err0 != nil {
 		return tag, e.Handle(ctx, execLoc, err0)
 	}
-	t, err := dbClient.Exec(ctx, req.BuildSql(), args...)
+	t, err := dbClient.Exec(ctx, BuildSql(req), args...)
 	if err != nil {
 		err0 = txn.Rollback(ctx)
 		return tag, e.Handle(ctx, execLoc, recast(err), err0)

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-sre/core/runtime"
-	"github.com/go-sre/postgresql/pgxdml"
+	"github.com/go-sre/core/sql"
 	"github.com/jackc/pgx/v5/pgtype"
 	"time"
 )
@@ -42,7 +42,7 @@ const (
 
 var queryTestExchange = runtime.ContextWithProxy(nil, queryTestProxy)
 
-func queryTestProxy(req *Request) (Rows, error) {
+func queryTestProxy(req *sql.Request) (Rows, error) {
 	switch req.Uri {
 	case BuildQueryUri(queryErrorRsc):
 		return nil, errors.New("pgxsql query error")
@@ -59,7 +59,7 @@ func ExampleQuery_TestError() {
 	fmt.Printf("test: Query[runtime.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
-	//[[] github.com/gotemplates/postgresql/pgxsql/exec [pgxsql query error]]
+	//[[] github.com/go-sre/postgresql/pgxsql/exec [pgxsql query error]]
 	//test: Query[runtime.DebugError](ctx,select * from test) -> [rows:<nil>] [status:Internal]
 
 }
@@ -127,7 +127,7 @@ func ExampleQuery_Conditions_Where() {
 	} else {
 		defer ClientShutdown()
 
-		where := []pgxdml.Attr{{"location", "garage"}}
+		where := []sql.Attr{{"location", "garage"}}
 		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
 		results, status := Query[runtime.DebugError](nil, req)
 		if !status.OK() {

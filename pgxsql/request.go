@@ -1,7 +1,6 @@
 package pgxsql
 
 import (
-	"errors"
 	"fmt"
 	"github.com/go-sre/core/sql"
 	"github.com/go-sre/postgresql/pgxdml"
@@ -9,20 +8,20 @@ import (
 
 const (
 	PostgresNID = "postgresql"
-	QueryNSS    = "query"
-	InsertNSS   = "insert"
-	UpdateNSS   = "update"
-	DeleteNSS   = "delete"
-	PingNSS     = "ping"
-	StatNSS     = "stat"
+	//QueryNSS    = "query"
+	//InsertNSS   = "insert"
+	//UpdateNSS   = "update"
+	//DeleteNSS   = "delete"
+	//PingNSS     = "ping"
+	//StatNSS     = "stat"
 
-	PingUri = "urn:" + PostgresNID + ":" + PingNSS
-	StatUri = "urn:" + PostgresNID + ":" + StatNSS
+	PingUri = "urn:" + PostgresNID + ":" + sql.PingNSS
+	StatUri = "urn:" + PostgresNID + ":" + sql.StatNSS
 
-	selectCmd = 0
-	insertCmd = 1
-	updateCmd = 2
-	deleteCmd = 3
+	//selectCmd = 0
+	//insertCmd = 1
+	//updateCmd = 2
+	//deleteCmd = 3
 
 	variableReference = "$1"
 )
@@ -33,25 +32,26 @@ func buildUri(nsid, nss, resource string) string {
 
 // BuildQueryUri - build an uri with the Query NSS
 func BuildQueryUri(resource string) string {
-	return buildUri(PostgresNID, QueryNSS, resource)
+	return sql.BuildQueryUri(PostgresNID, region, zone, resource)
 }
 
 // BuildInsertUri - build an uri with the Insert NSS
 func BuildInsertUri(resource string) string {
-	return buildUri(PostgresNID, InsertNSS, resource)
+	return sql.BuildInsertUri(PostgresNID, region, zone, resource)
 }
 
 // BuildUpdateUri - build an uri with the Update NSS
 func BuildUpdateUri(resource string) string {
-	return buildUri(PostgresNID, UpdateNSS, resource)
+	return sql.BuildUpdateUri(PostgresNID, region, zone, resource)
 }
 
 // BuildDeleteUri - build an uri with the Delete NSS
 func BuildDeleteUri(resource string) string {
-	return buildUri(PostgresNID, DeleteNSS, resource)
+	return sql.BuildDeleteUri(PostgresNID, region, zone, resource)
 }
 
 // Request - contains data needed to build the SQL statement related to the uri
+/*
 type Request struct {
 	cmd      int
 	Uri      string
@@ -69,20 +69,7 @@ func (r *Request) Validate() error {
 	if r.Template == "" {
 		return errors.New("invalid argument: request template is empty")
 	}
-	/*if r.cmd == deleteCmd {
-		if len(r.Where) == 0 {
-			return errors.New("invalid argument: delete where clause is empty")
-		}
-	}
-	if r.cmd == updateCmd {
-		if len(r.Attrs) == 0 {
-			return errors.New("invalid argument: update set clause is empty")
-		}
-		if len(r.Where) == 0 {
-			return errors.New("invalid argument: update where clause is empty")
-		}
-	}
-	*/
+
 	return nil
 }
 
@@ -90,18 +77,21 @@ func (r *Request) String() string {
 	return r.Template
 }
 
-func (r *Request) BuildSql() string {
-	var sql = r.Template
+
+*/
+
+func BuildSql(r *sql.Request) string {
+	var stmt = r.Template
 	var err error
 
-	switch r.cmd {
-	case selectCmd:
-		sql, err = pgxdml.ExpandSelect(r.Template, r.Where)
-	case insertCmd:
+	switch r.Cmd {
+	case sql.SelectCmd:
+		stmt, err = pgxdml.ExpandSelect(r.Template, r.Where)
+	case sql.InsertCmd:
 		if len(r.Values) > 0 {
-			sql, err = pgxdml.WriteInsert(r.Template, r.Values)
+			stmt, err = pgxdml.WriteInsert(r.Template, r.Values)
 		}
-	case updateCmd:
+	case sql.UpdateCmd:
 		//if len(r.Where) == 0 {
 		//	r.Where = append(r.Where, pgxdml.Attr{Name: "update_error_no_where_clause", Val: "null"})
 		//}
@@ -109,34 +99,34 @@ func (r *Request) BuildSql() string {
 		//	r.Attrs = append(r.Attrs, pgxdml.Attr{Name: "update_error_no_set_clause", Val: "null"})
 		//}
 		if len(r.Where) > 0 && len(r.Attrs) > 0 {
-			sql, err = pgxdml.WriteUpdate(r.Template, r.Attrs, r.Where)
+			stmt, err = pgxdml.WriteUpdate(r.Template, r.Attrs, r.Where)
 		}
-	case deleteCmd:
+	case sql.DeleteCmd:
 		if len(r.Where) > 0 {
 			//r.Where = append(r.Where, pgxdml.Attr{Name: "delete_error_no_where_clause", Val: "null"})
-			sql, err = pgxdml.WriteDelete(r.Template, r.Where)
+			stmt, err = pgxdml.WriteDelete(r.Template, r.Where)
 		}
 	}
 	r.Error = err
-	return sql
+	return stmt
 }
 
-func NewQueryRequest(resource, template string, where []sql.Attr) *Request {
-	return &Request{cmd: selectCmd, Uri: BuildQueryUri(resource), Template: template, Where: where}
+func NewQueryRequest(resource, template string, where []sql.Attr) *sql.Request {
+	return sql.NewQueryRequest(BuildQueryUri(resource), template, where)
 }
 
-func NewQueryRequestFromValues(resource, template string, values map[string][]string) *Request {
-	return &Request{cmd: selectCmd, Uri: BuildQueryUri(resource), Template: template, Where: pgxdml.BuildWhere(values)}
+func NewQueryRequestFromValues(resource, template string, values map[string][]string) *sql.Request {
+	return sql.NewQueryRequestFromValues(BuildQueryUri(resource), template, values)
 }
 
-func NewInsertRequest(resource, template string, values [][]any) *Request {
-	return &Request{cmd: insertCmd, Uri: BuildInsertUri(resource), Template: template, Values: values}
+func NewInsertRequest(resource, template string, values [][]any) *sql.Request {
+	return sql.NewInsertRequest(BuildInsertUri(resource), template, values)
 }
 
-func NewUpdateRequest(resource, template string, attrs []sql.Attr, where []sql.Attr) *Request {
-	return &Request{cmd: updateCmd, Uri: BuildUpdateUri(resource), Template: template, Attrs: attrs, Where: where}
+func NewUpdateRequest(resource, template string, attrs []sql.Attr, where []sql.Attr) *sql.Request {
+	return sql.NewUpdateRequest(BuildUpdateUri(resource), template, attrs, where)
 }
 
-func NewDeleteRequest(resource, template string, where []sql.Attr) *Request {
-	return &Request{cmd: deleteCmd, Uri: BuildDeleteUri(resource), Template: template, Attrs: nil, Where: where}
+func NewDeleteRequest(resource, template string, where []sql.Attr) *sql.Request {
+	return sql.NewDeleteRequest(BuildDeleteUri(resource), template, where)
 }

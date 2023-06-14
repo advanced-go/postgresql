@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
+	sql2 "github.com/go-sre/core/sql"
 	"net/url"
 )
 
@@ -25,7 +26,7 @@ func ExampleBuildRequest() {
 func ExampleRequest_Validate() {
 	uri := "urn:postgres:query.resource"
 	sql := "select * from table"
-	req := Request{}
+	req := sql2.Request{}
 
 	err := req.Validate()
 	fmt.Printf("test: Validate(empty) -> %v\n", err)
@@ -73,12 +74,12 @@ func ExampleBuildSql() {
 	t := "delete from access_log"
 	req := NewDeleteRequest(rsc, t, nil)
 
-	sql := req.BuildSql()
+	sql := BuildSql(req)
 	fmt.Printf("test: Delete.BuildSql(%v) -> %v\n", t, sql)
 
 	t = "update access_log"
 	req = NewUpdateRequest(rsc, t, nil, nil)
-	sql = req.BuildSql()
+	sql = BuildSql(req)
 	fmt.Printf("test: Update.BuildSql(%v) -> %v\n", t, sql)
 
 	//Output:
@@ -93,11 +94,11 @@ func ExampleNewQueryRequestFromValuesBuildSql() {
 	t := "select * from access_log {where} order by start_time desc limit 2"
 	req := NewQueryRequestFromValues(rsc, t, u.Query())
 
-	sql := req.BuildSql()
+	sql := BuildSql(req)
 	fmt.Printf("test: NewQueryRequestFromValues(%v) -> %v\n", t, sql)
 
 	req = NewQueryRequestFromValues(rsc, t, nil)
-	sql = req.BuildSql()
+	sql = BuildSql(req)
 	fmt.Printf("test: NewQueryRequestFromValues(%v) -> %v\n", t, sql)
 
 	//Output:

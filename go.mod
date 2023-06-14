@@ -3,7 +3,7 @@ module github.com/go-sre/postgresql
 go 1.18
 
 require (
-	github.com/go-sre/core v0.0.0-20230614121137-46bf71d5302e
+	github.com/go-sre/core v0.0.0-20230614131255-a542932c7f46
 	github.com/go-sre/host v0.0.0-20230407132048-2d1598e803d4
 	github.com/jackc/pgx/v5 v5.2.0
 )
