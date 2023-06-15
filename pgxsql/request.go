@@ -2,8 +2,9 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/go-sre/core/sql"
-	"github.com/go-sre/postgresql/pgxdml"
+	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/sql"
+	"github.com/go-ai-agent/postgresql/pgxdml"
 )
 
 const (
@@ -111,7 +112,7 @@ func BuildSql(r *sql.Request) string {
 	return stmt
 }
 
-func NewQueryRequest(resource, template string, where []sql.Attr) *sql.Request {
+func NewQueryRequest(resource, template string, where []runtime.Attr) *sql.Request {
 	return sql.NewQueryRequest(BuildQueryUri(resource), template, where)
 }
 
@@ -123,10 +124,10 @@ func NewInsertRequest(resource, template string, values [][]any) *sql.Request {
 	return sql.NewInsertRequest(BuildInsertUri(resource), template, values)
 }
 
-func NewUpdateRequest(resource, template string, attrs []sql.Attr, where []sql.Attr) *sql.Request {
+func NewUpdateRequest(resource, template string, attrs []runtime.Attr, where []runtime.Attr) *sql.Request {
 	return sql.NewUpdateRequest(BuildUpdateUri(resource), template, attrs, where)
 }
 
-func NewDeleteRequest(resource, template string, where []sql.Attr) *sql.Request {
+func NewDeleteRequest(resource, template string, where []runtime.Attr) *sql.Request {
 	return sql.NewDeleteRequest(BuildDeleteUri(resource), template, where)
 }

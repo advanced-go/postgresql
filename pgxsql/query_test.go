@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/go-sre/core/runtime"
-	"github.com/go-sre/core/sql"
+	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/sql"
 	"github.com/jackc/pgx/v5/pgtype"
 	"time"
 )
@@ -59,7 +59,7 @@ func ExampleQuery_TestError() {
 	fmt.Printf("test: Query[runtime.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
-	//[[] github.com/go-sre/postgresql/pgxsql/exec [pgxsql query error]]
+	//[[] github.com/go-ai-agent/postgresql/pgxsql/exec [pgxsql query error]]
 	//test: Query[runtime.DebugError](ctx,select * from test) -> [rows:<nil>] [status:Internal]
 
 }
@@ -127,7 +127,7 @@ func ExampleQuery_Conditions_Where() {
 	} else {
 		defer ClientShutdown()
 
-		where := []sql.Attr{{"location", "garage"}}
+		where := []runtime.Attr{{"location", "garage"}}
 		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
 		results, status := Query[runtime.DebugError](nil, req)
 		if !status.OK() {

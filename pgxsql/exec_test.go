@@ -3,9 +3,9 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/go-sre/core/runtime"
-	"github.com/go-sre/core/sql"
-	"github.com/go-sre/postgresql/pgxdml"
+	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/sql"
+	"github.com/go-ai-agent/postgresql/pgxdml"
 	"time"
 )
 
@@ -56,7 +56,7 @@ func ExampleExec_Proxy() {
 	fmt.Printf("test: Exec[DebugError](%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
 
 	//Output:
-	//[[] github.com/go-sre/postgresql/pgxsql/exec [exec error]]
+	//[[] github.com/go-ai-agent/postgresql/pgxsql/exec [exec error]]
 	//test: Exec[DebugError](update test) -> Internal [cmd:{ 0 false false false false}]
 	//test: Exec[DebugError](insert test) -> OK [cmd:{INSERT 1 1234 true false false false}]
 
@@ -94,8 +94,8 @@ func ExampleExec_Update() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		attrs := []sql.Attr{{"Temperature", 45.1234}}
-		where := []sql.Attr{{"Location", "plano"}}
+		attrs := []runtime.Attr{{"Temperature", 45.1234}}
+		where := []runtime.Attr{{"Location", "plano"}}
 		req := NewUpdateRequest(execUpdateRsc, execUpdateConditions, attrs, where)
 
 		results, status := Exec[runtime.DebugError](nil, req)
@@ -117,7 +117,7 @@ func ExampleExec_Delete() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		where := []sql.Attr{{"Location", "plano"}}
+		where := []runtime.Attr{{"Location", "plano"}}
 		req := NewDeleteRequest(execDeleteRsc, execDeleteConditions, where)
 
 		results, status := Exec[runtime.DebugError](nil, req)

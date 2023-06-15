@@ -3,9 +3,9 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/go-sre/core/runtime"
-	"github.com/go-sre/core/sql"
-	"github.com/go-sre/host/messaging"
+	"github.com/go-ai-agent/core/resource"
+	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/sql"
 )
 
 // Query - templated function for a Query
@@ -20,7 +20,7 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *sql.Request) (resul
 	if req == nil {
 		return nil, e.Handle(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = controllerApply(ctx, messaging.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = controllerApply(ctx, resource.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)

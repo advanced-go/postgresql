@@ -2,8 +2,8 @@ package pgxsql
 
 import (
 	"context"
-	"github.com/go-sre/core/runtime"
-	"github.com/go-sre/host/messaging"
+	"github.com/go-ai-agent/core/resource"
+	"github.com/go-ai-agent/core/runtime"
 	"reflect"
 	"sync/atomic"
 	"time"
@@ -13,10 +13,10 @@ type pkg struct{}
 
 var (
 	Uri             = pkgPath
-	c               = make(chan messaging.Message, 1)
+	c               = make(chan resource.Message, 1)
 	pkgPath         = reflect.TypeOf(any(pkg{})).PkgPath()
 	started         int64
-	controllerApply messaging.ControllerApply
+	controllerApply resource.ControllerApply
 	zone            = "zone"
 	region          = "region"
 )
@@ -38,25 +38,25 @@ func init() {
 	controllerApply = func(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
 		return func() {}, ctx, false
 	}
-	messaging.RegisterResource(Uri, c)
+	resource.Register(Uri, c)
 	go receive()
 }
 
-var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
+var messageHandler resource.MessageHandler = func(msg resource.Message) {
 	switch msg.Event {
-	case messaging.StartupEvent:
+	case resource.StartupEvent:
 		clientStartup(msg)
 		if IsStarted() {
-			apply := messaging.AccessControllerApply(&msg)
+			apply := resource.AccessControllerApply(&msg)
 			if apply != nil {
 				controllerApply = apply
 			}
 		}
-	case messaging.ShutdownEvent:
+	case resource.ShutdownEvent:
 		ClientShutdown()
-	case messaging.PingEvent:
+	case resource.PingEvent:
 		start := time.Now()
-		messaging.ReplyTo(msg, Ping[runtime.LogError](nil).SetDuration(time.Since(start)))
+		resource.ReplyTo(msg, Ping[runtime.LogError](nil).SetDuration(time.Since(start)))
 	}
 }
 

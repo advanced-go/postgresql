@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/go-sre/core/runtime"
+	"github.com/go-ai-agent/core/runtime"
 )
 
 func ExampleStat() {

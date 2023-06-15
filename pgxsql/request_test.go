@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
-	sql2 "github.com/go-sre/core/sql"
+	sql2 "github.com/go-ai-agent/core/sql"
 	"net/url"
 )
 
