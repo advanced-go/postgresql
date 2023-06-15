@@ -3,7 +3,7 @@ module github.com/go-sre/postgresql
 go 1.18
 
 require (
-	github.com/go-sre/core v0.0.0-20230615110806-66518a15d376
+	github.com/go-sre/core v0.0.0-20230615111522-755224af6450
 	github.com/go-sre/host v0.0.0-20230407132048-2d1598e803d4
 	github.com/jackc/pgx/v5 v5.2.0
 )
@@ -19,6 +19,6 @@ require (
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
-	google.golang.org/grpc v1.54.0 // indirect
+	google.golang.org/grpc v1.55.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 )

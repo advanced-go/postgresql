@@ -2,12 +2,12 @@ package pgxdml
 
 import (
 	"fmt"
-	"github.com/go-sre/core/sql"
+	"github.com/go-sre/core/runtime"
 )
 
 func ExampleExpandSelect() {
 	t := "select * from access_log {where} order by start_time desc limit 5"
-	where := []sql.Attr{{Key: "status_code", Val: "503"}}
+	where := []runtime.Attr{{Key: "status_code", Val: "503"}}
 
 	sql, err := ExpandSelect("", nil)
 	fmt.Printf("test: ExpandSelect(nil,nil) -> [error:%v] [empty:%v]\n", err, sql == "")

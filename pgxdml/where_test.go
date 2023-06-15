@@ -2,7 +2,7 @@ package pgxdml
 
 import (
 	"fmt"
-	"github.com/go-sre/core/sql"
+	"github.com/go-sre/core/runtime"
 	"net/url"
 	"strings"
 )
@@ -23,15 +23,15 @@ func ExampleWriteWhere() {
 	err := WriteWhere(&sb, false, nil)
 	fmt.Printf("test: WriteWhere(false,nil) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
-	err = WriteWhere(&sb, false, []sql.Attr{{Key: "", Val: nil}})
+	err = WriteWhere(&sb, false, []runtime.Attr{{Key: "", Val: nil}})
 	fmt.Printf("test: WriteWhere(false,empty name) -> [error:%v] [stmt:%v]\n", err, NilEmpty(strings.Trim(sb.String(), " ")))
 
 	sb.Reset()
-	err = WriteWhere(&sb, true, []sql.Attr{{Key: "status_code", Val: "503"}})
+	err = WriteWhere(&sb, true, []runtime.Attr{{Key: "status_code", Val: "503"}})
 	fmt.Printf("test: WriteWhere(true,name,val) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	sb.Reset()
-	err = WriteWhere(&sb, false, []sql.Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}})
+	err = WriteWhere(&sb, false, []runtime.Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}})
 	fmt.Printf("test: WriteWhere(false,name value) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	//Output:
@@ -48,15 +48,15 @@ func ExampleWriteWhereAttributes() {
 	err := WriteWhereAttributes(&sb, nil)
 	fmt.Printf("test: WriteWhereAttributes(nil) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
-	err = WriteWhereAttributes(&sb, []sql.Attr{{Key: "", Val: nil}})
+	err = WriteWhereAttributes(&sb, []runtime.Attr{{Key: "", Val: nil}})
 	fmt.Printf("test: WriteWhereAttributes(empty name) -> [error:%v] [stmt:%v]\n", err, NilEmpty(strings.Trim(sb.String(), " ")))
 
 	sb.Reset()
-	err = WriteWhereAttributes(&sb, []sql.Attr{{Key: "status_code", Val: "503"}})
+	err = WriteWhereAttributes(&sb, []runtime.Attr{{Key: "status_code", Val: "503"}})
 	fmt.Printf("test: WriteWhereAttributes(name,val) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	sb.Reset()
-	err = WriteWhereAttributes(&sb, []sql.Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}})
+	err = WriteWhereAttributes(&sb, []runtime.Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}})
 	fmt.Printf("test: WriteWhereAttributes(name value) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	//Output:

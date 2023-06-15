@@ -2,7 +2,7 @@ package pgxdml
 
 import (
 	"fmt"
-	"github.com/go-sre/core/sql"
+	"github.com/go-sre/core/runtime"
 )
 
 const (
@@ -10,7 +10,7 @@ const (
 )
 
 func ExampleWriteDelete() {
-	where := []sql.Attr{{Key: "customer_id", Val: "customer1"}, {Key: "created_ts", Val: "2022/11/30 15:48:54.049496"}} //time.Now()}}
+	where := []runtime.Attr{{Key: "customer_id", Val: "customer1"}, {Key: "created_ts", Val: "2022/11/30 15:48:54.049496"}} //time.Now()}}
 
 	sql, err := WriteDelete(deleteTestEntryStmt, where)
 	fmt.Printf("test: WriteDelete() -> [error:%v] [stmt:%v]\n", err, NilEmpty(sql))

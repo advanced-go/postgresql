@@ -2,24 +2,24 @@ package pgxdml
 
 import (
 	"errors"
-	"github.com/go-sre/core/sql"
+	"github.com/go-sre/core/runtime"
 	"strings"
 )
 
-// BuildWhere - build the []sql.Attr based on the URL query parameters
-func BuildWhere(values map[string][]string) []sql.Attr {
+// BuildWhere - build the []runtime.Attr based on the URL query parameters
+func BuildWhere(values map[string][]string) []runtime.Attr {
 	if len(values) == 0 {
 		return nil
 	}
-	var where []sql.Attr
+	var where []runtime.Attr
 	for k, v := range values {
-		where = append(where, sql.Attr{Key: k, Val: v[0]})
+		where = append(where, runtime.Attr{Key: k, Val: v[0]})
 	}
 	return where
 }
 
-// WriteWhere - build a SQL WHERE clause utilizing the given []sql.Attr
-func WriteWhere(sb *strings.Builder, terminate bool, attrs []sql.Attr) error {
+// WriteWhere - build a SQL WHERE clause utilizing the given []runtime.Attr
+func WriteWhere(sb *strings.Builder, terminate bool, attrs []runtime.Attr) error {
 	max := len(attrs) - 1
 	if max < 0 {
 		return errors.New("invalid update where argument, attrs slice is empty")
@@ -33,7 +33,7 @@ func WriteWhere(sb *strings.Builder, terminate bool, attrs []sql.Attr) error {
 }
 
 // WriteWhereAttributes - build a SQL statement only containing the []Attr conditionals
-func WriteWhereAttributes(sb *strings.Builder, attrs []sql.Attr) error {
+func WriteWhereAttributes(sb *strings.Builder, attrs []runtime.Attr) error {
 	max := len(attrs) - 1
 	if max < 0 {
 		return errors.New("invalid update where argument, attrs slice is empty")

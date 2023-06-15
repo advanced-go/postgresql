@@ -3,7 +3,7 @@ package pgxdml
 import (
 	"errors"
 	"fmt"
-	"github.com/go-sre/core/sql"
+	"github.com/go-sre/core/runtime"
 	"reflect"
 	"strings"
 	"time"
@@ -44,7 +44,7 @@ func FmtValue(v any) (string, error) {
 }
 
 // FmtAttr - format a name, value pair for a SQL statement
-func FmtAttr(attr sql.Attr) (string, error) {
+func FmtAttr(attr runtime.Attr) (string, error) {
 	if attr.Key == "" {
 		return "", errors.New("invalid attribute argument, attribute name is empty")
 	}
