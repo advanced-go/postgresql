@@ -9,14 +9,10 @@ import (
 	"github.com/go-sre/host/messaging"
 )
 
-const (
-	NullCount = int64(-1)
-)
-
 var execLoc = pkgPath + "/exec"
 
 // Exec - templated function for executing a SQL statement
-func Exec[E runtime.ErrorHandler](ctx context.Context, req *sql.Request, args ...any) (tag CommandTag, status *runtime.Status) {
+func Exec[E runtime.ErrorHandler](ctx context.Context, req *sql.Request) (tag CommandTag, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()
@@ -47,7 +43,7 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, req *sql.Request, args ..
 	if err0 != nil {
 		return tag, e.Handle(ctx, execLoc, err0)
 	}
-	t, err := dbClient.Exec(ctx, BuildSql(req), args...)
+	t, err := dbClient.Exec(ctx, BuildSql(req), req.Args)
 	if err != nil {
 		err0 = txn.Rollback(ctx)
 		return tag, e.Handle(ctx, execLoc, recast(err), err0)

@@ -12,6 +12,8 @@ github.com/go-sre/core v0.0.0-20230614131255-a542932c7f46 h1:Juxce1XBw6D90ViS/Y/
 github.com/go-sre/core v0.0.0-20230614131255-a542932c7f46/go.mod h1:OVoGBu0ZwcDqFzawayVvY3LO/3g7xW61Ggra39vqQhQ=
 github.com/go-sre/core v0.0.0-20230615105041-e5538516e11c h1:WQbixrZqJdgUrRkG7Mfzm9KjRzTgWrZHIh1/HLpdl58=
 github.com/go-sre/core v0.0.0-20230615105041-e5538516e11c/go.mod h1:OVoGBu0ZwcDqFzawayVvY3LO/3g7xW61Ggra39vqQhQ=
+github.com/go-sre/core v0.0.0-20230615110806-66518a15d376 h1:0ZEYFDah0ii1MJE+wfUQ1eX8TVpecIKdN11RY7wVupo=
+github.com/go-sre/core v0.0.0-20230615110806-66518a15d376/go.mod h1:OVoGBu0ZwcDqFzawayVvY3LO/3g7xW61Ggra39vqQhQ=
 github.com/go-sre/host v0.0.0-20230407132048-2d1598e803d4 h1:U7aX2b1t/NBSSOrErMT7fTv25xBWX0pxUe5BmLxCEDk=
 github.com/go-sre/host v0.0.0-20230407132048-2d1598e803d4/go.mod h1:usmAlFUARPvq31GyTy+TBdqw01s4Pk+ARD5LYqj+19U=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
