@@ -16,7 +16,7 @@ const (
 var execLoc = pkgPath + "/exec"
 
 // Exec - templated function for executing a SQL statement
-func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req *sql.Request, args ...any) (tag CommandTag, status *runtime.Status) {
+func Exec[E runtime.ErrorHandler](ctx context.Context, req *sql.Request, args ...any) (tag CommandTag, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()
@@ -52,9 +52,9 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req 
 		err0 = txn.Rollback(ctx)
 		return tag, e.Handle(ctx, execLoc, recast(err), err0)
 	}
-	if expectedCount != NullCount && t.RowsAffected() != expectedCount {
+	if req.ExpectedCount != sql.NullExpectedCount && t.RowsAffected() != req.ExpectedCount {
 		err0 = txn.Rollback(ctx)
-		return tag, e.Handle(ctx, execLoc, errors.New(fmt.Sprintf("error exec statement [%v] : actual RowsAffected %v != expected RowsAffected %v", t.String(), t.RowsAffected(), expectedCount)), err0)
+		return tag, e.Handle(ctx, execLoc, errors.New(fmt.Sprintf("error exec statement [%v] : actual RowsAffected %v != expected RowsAffected %v", t.String(), t.RowsAffected(), req.ExpectedCount)), err0)
 	}
 	err = txn.Commit(ctx)
 	if err != nil {

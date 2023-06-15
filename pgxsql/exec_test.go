@@ -49,10 +49,10 @@ func execTestProxy(req *sql.Request) (tag CommandTag, err error) {
 func ExampleExec_Proxy() {
 	ctx := runtime.ContextWithProxy(nil, execTestProxy)
 
-	cmd, status := Exec[runtime.DebugError](ctx, NullCount, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
+	cmd, status := Exec[runtime.DebugError](ctx, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec[DebugError](%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)
 
-	cmd, status = Exec[runtime.DebugError](ctx, NullCount, NewInsertRequest(execInsertRsc, execInsertSql, nil))
+	cmd, status = Exec[runtime.DebugError](ctx, NewInsertRequest(execInsertRsc, execInsertSql, nil))
 	fmt.Printf("test: Exec[DebugError](%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
 
 	//Output:
@@ -75,7 +75,7 @@ func ExampleExec_Insert() {
 		}
 		req := NewInsertRequest(execInsertRsc, execInsertConditions, pgxdml.NewInsertValues([]any{pgxdml.TimestampFn, cond.Location, cond.Temperature}))
 
-		results, status := Exec[runtime.DebugError](nil, NullCount, req)
+		results, status := Exec[runtime.DebugError](nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Insert[runtime.DebugError](nil,%v) -> [status:%v] [tag:%v}\n", execInsertConditions, status, results)
 		} else {
@@ -98,7 +98,7 @@ func ExampleExec_Update() {
 		where := []sql.Attr{{"Location", "plano"}}
 		req := NewUpdateRequest(execUpdateRsc, execUpdateConditions, attrs, where)
 
-		results, status := Exec[runtime.DebugError](nil, NullCount, req)
+		results, status := Exec[runtime.DebugError](nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Update[runtime.DebugError](nil,%v) -> [status:%v] [tag:%v}\n", execUpdateConditions, status, results)
 		} else {
@@ -120,7 +120,7 @@ func ExampleExec_Delete() {
 		where := []sql.Attr{{"Location", "plano"}}
 		req := NewDeleteRequest(execDeleteRsc, execDeleteConditions, where)
 
-		results, status := Exec[runtime.DebugError](nil, NullCount, req)
+		results, status := Exec[runtime.DebugError](nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Delete[runtime.DebugError](nil,%v) -> [status:%v] [tag:%v}\n", execDeleteConditions, status, results)
 		} else {
