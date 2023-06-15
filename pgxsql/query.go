@@ -9,7 +9,7 @@ import (
 )
 
 // Query - templated function for a Query
-func Query[E runtime.ErrorHandler](ctx context.Context, req *sql.Request, args ...any) (result Rows, status *runtime.Status) {
+func Query[E runtime.ErrorHandler](ctx context.Context, req *sql.Request) (result Rows, status *runtime.Status) {
 	var e E
 	var limited = false
 	var fn func()
@@ -36,7 +36,7 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *sql.Request, args .
 	if dbClient == nil {
 		return nil, e.Handle(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	pgxRows, err := dbClient.Query(ctx, BuildSql(req), args...)
+	pgxRows, err := dbClient.Query(ctx, BuildSql(req), req.Args)
 	if err != nil {
 		return nil, e.Handle(ctx, queryLoc, recast(err))
 	}
