@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
+	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/runtime"
 )
 
@@ -13,7 +14,7 @@ func ExamplePing() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
 
-		status := Ping[runtime.DebugError](nil)
+		status := Ping[runtime.DebugError, controller.NilHandler](nil)
 		fmt.Printf("test: Ping(nil) -> %v\n", status)
 	}
 

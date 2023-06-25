@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/resource"
 	"github.com/go-ai-agent/core/runtime"
 )
@@ -12,12 +13,13 @@ var (
 )
 
 // Stat - templated function for retrieving runtime stats
-func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *runtime.Status) {
+func Stat[E runtime.ErrorHandler, H controller.Handler](ctx context.Context) (stat *Stats, status *runtime.Status) {
 	var e E
+	var h H
 	var limited = false
 	var fn func()
 
-	fn, ctx, limited = controllerApply(ctx, resource.NewStatusCode(&status), StatUri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = h.Apply(ctx, resource.NewStatusCode(&status), StatUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)

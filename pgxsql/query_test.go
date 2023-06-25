@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
+	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/runtime"
 	"github.com/go-ai-agent/core/sql"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -55,7 +56,7 @@ func queryTestProxy(req *sql.Request) (Rows, error) {
 
 func ExampleQuery_TestError() {
 	ctx := queryTestExchange
-	result, status := Query[runtime.DebugError](ctx, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
+	result, status := Query[runtime.DebugError, controller.NilHandler](ctx, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
 	fmt.Printf("test: Query[runtime.DebugError](ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
@@ -66,7 +67,7 @@ func ExampleQuery_TestError() {
 
 func ExampleQuery_TestRows() {
 	ctx := queryTestExchange
-	result, status := Query[runtime.DebugError](ctx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
+	result, status := Query[runtime.DebugError, controller.NilHandler](ctx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
 	fmt.Printf("test: Query[runtime.DebugError](ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, result.CommandTag())
 
 	//Output:
@@ -81,7 +82,7 @@ func ExampleQuery_Conditions_Error() {
 	} else {
 		defer ClientShutdown()
 		req := NewQueryRequest(queryRowsRsc, queryConditionsError, nil)
-		results, status := Query[runtime.DebugError](nil, req)
+		results, status := Query[runtime.DebugError, controller.NilHandler](nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v]\n", queryConditionsError, status)
 		} else {
@@ -104,7 +105,7 @@ func ExampleQuery_Conditions() {
 	} else {
 		defer ClientShutdown()
 		req := NewQueryRequest(queryRowsRsc, queryConditions, nil)
-		results, status := Query[runtime.DebugError](nil, req)
+		results, status := Query[runtime.DebugError, controller.NilHandler](nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v]\n", queryConditions, status)
 		} else {
@@ -129,7 +130,7 @@ func ExampleQuery_Conditions_Where() {
 
 		where := []runtime.Attr{{"location", "garage"}}
 		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
-		results, status := Query[runtime.DebugError](nil, req)
+		results, status := Query[runtime.DebugError, controller.NilHandler](nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Query[runtime.DebugError](nil,%v) -> [status:%v]\n", queryConditionsWhere, status)
 		} else {

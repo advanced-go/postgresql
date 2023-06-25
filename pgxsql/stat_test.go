@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
+	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/runtime"
 )
 
@@ -13,7 +14,7 @@ func ExampleStat() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
 
-		stat, status := Stat[runtime.DebugError](nil)
+		stat, status := Stat[runtime.DebugError, controller.NilHandler](nil)
 		fmt.Printf("test: Stat(nil) -> [status:%v] [stat:%v]\n", status, stat != nil)
 	}
 

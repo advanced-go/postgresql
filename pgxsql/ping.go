@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/resource"
 	"github.com/go-ai-agent/core/runtime"
 )
@@ -12,15 +13,16 @@ var (
 )
 
 // Ping - templated function for pinging the database cluster
-func Ping[E runtime.ErrorHandler](ctx context.Context) (status *runtime.Status) {
+func Ping[E runtime.ErrorHandler, H controller.Handler](ctx context.Context) (status *runtime.Status) {
 	var e E
+	var h H
 	var limited = false
 	var fn func()
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	fn, ctx, limited = controllerApply(ctx, resource.NewStatusCode(&status), PingUri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = h.Apply(ctx, resource.NewStatusCode(&status), PingUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return runtime.NewStatusCode(runtime.StatusRateLimited)
