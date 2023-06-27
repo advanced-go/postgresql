@@ -2,8 +2,6 @@ package pgxsql
 
 import (
 	"fmt"
-	sql2 "github.com/go-ai-agent/core/sql"
-	"net/url"
 )
 
 func ExampleBuildRequest() {
@@ -26,7 +24,7 @@ func ExampleBuildRequest() {
 func ExampleRequest_Validate() {
 	uri := "urn:postgres:query.resource"
 	sql := "select * from table"
-	req := sql2.Request{}
+	req := Request{}
 
 	err := req.Validate()
 	fmt.Printf("test: Validate(empty) -> %v\n", err)
@@ -66,44 +64,5 @@ func ExampleRequest_Validate() {
 	//test: Validate(urn:postgres:query.resource) -> invalid argument: request template is empty
 	//test: Validate(select * from table) -> invalid argument: request Uri is empty
 	//test: Validate(all) -> <nil>
-
-}
-
-func ExampleBuildSql() {
-	rsc := "access-log"
-	t := "delete from access_log"
-	req := NewDeleteRequest(rsc, t, nil)
-
-	sql := BuildSql(req)
-	fmt.Printf("test: Delete.BuildSql(%v) -> %v\n", t, sql)
-
-	t = "update access_log"
-	req = NewUpdateRequest(rsc, t, nil, nil)
-	sql = BuildSql(req)
-	fmt.Printf("test: Update.BuildSql(%v) -> %v\n", t, sql)
-
-	//Output:
-	//test: Delete.BuildSql(delete from access_log) -> delete from access_log
-	//test: Update.BuildSql(update access_log) -> update access_log
-
-}
-
-func ExampleNewQueryRequestFromValuesBuildSql() {
-	u, _ := url.Parse("https://www.google.com/search?location=texas&zone=plano")
-	rsc := "access-log"
-	t := "select * from access_log {where} order by start_time desc limit 2"
-	req := NewQueryRequestFromValues(rsc, t, u.Query())
-
-	sql := BuildSql(req)
-	fmt.Printf("test: NewQueryRequestFromValues(%v) -> %v\n", t, sql)
-
-	req = NewQueryRequestFromValues(rsc, t, nil)
-	sql = BuildSql(req)
-	fmt.Printf("test: NewQueryRequestFromValues(%v) -> %v\n", t, sql)
-
-	//Output:
-	//test: NewQueryRequestFromValues(select * from access_log {where} order by start_time desc limit 2) -> select * from access_log
-	//WHERE zone = 'plano' AND location = 'texas' order by start_time desc limit 2
-	//test: NewQueryRequestFromValues(select * from access_log {where} order by start_time desc limit 2) -> select * from access_log order by start_time desc limit 2
 
 }

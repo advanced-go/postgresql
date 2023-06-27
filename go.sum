@@ -1,10 +1,8 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/go-ai-agent/core v0.0.0-20230624151013-32ff7c729f4c h1:pJBa4UGR2xXZewQKwddKYsMJmJsmJS4pbB3mU1IgFag=
-github.com/go-ai-agent/core v0.0.0-20230624151013-32ff7c729f4c/go.mod h1:FRREoT8panAcYPCwCePd1TLZNgAMbobn5aFlhBsmPn0=
-github.com/go-ai-agent/core v0.0.0-20230625105409-5627df9ed1d7 h1:10ByJXGvdens/vXeY1QiuZOQJ18vPdXbstHODmvGhdo=
-github.com/go-ai-agent/core v0.0.0-20230625105409-5627df9ed1d7/go.mod h1:e8dEtRFLNPU1flNZyblxGpOqvByDf03CZXL7ZLBjjY8=
+github.com/go-ai-agent/core v0.0.0-20230627114955-f9802c779160 h1:W0PSo54xdzA9cd4XqAMKkDuS3IHLtcReBQLZj5ISZBU=
+github.com/go-ai-agent/core v0.0.0-20230627114955-f9802c779160/go.mod h1:e8dEtRFLNPU1flNZyblxGpOqvByDf03CZXL7ZLBjjY8=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/golang/protobuf v1.5.3 h1:KhyjKVUg7Usr/dYsdSqoFveMYd5ko72D+zANwlG1mmg=
 github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=

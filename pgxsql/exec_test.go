@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/core/sql"
 	"github.com/go-ai-agent/postgresql/pgxdml"
 	"time"
 )
@@ -30,7 +29,7 @@ const (
 	execDeleteConditions = "DELETE FROM conditions"
 )
 
-func execTestProxy(req *sql.Request) (tag CommandTag, err error) {
+func execTestProxy(req *Request) (tag CommandTag, err error) {
 	switch req.Uri {
 	case BuildUpdateUri(execUpdateRsc):
 		return tag, errors.New("exec error")

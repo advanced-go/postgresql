@@ -1,19 +1,17 @@
 package pgxsql
 
-import "github.com/go-ai-agent/core/sql"
-
-func findExecProxy(proxies []any) func(*sql.Request) (CommandTag, error) {
+func findExecProxy(proxies []any) func(*Request) (CommandTag, error) {
 	for _, p := range proxies {
-		if fn, ok := p.(func(*sql.Request) (CommandTag, error)); ok {
+		if fn, ok := p.(func(*Request) (CommandTag, error)); ok {
 			return fn
 		}
 	}
 	return nil
 }
 
-func findQueryProxy(proxies []any) func(*sql.Request) (Rows, error) {
+func findQueryProxy(proxies []any) func(*Request) (Rows, error) {
 	for _, p := range proxies {
-		if fn, ok := p.(func(*sql.Request) (Rows, error)); ok {
+		if fn, ok := p.(func(*Request) (Rows, error)); ok {
 			return fn
 		}
 	}

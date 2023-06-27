@@ -6,11 +6,10 @@ import (
 	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/resource"
 	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/core/sql"
 )
 
 // Query - templated function for a Query
-func Query[E runtime.ErrorHandler, H controller.Handler](ctx context.Context, req *sql.Request) (result Rows, status *runtime.Status) {
+func Query[E runtime.ErrorHandler, H controller.Handler](ctx context.Context, req *Request) (result Rows, status *runtime.Status) {
 	var e E
 	var h H
 	var limited = false

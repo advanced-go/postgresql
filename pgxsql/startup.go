@@ -16,8 +16,13 @@ var (
 	c       = make(chan resource.Message, 1)
 	pkgPath = reflect.TypeOf(any(pkg{})).PkgPath()
 	started int64
-	zone    = "zone"
-	region  = "region"
+	origin  = runtime.Origin{
+		Region:     "region",
+		Zone:       "zone",
+		SubZone:    "",
+		Service:    "",
+		InstanceId: "",
+	}
 )
 
 // IsStarted - returns status of startup

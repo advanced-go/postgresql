@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/core/sql"
 	"github.com/jackc/pgx/v5/pgtype"
 	"time"
 )
@@ -43,7 +42,7 @@ const (
 
 var queryTestExchange = runtime.ContextWithProxy(nil, queryTestProxy)
 
-func queryTestProxy(req *sql.Request) (Rows, error) {
+func queryTestProxy(req *Request) (Rows, error) {
 	switch req.Uri {
 	case BuildQueryUri(queryErrorRsc):
 		return nil, errors.New("pgxsql query error")
