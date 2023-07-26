@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/resiliency/controller"
 	"github.com/jackc/pgx/v5/pgtype"
 	"time"
 )

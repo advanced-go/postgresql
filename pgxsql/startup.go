@@ -1,9 +1,9 @@
 package pgxsql
 
 import (
-	"github.com/go-ai-agent/core/controller"
-	"github.com/go-ai-agent/core/resource"
+	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/resiliency/controller"
 	"reflect"
 	"sync/atomic"
 	"time"
@@ -13,7 +13,7 @@ type pkg struct{}
 
 var (
 	Uri     = pkgPath
-	c       = make(chan resource.Message, 1)
+	c       = make(chan host.Message, 1)
 	pkgPath = reflect.TypeOf(any(pkg{})).PkgPath()
 	started int64
 	origin  = runtime.Origin{
@@ -39,25 +39,25 @@ func resetStarted() {
 }
 
 func init() {
-	resource.Register(Uri, c)
+	host.Register(Uri, c)
 	go receive()
 }
 
-var messageHandler resource.MessageHandler = func(msg resource.Message) {
+var messageHandler host.MessageHandler = func(msg host.Message) {
 	switch msg.Event {
-	case resource.StartupEvent:
+	case host.StartupEvent:
 		clientStartup(msg)
 		//if IsStarted() {
-		//	apply := resource.AccessControllerApply(&msg)
+		//	apply := host.AccessControllerApply(&msg)
 		//	if apply != nil {
 		//		controllerApply = apply
 		//	}
 		//}
-	case resource.ShutdownEvent:
+	case host.ShutdownEvent:
 		ClientShutdown()
-	case resource.PingEvent:
+	case host.PingEvent:
 		start := time.Now()
-		resource.ReplyTo(msg, Ping[runtime.LogError, controller.DefaultHandler](nil).SetDuration(time.Since(start)))
+		host.ReplyTo(msg, Ping[runtime.LogError, controller.DefaultHandler](nil).SetDuration(time.Since(start)))
 	}
 }
 

@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/resource"
+	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
 	"time"
 )
@@ -24,7 +24,7 @@ func Example_Startup() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
 
-		status := resource.Ping[runtime.DebugError](nil, postgresUri)
+		status := host.Ping[runtime.DebugError](nil, postgresUri)
 		fmt.Printf("test: messaging.Ping() -> %v\n", status)
 
 	}
@@ -45,12 +45,12 @@ func testStartup() error {
 		return nil
 	}
 
-	c <- resource.Message{
+	c <- host.Message{
 		To:      "",
 		From:    "",
-		Event:   resource.StartupEvent,
+		Event:   host.StartupEvent,
 		Status:  nil,
-		Content: []any{resource.DatabaseUrl{Url: serviceUrl}}, //messaging.ActuatorApply(actuator.EgressApply)},
+		Content: []any{host.DatabaseUrl{Url: serviceUrl}}, //messaging.ActuatorApply(actuator.EgressApply)},
 		ReplyTo: nil,
 	}
 	time.Sleep(time.Second * 3)

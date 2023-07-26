@@ -7,7 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/resource"
+	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
@@ -16,23 +16,23 @@ import (
 var dbClient *pgxpool.Pool
 var clientLoc = pkgPath + "/client"
 
-var clientStartup resource.MessageHandler = func(msg resource.Message) {
+var clientStartup host.MessageHandler = func(msg host.Message) {
 	if IsStarted() {
 		return
 	}
 	start := time.Now()
-	db := resource.AccessDatabaseUrl(&msg)
-	credentials := resource.AccessCredentials(&msg)
+	db := host.AccessDatabaseUrl(&msg)
+	credentials := host.AccessCredentials(&msg)
 	err := ClientStartup(db, credentials)
 	if err != nil {
-		resource.ReplyTo(msg, runtime.NewStatusError(clientLoc, err).SetDuration(time.Since(start)))
+		host.ReplyTo(msg, runtime.NewStatusError(clientLoc, err).SetDuration(time.Since(start)))
 		return
 	}
-	resource.ReplyTo(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
+	host.ReplyTo(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
 }
 
 // ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
-func ClientStartup(db resource.DatabaseUrl, credentials resource.Credentials) error {
+func ClientStartup(db host.DatabaseUrl, credentials host.Credentials) error {
 	if IsStarted() {
 		return nil
 	}
@@ -67,7 +67,7 @@ func ClientShutdown() {
 	}
 }
 
-func connectString(url string, credentials resource.Credentials) (string, error) {
+func connectString(url string, credentials host.Credentials) (string, error) {
 	// Username and password can be in the connect string Url
 	if credentials == nil {
 		return url, nil

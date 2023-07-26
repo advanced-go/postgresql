@@ -2,8 +2,8 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/go-ai-agent/core/controller"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/resiliency/controller"
 )
 
 func ExampleStat() {

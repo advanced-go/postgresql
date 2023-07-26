@@ -2,12 +2,12 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/go-ai-agent/core/resource"
+	"github.com/go-ai-agent/core/host"
 )
 
 func ExampleClientStartup() {
 
-	db := resource.DatabaseUrl{Url: ""}
+	db := host.DatabaseUrl{Url: ""}
 	err := ClientStartup(db, nil)
 	if err == nil {
 		defer ClientShutdown()

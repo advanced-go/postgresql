@@ -3,9 +3,9 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/go-ai-agent/core/controller"
-	"github.com/go-ai-agent/core/resource"
+	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/resiliency/controller"
 )
 
 var (
@@ -19,7 +19,7 @@ func Stat[E runtime.ErrorHandler, H controller.Handler](ctx context.Context) (st
 	var limited = false
 	var fn func()
 
-	fn, ctx, limited = h.Apply(ctx, resource.NewStatusCode(&status), StatUri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = h.Apply(ctx, host.NewStatusCode(&status), StatUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
