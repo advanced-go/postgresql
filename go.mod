@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/go-ai-agent/core v0.0.0-20230726113548-5f2d053da957
-	github.com/go-ai-agent/resiliency v0.0.0-20230726112828-8a137a397806
+	github.com/go-ai-agent/resiliency v0.0.0-20230729131033-79fc67f9fc9c
 	github.com/jackc/pgx/v5 v5.2.0
 )
 
