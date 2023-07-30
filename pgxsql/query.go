@@ -3,17 +3,15 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/resiliency/controller"
 )
 
 // Query - templated function for a Query
-func Query[E runtime.ErrorHandler, H controller.Handler](ctx context.Context, req *Request) (result Rows, status *runtime.Status) {
+func Query[E runtime.ErrorHandler](ctx context.Context, req *Request) (result Rows, status *runtime.Status) {
 	var e E
-	var h H
+	//var h H
 	var limited = false
-	var fn func()
+	//var fn func()
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -21,8 +19,8 @@ func Query[E runtime.ErrorHandler, H controller.Handler](ctx context.Context, re
 	if req == nil {
 		return nil, e.Handle(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = h.Apply(ctx, host.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
-	defer fn()
+	//	fn, ctx, limited = h.Apply(ctx, host.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
+	//	defer fn()
 	if limited {
 		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}

@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/go-ai-agent/core v0.0.0-20230726113548-5f2d053da957
-	github.com/go-ai-agent/resiliency v0.0.0-20230729131033-79fc67f9fc9c
 	github.com/jackc/pgx/v5 v5.2.0
 )
 
@@ -19,7 +18,6 @@ require (
 	golang.org/x/crypto v0.10.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/grpc v1.56.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 )

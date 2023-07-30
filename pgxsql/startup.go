@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/resiliency/controller"
 	"reflect"
 	"sync/atomic"
 	"time"
@@ -57,7 +56,7 @@ var messageHandler host.MessageHandler = func(msg host.Message) {
 		ClientShutdown()
 	case host.PingEvent:
 		start := time.Now()
-		host.ReplyTo(msg, Ping[runtime.LogError, controller.DefaultHandler](nil).SetDuration(time.Since(start)))
+		host.ReplyTo(msg, Ping[runtime.LogError](nil).SetDuration(time.Since(start)))
 	}
 }
 

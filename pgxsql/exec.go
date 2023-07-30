@@ -4,19 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/resiliency/controller"
 )
 
 var execLoc = pkgPath + "/exec"
 
 // Exec - templated function for executing a SQL statement
-func Exec[E runtime.ErrorHandler, H controller.Handler](ctx context.Context, req *Request) (tag CommandTag, status *runtime.Status) {
+func Exec[E runtime.ErrorHandler](ctx context.Context, req *Request) (tag CommandTag, status *runtime.Status) {
 	var e E
-	var h H
+	//var h H
 	var limited = false
-	var fn func()
+	//var fn func()
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -24,8 +22,8 @@ func Exec[E runtime.ErrorHandler, H controller.Handler](ctx context.Context, req
 	if req == nil {
 		return tag, e.Handle(ctx, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = h.Apply(ctx, host.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
-	defer fn()
+	//fn, ctx, limited = h.Apply(ctx, host.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
+	//defer fn()
 	if limited {
 		return tag, runtime.NewStatusCode(runtime.StatusRateLimited)
 	}
