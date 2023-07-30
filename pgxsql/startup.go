@@ -1,6 +1,7 @@
 package pgxsql
 
 import (
+	"context"
 	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
 	"reflect"
@@ -11,11 +12,12 @@ import (
 type pkg struct{}
 
 var (
-	Uri     = pkgPath
-	c       = make(chan host.Message, 1)
-	pkgPath = reflect.TypeOf(any(pkg{})).PkgPath()
-	started int64
-	origin  = runtime.Origin{
+	Uri             = pkgPath
+	c               = make(chan host.Message, 1)
+	pkgPath         = reflect.TypeOf(any(pkg{})).PkgPath()
+	started         int64
+	controllerApply host.ControllerApply
+	origin          = runtime.Origin{
 		Region:     "region",
 		Zone:       "zone",
 		SubZone:    "",
@@ -38,6 +40,9 @@ func resetStarted() {
 }
 
 func init() {
+	controllerApply = func(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
+		return func() {}, ctx, false
+	}
 	host.Register(Uri, c)
 	go receive()
 }
@@ -46,12 +51,12 @@ var messageHandler host.MessageHandler = func(msg host.Message) {
 	switch msg.Event {
 	case host.StartupEvent:
 		clientStartup(msg)
-		//if IsStarted() {
-		//	apply := host.AccessControllerApply(&msg)
-		//	if apply != nil {
-		//		controllerApply = apply
-		//	}
-		//}
+		if IsStarted() {
+			apply := host.AccessControllerApply(&msg)
+			if apply != nil {
+				controllerApply = apply
+			}
+		}
 	case host.ShutdownEvent:
 		ClientShutdown()
 	case host.PingEvent:

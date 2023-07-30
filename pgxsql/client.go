@@ -21,9 +21,9 @@ var clientStartup host.MessageHandler = func(msg host.Message) {
 		return
 	}
 	start := time.Now()
-	db := host.AccessDatabaseUrl(&msg)
+	rsc := host.AccessResource(&msg)
 	credentials := host.AccessCredentials(&msg)
-	err := ClientStartup(db, credentials)
+	err := ClientStartup(rsc, credentials)
 	if err != nil {
 		host.ReplyTo(msg, runtime.NewStatusError(clientLoc, err).SetDuration(time.Since(start)))
 		return
@@ -32,15 +32,15 @@ var clientStartup host.MessageHandler = func(msg host.Message) {
 }
 
 // ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
-func ClientStartup(db host.DatabaseUrl, credentials host.Credentials) error {
+func ClientStartup(rsc host.Resource, credentials host.Credentials) error {
 	if IsStarted() {
 		return nil
 	}
-	if db.Url == "" {
+	if rsc.Uri == "" {
 		return errors.New("database URL is empty")
 	}
 	// Create connection string with credentials
-	s, err := connectString(db.Url, credentials)
+	s, err := connectString(rsc.Uri, credentials)
 	if err != nil {
 		return err
 	}

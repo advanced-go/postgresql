@@ -50,7 +50,7 @@ func testStartup() error {
 		From:    "",
 		Event:   host.StartupEvent,
 		Status:  nil,
-		Content: []any{host.DatabaseUrl{Url: serviceUrl}}, //messaging.ActuatorApply(actuator.EgressApply)},
+		Content: []any{host.Resource{Uri: serviceUrl}}, //messaging.ActuatorApply(actuator.EgressApply)},
 		ReplyTo: nil,
 	}
 	time.Sleep(time.Second * 3)

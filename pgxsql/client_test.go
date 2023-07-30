@@ -7,8 +7,8 @@ import (
 
 func ExampleClientStartup() {
 
-	db := host.DatabaseUrl{Url: ""}
-	err := ClientStartup(db, nil)
+	rsc := host.Resource{Uri: ""}
+	err := ClientStartup(rsc, nil)
 	if err == nil {
 		defer ClientShutdown()
 	}
