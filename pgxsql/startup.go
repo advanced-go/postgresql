@@ -17,13 +17,6 @@ var (
 	pkgPath         = reflect.TypeOf(any(pkg{})).PkgPath()
 	started         int64
 	controllerApply host.ControllerApply
-	origin          = runtime.Origin{
-		Region:     "region",
-		Zone:       "zone",
-		SubZone:    "",
-		Service:    "",
-		InstanceId: "",
-	}
 )
 
 // IsStarted - returns status of startup

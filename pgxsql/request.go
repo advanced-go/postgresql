@@ -2,7 +2,6 @@ package pgxsql
 
 import (
 	"errors"
-	"fmt"
 	"github.com/go-ai-agent/core/runtime"
 )
 
@@ -26,28 +25,28 @@ const (
 	NullExpectedCount = int64(-1)
 )
 
-func BuildUri(nid string, o runtime.Origin, nss, resource string) string {
-	return fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
+func BuildUri(nid string, nss, resource string) string {
+	return runtime.OriginUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
 // BuildQueryUri - build an uri with the Query NSS
 func BuildQueryUri(resource string) string {
-	return BuildUri(PostgresNID, origin, QueryNSS, resource)
+	return BuildUri(PostgresNID, QueryNSS, resource)
 }
 
 // BuildInsertUri - build an uri with the Insert NSS
 func BuildInsertUri(resource string) string {
-	return BuildUri(PostgresNID, origin, InsertNSS, resource)
+	return BuildUri(PostgresNID, InsertNSS, resource)
 }
 
 // BuildUpdateUri - build an uri with the Update NSS
 func BuildUpdateUri(resource string) string {
-	return BuildUri(PostgresNID, origin, UpdateNSS, resource)
+	return BuildUri(PostgresNID, UpdateNSS, resource)
 }
 
 // BuildDeleteUri - build an uri with the Delete NSS
 func BuildDeleteUri(resource string) string {
-	return BuildUri(PostgresNID, origin, DeleteNSS, resource)
+	return BuildUri(PostgresNID, DeleteNSS, resource)
 }
 
 // Request - contains data needed to build the SQL statement related to the uri
