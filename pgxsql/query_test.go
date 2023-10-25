@@ -162,11 +162,11 @@ func scanRows(rows Rows) ([]TestConditions, *runtime.Status) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return nil, runtime.NewStatusError("", err)
+			return nil, runtime.NewStatusError(err)
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return nil, runtime.NewStatusError("", err)
+			return nil, runtime.NewStatusError(err)
 		}
 		conditions = append(conditions, scanColumns(values))
 	}

@@ -8,7 +8,7 @@ import (
 	"github.com/go-ai-agent/core/runtime"
 )
 
-var execLoc = pkgPath + "/exec"
+var execLoc = PkgUri + "/exec"
 
 // Exec - templated function for executing a SQL statement
 func Exec[E runtime.ErrorHandler](ctx context.Context, req *Request) (tag CommandTag, status *runtime.Status) {

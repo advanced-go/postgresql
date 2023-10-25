@@ -71,7 +71,7 @@ type Rows interface {
 }
 
 var (
-	queryLoc = pkgPath + "/query"
+	queryLoc = PkgUri + "/query"
 )
 
 type proxyRows struct {

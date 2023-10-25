@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	statLoc = pkgPath + "/stat"
+	statLoc = PkgUri + "/stat"
 )
 
 // Stat - templated function for retrieving runtime stats
