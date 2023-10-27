@@ -2,12 +2,11 @@ package pgxdml
 
 import (
 	"fmt"
-	"github.com/go-ai-agent/core/runtime"
 )
 
 func ExampleExpandSelect() {
 	t := "select * from access_log {where} order by start_time desc limit 5"
-	where := []runtime.Attr{{Key: "status_code", Val: "503"}}
+	where := []Attr{{Key: "status_code", Val: "503"}}
 
 	sql, err := ExpandSelect("", nil)
 	fmt.Printf("test: ExpandSelect(nil,nil) -> [error:%v] [empty:%v]\n", err, sql == "")

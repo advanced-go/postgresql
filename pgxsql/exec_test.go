@@ -94,8 +94,8 @@ func ExampleExec_Update() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		attrs := []runtime.Attr{{"Temperature", 45.1234}}
-		where := []runtime.Attr{{"Location", "plano"}}
+		attrs := []pgxdml.Attr{{"Temperature", 45.1234}}
+		where := []pgxdml.Attr{{"Location", "plano"}}
 		req := NewUpdateRequest(execUpdateRsc, execUpdateConditions, attrs, where)
 
 		results, status := Exec[runtimetest.DebugError](nil, req)
@@ -117,7 +117,7 @@ func ExampleExec_Delete() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		where := []runtime.Attr{{"Location", "plano"}}
+		where := []pgxdml.Attr{{"Location", "plano"}}
 		req := NewDeleteRequest(execDeleteRsc, execDeleteConditions, where)
 
 		results, status := Exec[runtimetest.DebugError](nil, req)

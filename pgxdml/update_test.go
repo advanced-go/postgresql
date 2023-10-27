@@ -2,7 +2,6 @@ package pgxdml
 
 import (
 	"fmt"
-	"github.com/go-ai-agent/core/runtime"
 	"strings"
 )
 
@@ -11,8 +10,8 @@ const (
 )
 
 func ExampleWriteUpdate() {
-	where := []runtime.Attr{{Key: "customer_id", Val: "customer1"}, {Key: "created_ts", Val: "2022/11/30 15:48:54.049496"}} //time.Now()}}
-	attrs := []runtime.Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}}
+	where := []Attr{{Key: "customer_id", Val: "customer1"}, {Key: "created_ts", Val: "2022/11/30 15:48:54.049496"}} //time.Now()}}
+	attrs := []Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}}
 
 	sql, err := WriteUpdate(UpdateTestEntryStmt, attrs, where)
 	fmt.Printf("test: WriteUpdate(stmt,attrs,where) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sql))
@@ -36,11 +35,11 @@ func ExampleWriteUpdateSet() {
 	fmt.Printf("test: WriteUpdateSet(nil) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	sb.Reset()
-	err = WriteUpdateSet(&sb, []runtime.Attr{{Key: "status_code", Val: "503"}})
+	err = WriteUpdateSet(&sb, []Attr{{Key: "status_code", Val: "503"}})
 	fmt.Printf("test: WriteUpdateSet(name value) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	sb.Reset()
-	err = WriteUpdateSet(&sb, []runtime.Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}})
+	err = WriteUpdateSet(&sb, []Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}})
 	fmt.Printf("test: WriteUpdateSet(name value) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sb.String()))
 
 	//Output:

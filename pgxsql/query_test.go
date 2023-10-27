@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-ai-agent/core/runtime"
 	"github.com/go-ai-agent/core/runtime/runtimetest"
+	"github.com/go-ai-agent/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5/pgtype"
 	"time"
 )
@@ -127,7 +128,7 @@ func ExampleQuery_Conditions_Where() {
 	} else {
 		defer ClientShutdown()
 
-		where := []runtime.Attr{{"location", "garage"}}
+		where := []pgxdml.Attr{{"location", "garage"}}
 		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
 		results, status := Query[runtimetest.DebugError](nil, req)
 		if !status.OK() {

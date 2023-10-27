@@ -1,12 +1,11 @@
 package pgxdml
 
 import (
-	"github.com/go-ai-agent/core/runtime"
 	"strings"
 )
 
 // WriteDelete - build a SQL delete statement with a WHERE clause
-func WriteDelete(sql string, where []runtime.Attr) (string, error) {
+func WriteDelete(sql string, where []Attr) (string, error) {
 	var sb strings.Builder
 
 	sb.WriteString(sql)

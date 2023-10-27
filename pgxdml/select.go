@@ -2,7 +2,6 @@ package pgxdml
 
 import (
 	"errors"
-	"github.com/go-ai-agent/core/runtime"
 	"strings"
 )
 
@@ -11,7 +10,7 @@ const (
 )
 
 // ExpandSelect - given a template, expand the template to build a WHERE clause if configured
-func ExpandSelect(template string, where []runtime.Attr) (string, error) {
+func ExpandSelect(template string, where []Attr) (string, error) {
 	if template == "" {
 		return template, errors.New("template is empty")
 	}

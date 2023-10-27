@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/postgresql/pgxdml"
 )
 
 const (
@@ -56,8 +57,8 @@ type Request struct {
 	Uri           string
 	Template      string
 	Values        [][]any
-	Attrs         []runtime.Attr
-	Where         []runtime.Attr
+	Attrs         []pgxdml.Attr
+	Where         []pgxdml.Attr
 	Args          []any
 	Error         error
 }
@@ -76,7 +77,7 @@ func (r *Request) String() string {
 	return r.Template
 }
 
-func NewQueryRequest(uri, template string, where []runtime.Attr, args ...any) *Request {
+func NewQueryRequest(uri, template string, where []pgxdml.Attr, args ...any) *Request {
 	return &Request{ExpectedCount: NullExpectedCount, Cmd: SelectCmd, Uri: uri, Template: template, Where: where, Args: args}
 }
 
@@ -88,22 +89,22 @@ func NewInsertRequest(uri, template string, values [][]any, args ...any) *Reques
 	return &Request{ExpectedCount: NullExpectedCount, Cmd: InsertCmd, Uri: uri, Template: template, Values: values, Args: args}
 }
 
-func NewUpdateRequest(uri, template string, attrs []runtime.Attr, where []runtime.Attr, args ...any) *Request {
+func NewUpdateRequest(uri, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *Request {
 	return &Request{ExpectedCount: NullExpectedCount, Cmd: UpdateCmd, Uri: uri, Template: template, Attrs: attrs, Where: where, Args: args}
 }
 
-func NewDeleteRequest(uri, template string, where []runtime.Attr, args ...any) *Request {
+func NewDeleteRequest(uri, template string, where []pgxdml.Attr, args ...any) *Request {
 	return &Request{ExpectedCount: NullExpectedCount, Cmd: DeleteCmd, Uri: uri, Template: template, Attrs: nil, Where: where, Args: args}
 }
 
 // BuildWhere - build the []Attr based on the URL query parameters
-func BuildWhere(values map[string][]string) []runtime.Attr {
+func BuildWhere(values map[string][]string) []pgxdml.Attr {
 	if len(values) == 0 {
 		return nil
 	}
-	var where []runtime.Attr
+	var where []pgxdml.Attr
 	for k, v := range values {
-		where = append(where, runtime.Attr{Key: k, Val: v[0]})
+		where = append(where, pgxdml.Attr{Key: k, Val: v[0]})
 	}
 	return where
 }
