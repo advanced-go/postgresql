@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-ai-agent/core/host"
-	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/runtime/runtimetest"
 	"time"
 )
 
@@ -24,7 +24,7 @@ func Example_Startup() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
 
-		status := host.Ping[runtime.DebugError](nil, postgresUri)
+		status := host.Ping[runtimetest.DebugError](nil, postgresUri)
 		fmt.Printf("test: messaging.Ping() -> %v\n", status)
 
 	}

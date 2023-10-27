@@ -7,6 +7,10 @@ import (
 	"github.com/go-ai-agent/core/runtime"
 )
 
+var (
+	queryLoc = pkgUri + "/Query"
+)
+
 // Query - templated function for a Query
 func Query[E runtime.ErrorHandler](ctx context.Context, req *Request) (result Rows, status *runtime.Status) {
 	var e E
@@ -22,7 +26,7 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *Request) (result Ro
 	fn, ctx, limited = controllerApply(ctx, host.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
-		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
+		return nil, runtime.NewStatus(runtime.StatusRateLimited)
 	}
 	if proxies, ok := runtime.IsProxyable(ctx); ok {
 		if pQuery := findQueryProxy(proxies); pQuery != nil {

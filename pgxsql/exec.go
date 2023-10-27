@@ -8,7 +8,7 @@ import (
 	"github.com/go-ai-agent/core/runtime"
 )
 
-var execLoc = PkgUri + "/exec"
+var execLoc = pkgUri + "/Exec"
 
 // Exec - templated function for executing a SQL statement
 func Exec[E runtime.ErrorHandler](ctx context.Context, req *Request) (tag CommandTag, status *runtime.Status) {
@@ -25,7 +25,7 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, req *Request) (tag Comman
 	fn, ctx, limited = controllerApply(ctx, host.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
-		return tag, runtime.NewStatusCode(runtime.StatusRateLimited)
+		return tag, runtime.NewStatus(runtime.StatusRateLimited)
 	}
 	if proxies, ok := runtime.IsProxyable(ctx); ok {
 		if pExec := findExecProxy(proxies); pExec != nil {

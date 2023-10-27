@@ -16,7 +16,7 @@ func init() {
 	controllerApply = func(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
 		return func() {}, ctx, false
 	}
-	host.Register(PkgUri, c)
+	host.Register(pkgUri, c)
 	go receive()
 }
 

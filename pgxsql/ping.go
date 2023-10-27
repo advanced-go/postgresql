@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	pingLoc = PkgUri + "/stat"
+	pingLoc = pkgUri + "/Ping"
 )
 
 // Ping - templated function for pinging the database cluster
@@ -23,7 +23,7 @@ func Ping[E runtime.ErrorHandler](ctx context.Context) (status *runtime.Status) 
 	fn, ctx, limited = controllerApply(ctx, host.NewStatusCode(&status), PingUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
-		return runtime.NewStatusCode(runtime.StatusRateLimited)
+		return runtime.NewStatus(runtime.StatusRateLimited)
 	}
 	if dbClient == nil {
 		return e.Handle(ctx, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)

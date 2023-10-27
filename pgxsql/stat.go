@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	statLoc = PkgUri + "/stat"
+	statLoc = pkgUri + "/Stat"
 )
 
 // Stat - templated function for retrieving runtime stats
@@ -20,7 +20,7 @@ func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *run
 	fn, ctx, limited = controllerApply(ctx, host.NewStatusCode(&status), StatUri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
-		return nil, runtime.NewStatusCode(runtime.StatusRateLimited)
+		return nil, runtime.NewStatus(runtime.StatusRateLimited)
 	}
 	if dbClient == nil {
 		return nil, e.Handle(ctx, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)

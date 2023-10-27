@@ -9,8 +9,8 @@ import (
 type pkg struct{}
 
 var (
-	PkgUrl  = runtime.ParsePkgUrl(reflect.TypeOf(any(pkg{})).PkgPath())
-	PkgUri  = PkgUrl.Host + PkgUrl.Path
+	pkgUri  = reflect.TypeOf(any(pkg{})).PkgPath()
+	pkgPath = runtime.PathFromUri(pkgUri)
 	started int64
 )
 

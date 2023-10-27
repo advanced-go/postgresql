@@ -14,7 +14,7 @@ import (
 )
 
 var dbClient *pgxpool.Pool
-var clientLoc = PkgUri + "/client"
+var clientLoc = pkgUri + "/Startup"
 
 var clientStartup host.MessageHandler = func(msg host.Message) {
 	if IsStarted() {
@@ -25,7 +25,7 @@ var clientStartup host.MessageHandler = func(msg host.Message) {
 	credentials := host.AccessCredentials(&msg)
 	err := ClientStartup(rsc, credentials)
 	if err != nil {
-		host.ReplyTo(msg, runtime.NewStatusError(err).SetDuration(time.Since(start)).SetLocation(clientLoc))
+		host.ReplyTo(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
 		return
 	}
 	host.ReplyTo(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))

@@ -70,10 +70,6 @@ type Rows interface {
 	//Conn() *Conn
 }
 
-var (
-	queryLoc = PkgUri + "/query"
-)
-
 type proxyRows struct {
 	pgxRows pgx.Rows
 	fd      []FieldDescription
