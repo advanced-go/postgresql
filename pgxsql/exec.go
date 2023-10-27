@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/runtime/startup"
 )
 
 var execLoc = pkgUri + "/Exec"
@@ -22,7 +22,7 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, req *Request) (tag Comman
 	if req == nil {
 		return tag, e.Handle(ctx, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetCode(runtime.StatusInvalidArgument)
 	}
-	fn, ctx, limited = controllerApply(ctx, host.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
+	fn, ctx, limited = controllerApply(ctx, startup.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
 	if limited {
 		return tag, runtime.NewStatus(runtime.StatusRateLimited)

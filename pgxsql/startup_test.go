@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime/runtimetest"
+	"github.com/go-ai-agent/core/runtime/startup"
 	"time"
 )
 
@@ -24,7 +24,7 @@ func Example_Startup() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
 
-		status := host.Ping[runtimetest.DebugError](nil, postgresUri)
+		status := startup.Ping[runtimetest.DebugError](nil, postgresUri)
 		fmt.Printf("test: messaging.Ping() -> %v\n", status)
 
 	}
@@ -32,7 +32,7 @@ func Example_Startup() {
 	//Output:
 	//test: IsStarted() -> false
 	//test: clientStartup() -> [started:true]
-	//{traffic:egress, route:*, request-id:, status-code:0, method:GET, url:urn:postgres:ping, host:postgres, path:ping, timeout:-1, rate-limit:-1, rate-burst:-1, retry:, retry-rate-limit:-1, retry-rate-burst:-1, status-flags:}
+	//{traffic:egress, route:*, request-id:, status-code:0, method:GET, url:urn:postgres:ping, startup:postgres, path:ping, timeout:-1, rate-limit:-1, rate-burst:-1, retry:, retry-rate-limit:-1, retry-rate-burst:-1, status-flags:}
 	//test: messaging.Ping() -> OK
 
 }
@@ -45,12 +45,12 @@ func testStartup() error {
 		return nil
 	}
 
-	c <- host.Message{
+	c <- startup.Message{
 		To:      "",
 		From:    "",
-		Event:   host.StartupEvent,
+		Event:   startup.StartupEvent,
 		Status:  nil,
-		Content: []any{host.Resource{Uri: serviceUrl}}, //messaging.ActuatorApply(actuator.EgressApply)},
+		Content: []any{startup.Resource{Uri: serviceUrl}}, //messaging.ActuatorApply(actuator.EgressApply)},
 		ReplyTo: nil,
 	}
 	time.Sleep(time.Second * 3)

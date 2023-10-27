@@ -2,39 +2,39 @@ package pgxsql
 
 import (
 	"context"
-	"github.com/go-ai-agent/core/host"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/runtime/startup"
 	"time"
 )
 
 var (
-	c               = make(chan host.Message, 1)
-	controllerApply host.ControllerApply
+	c               = make(chan startup.Message, 1)
+	controllerApply startup.ControllerApply
 )
 
 func init() {
 	controllerApply = func(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
 		return func() {}, ctx, false
 	}
-	host.Register(pkgUri, c)
+	startup.Register(pkgUri, c)
 	go receive()
 }
 
-var messageHandler host.MessageHandler = func(msg host.Message) {
+var messageHandler startup.MessageHandler = func(msg startup.Message) {
 	switch msg.Event {
-	case host.StartupEvent:
+	case startup.StartupEvent:
 		clientStartup(msg)
 		if IsStarted() {
-			apply := host.AccessControllerApply(&msg)
+			apply := startup.AccessControllerApply(&msg)
 			if apply != nil {
 				controllerApply = apply
 			}
 		}
-	case host.ShutdownEvent:
+	case startup.ShutdownEvent:
 		ClientShutdown()
-	case host.PingEvent:
+	case startup.PingEvent:
 		start := time.Now()
-		host.ReplyTo(msg, Ping[runtime.LogError](nil).SetDuration(time.Since(start)))
+		startup.ReplyTo(msg, Ping[runtime.LogError](nil).SetDuration(time.Since(start)))
 	}
 }
 
