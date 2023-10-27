@@ -8,12 +8,11 @@ import (
 )
 
 var (
-	queryLoc = pkgUri + "/Query"
+	queryLoc = PkgUri + "/Query"
 )
 
-// Query - templated function for a Query
-func Query[E runtime.ErrorHandler](ctx context.Context, req *Request) (result Rows, status *runtime.Status) {
-	var e E
+// Query - function for a Query
+func Query(ctx context.Context, req *Request) (result Rows, status *runtime.Status) {
 	var limited = false
 	var fn func()
 
@@ -21,7 +20,7 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *Request) (result Ro
 		ctx = context.Background()
 	}
 	if req == nil {
-		return nil, e.Handle(ctx, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetCode(runtime.StatusInvalidArgument)
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
 	}
 	fn, ctx, limited = controllerApply(ctx, startup.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
@@ -32,15 +31,15 @@ func Query[E runtime.ErrorHandler](ctx context.Context, req *Request) (result Ro
 		if pQuery := findQueryProxy(proxies); pQuery != nil {
 			var err error
 			result, err = pQuery(req)
-			return result, e.Handle(ctx, execLoc, err)
+			return result, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
 		}
 	}
 	if dbClient == nil {
-		return nil, e.Handle(ctx, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
 	}
 	pgxRows, err := dbClient.Query(ctx, BuildSql(req), req.Args)
 	if err != nil {
-		return nil, e.Handle(ctx, queryLoc, recast(err))
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, recast(err)).SetRequestId(ctx)
 	}
 	return &proxyRows{pgxRows: pgxRows, fd: createFieldDescriptions(pgxRows.FieldDescriptions())}, runtime.NewStatusOK()
 }

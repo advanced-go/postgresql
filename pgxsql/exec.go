@@ -8,11 +8,10 @@ import (
 	"github.com/go-ai-agent/core/runtime/startup"
 )
 
-var execLoc = pkgUri + "/Exec"
+var execLoc = PkgUri + "/Exec"
 
-// Exec - templated function for executing a SQL statement
-func Exec[E runtime.ErrorHandler](ctx context.Context, req *Request) (tag CommandTag, status *runtime.Status) {
-	var e E
+// Exec - function for executing a SQL statement
+func Exec(ctx context.Context, req *Request) (tag CommandTag, status *runtime.Status) {
 	var limited = false
 	var fn func()
 
@@ -20,7 +19,7 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, req *Request) (tag Comman
 		ctx = context.Background()
 	}
 	if req == nil {
-		return tag, e.Handle(ctx, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetCode(runtime.StatusInvalidArgument)
+		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetRequestId(ctx)
 	}
 	fn, ctx, limited = controllerApply(ctx, startup.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
 	defer fn()
@@ -30,29 +29,29 @@ func Exec[E runtime.ErrorHandler](ctx context.Context, req *Request) (tag Comman
 	if proxies, ok := runtime.IsProxyable(ctx); ok {
 		if pExec := findExecProxy(proxies); pExec != nil {
 			result, err := pExec(req)
-			return result, e.Handle(ctx, execLoc, err)
+			return result, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
 		}
 	}
 	if dbClient == nil {
-		return tag, e.Handle(ctx, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
+		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetRequestId(ctx)
 	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)
 	if err0 != nil {
-		return tag, e.Handle(ctx, execLoc, err0)
+		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err0).SetRequestId(ctx)
 	}
 	t, err := dbClient.Exec(ctx, BuildSql(req), req.Args)
 	if err != nil {
 		err0 = txn.Rollback(ctx)
-		return tag, e.Handle(ctx, execLoc, recast(err), err0)
+		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, recast(err), err0).SetRequestId(ctx)
 	}
 	if req.ExpectedCount != NullExpectedCount && t.RowsAffected() != req.ExpectedCount {
 		err0 = txn.Rollback(ctx)
-		return tag, e.Handle(ctx, execLoc, errors.New(fmt.Sprintf("error exec statement [%v] : actual RowsAffected %v != expected RowsAffected %v", t.String(), t.RowsAffected(), req.ExpectedCount)), err0)
+		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New(fmt.Sprintf("error exec statement [%v] : actual RowsAffected %v != expected RowsAffected %v", t.String(), t.RowsAffected(), req.ExpectedCount)), err0).SetRequestId(ctx)
 	}
 	err = txn.Commit(ctx)
 	if err != nil {
-		return tag, e.Handle(ctx, execLoc, err)
+		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
 	}
 	return CommandTag{Sql: t.String(), RowsAffected: t.RowsAffected(), Insert: t.Insert(), Update: t.Update(), Delete: t.Delete(), Select: t.Select()}, runtime.NewStatusOK()
 }

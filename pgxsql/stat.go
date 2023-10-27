@@ -8,12 +8,11 @@ import (
 )
 
 var (
-	statLoc = pkgUri + "/Stat"
+	statLoc = PkgUri + "/Stat"
 )
 
-// Stat - templated function for retrieving runtime stats
-func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *runtime.Status) {
-	var e E
+// Stat - function for retrieving runtime stats
+func Stat(ctx context.Context) (stat *Stats, status *runtime.Status) {
 	var limited = false
 	var fn func()
 
@@ -23,7 +22,7 @@ func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *run
 		return nil, runtime.NewStatus(runtime.StatusRateLimited)
 	}
 	if dbClient == nil {
-		return nil, e.Handle(ctx, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument)
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetCode(runtime.StatusInvalidArgument).SetRequestId(ctx)
 	}
 	return dbClient.Stat(), runtime.NewStatusOK()
 }

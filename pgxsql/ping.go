@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	pingLoc = pkgUri + "/Ping"
+	pingLoc = PkgUri + "/Ping"
 )
 
 // Ping - templated function for pinging the database cluster

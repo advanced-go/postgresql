@@ -14,7 +14,7 @@ import (
 )
 
 var dbClient *pgxpool.Pool
-var clientLoc = pkgUri + "/Startup"
+var clientLoc = PkgUri + "/Startup"
 
 var clientStartup startup.MessageHandler = func(msg startup.Message) {
 	if IsStarted() {

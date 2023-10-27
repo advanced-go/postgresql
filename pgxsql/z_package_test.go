@@ -3,11 +3,11 @@ package pgxsql
 import "fmt"
 
 func Example_PackageUri() {
-	fmt.Printf("test: pkgUri -> %v\n", pkgUri)
-	fmt.Printf("test: pkgUri -> %v\n", pkgPath)
+	fmt.Printf("test: PkgUri -> %v\n", PkgUri)
+	fmt.Printf("test: pkgPath -> %v\n", pkgPath)
 
 	//Output:
-	//test: pkgUri -> github.com/go-ai-agent/postgresql/pgxsql
-	//test: pkgUri -> /go-ai-agent/postgresql/pgxsql
+	//test: PkgUri -> github.com/go-ai-agent/postgresql/pgxsql
+	//test: pkgPath -> /go-ai-agent/postgresql/pgxsql
 
 }
