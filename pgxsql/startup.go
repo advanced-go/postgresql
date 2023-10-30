@@ -2,7 +2,6 @@ package pgxsql
 
 import (
 	"context"
-	"github.com/go-ai-agent/core/runtime"
 	"github.com/go-ai-agent/core/runtime/startup"
 	"time"
 )
@@ -34,7 +33,7 @@ var messageHandler startup.MessageHandler = func(msg startup.Message) {
 		ClientShutdown()
 	case startup.PingEvent:
 		start := time.Now()
-		startup.ReplyTo(msg, Ping[runtime.LogError](nil).SetDuration(time.Since(start)))
+		startup.ReplyTo(msg, Ping(nil).SetDuration(time.Since(start)))
 	}
 }
 
