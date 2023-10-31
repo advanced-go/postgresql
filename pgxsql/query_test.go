@@ -6,6 +6,7 @@ import (
 	"github.com/go-ai-agent/core/runtime"
 	"github.com/go-ai-agent/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5/pgtype"
+	"net/http"
 	"time"
 )
 
@@ -148,7 +149,7 @@ func ExampleQuery_Conditions_Where() {
 func processResults(results Rows, msg string) (conditions []TestConditions, status *runtime.Status) {
 	conditions, status = scanRows(results)
 	if status.OK() && len(conditions) == 0 {
-		return nil, runtime.NewStatus(runtime.StatusNotFound)
+		return nil, runtime.NewStatus(http.StatusNotFound)
 	}
 	return conditions, status
 }

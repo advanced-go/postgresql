@@ -26,11 +26,11 @@ func Ping(ctx context.Context) (status *runtime.Status) {
 		return runtime.NewStatus(runtime.StatusRateLimited)
 	}
 	if dbClient == nil {
-		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil"))
+		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetRequestId(ctx)
 	}
 	err := dbClient.Ping(ctx)
 	if err != nil {
-		return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err)
+		return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err).SetRequestId(ctx)
 	}
 	return runtime.NewStatusOK()
 }
