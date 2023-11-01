@@ -17,7 +17,7 @@ var dbClient *pgxpool.Pool
 var clientLoc = PkgUri + "/Startup"
 
 var clientStartup startup.MessageHandler = func(msg startup.Message) {
-	if IsStarted() {
+	if isStarted() {
 		return
 	}
 	start := time.Now()
@@ -33,7 +33,7 @@ var clientStartup startup.MessageHandler = func(msg startup.Message) {
 
 // ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
 func ClientStartup(rsc startup.Resource, credentials startup.Credentials) error {
-	if IsStarted() {
+	if isStarted() {
 		return nil
 	}
 	if rsc.Uri == "" {

@@ -5,31 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/core/runtime/startup"
 )
 
 var execLoc = PkgUri + "/Exec"
 
 // Exec - function for executing a SQL statement
 func Exec(ctx context.Context, req *Request) (tag CommandTag, status *runtime.Status) {
-	var limited = false
-	var fn func()
-
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	if req == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetRequestId(ctx)
 	}
-	fn, ctx, limited = controllerApply(ctx, startup.NewStatusCode(&status), req.Uri, runtime.ContextRequestId(ctx), "GET")
-	defer fn()
-	if limited {
-		return tag, runtime.NewStatus(runtime.StatusRateLimited)
-	}
-	if proxies, ok := runtime.IsProxyable(ctx); ok {
-		if pExec := findExecProxy(proxies); pExec != nil {
-			result, err := pExec(req)
-			return result, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
+	if runtime.IsDebugEnvironment() {
+		if proxies, ok := runtime.IsProxyable(ctx); ok {
+			if pExec := findExecProxy(proxies); pExec != nil {
+				result, err := pExec(req)
+				return result, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
+			}
 		}
 	}
 	if dbClient == nil {

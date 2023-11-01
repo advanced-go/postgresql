@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/runtime/startup"
 	"net/http"
 	"reflect"
 	"sync/atomic"
@@ -15,8 +16,8 @@ var (
 	started int64
 )
 
-// IsStarted - returns status of startup
-func IsStarted() bool {
+// isStarted - returns status of startup
+func isStarted() bool {
 	return atomic.LoadInt64(&started) != 0
 }
 
@@ -35,12 +36,23 @@ func newTypeHandler[E runtime.ErrorHandler]() runtime.TypeHandlerFn {
 	}
 }
 
+func TypeHandler(r *http.Request, body any) (any, *runtime.Status) {
+	return typeHandler[runtime.LogError](r, body)
+}
+
 func typeHandler[E runtime.ErrorHandler](r *http.Request, body any) (any, *runtime.Status) {
 	//var e E
 
 	if r == nil {
 		return nil, runtime.NewStatus(http.StatusBadRequest)
 	}
+	if r.URL.Path == startup.StatusPath {
+		if isStarted() {
+			return nil, runtime.NewStatusOK()
+		}
+		return nil, runtime.NewStatus(runtime.StatusNotStarted)
+	}
+
 	// create a new context with a request id. Not creating a new request as upstream processing doesn't
 	// use http
 	/*
