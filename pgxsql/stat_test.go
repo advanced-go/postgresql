@@ -10,7 +10,7 @@ func ExampleStat() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		fmt.Printf("test: clientStartup() -> [started:%v]\n", IsStarted())
+		fmt.Printf("test: clientStartup() -> [started:%v]\n", isStarted())
 
 		stat, status := Stat(nil)
 		fmt.Printf("test: Stat(nil) -> [status:%v] [stat:%v]\n", status, stat != nil)
