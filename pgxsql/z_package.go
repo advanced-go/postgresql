@@ -30,11 +30,11 @@ func resetStarted() {
 }
 
 // newTypeHandler - templated function providing a TypeHandlerFn via a closure
-func newTypeHandler[E runtime.ErrorHandler]() runtime.TypeHandlerFn {
-	return func(r *http.Request, body any) (any, *runtime.Status) {
-		return typeHandler[E](r, body)
-	}
-}
+//func newTypeHandler[E runtime.ErrorHandler]() runtime.TypeHandlerFn {
+//	return func(r *http.Request, body any) (any, *runtime.Status) {
+//		return typeHandler[E](r, body)
+//	}
+//}
 
 func TypeHandler(r *http.Request, body any) (any, *runtime.Status) {
 	return typeHandler[runtime.LogError](r, body)
