@@ -53,32 +53,5 @@ func typeHandler[E runtime.ErrorHandler](r *http.Request, body any) (any, *runti
 		return nil, runtime.NewStatus(runtime.StatusNotStarted)
 	}
 
-	// create a new context with a request id. Not creating a new request as upstream processing doesn't
-	// use http
-	/*
-		requestId := runtime.GetOrCreateRequestId(r)
-		nc := runtime.ContextWithRequestId(r.Context(), requestId)
-		switch r.Method {
-		case http.MethodGet:
-			entries, status := get(nc, r.Header.Get(httpx.ContentLocation), r.URL.Query())
-			if !status.OK() {
-				e.HandleStatus(status, requestId, locTypeHandler)
-				return nil, status
-			}
-			if entries == nil {
-				status.SetCode(http.StatusNotFound)
-			}
-			return entries, status
-		case http.MethodPut:
-			cmdTag, status := put(nc, r.Header.Get(httpx.ContentLocation), body)
-			if !status.OK() {
-				e.HandleStatus(status, requestId, locTypeHandler)
-				return nil, status
-			}
-			return cmdTag, status
-		default:
-		}
-
-	*/
 	return nil, runtime.NewStatus(http.StatusMethodNotAllowed)
 }
