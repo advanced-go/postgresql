@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/runtime/startup"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/time/rate"
@@ -13,12 +14,6 @@ import (
 const (
 	egressTraffic = "egress"
 )
-
-// AccessLogFn - typedef for a function that provides access logging
-type AccessLogFn func(traffic string, start time.Time, duration time.Duration, uri, method string, statusCode int, controllerName string, limit rate.Limit, burst int, timeout int, statusFlags string)
-
-// PingFn - typedef for a function that provides access logging
-type PingFn func(ctx context.Context) *runtime.Status
 
 // QueryController - an interface that manages query resiliency
 type QueryController interface {
@@ -40,11 +35,11 @@ type Threshold struct {
 type controllerCfg struct {
 	name      string
 	threshold Threshold
-	log       AccessLogFn
+	log       startup.AccessLogFn
 }
 
 // NewQueryController - create a new resiliency controller
-func NewQueryController(name string, threshold Threshold, log AccessLogFn) QueryController {
+func NewQueryController(name string, threshold Threshold, log startup.AccessLogFn) QueryController {
 	ctrl := new(controllerCfg)
 	ctrl.name = name
 	ctrl.threshold = threshold
@@ -66,7 +61,7 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (pgx.Rows, *runtim
 type controllerCfgExec controllerCfg
 
 // NewExecController - create a new resiliency controller
-func NewExecController(name string, threshold Threshold, ping PingFn, log AccessLogFn) ExecController {
+func NewExecController(name string, threshold Threshold, log startup.AccessLogFn) ExecController {
 	ctrl := new(controllerCfgExec)
 	ctrl.name = name
 	ctrl.threshold = threshold

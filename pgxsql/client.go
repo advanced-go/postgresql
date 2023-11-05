@@ -18,9 +18,9 @@ var (
 	clientLoc = PkgUri + "/Startup"
 
 	queryControllerName = "query"
-	queryController     = NewQueryBypassController(queryControllerName, nil)
+	queryController     = NewQueryController(queryControllerName, Threshold{}, nil)
 	execControllerName  = "exec"
-	execController      = NewExecBypassController(execControllerName, nil)
+	execController      = NewExecController(execControllerName, Threshold{}, nil)
 )
 
 var clientStartup startup.MessageHandler = func(msg startup.Message) {
