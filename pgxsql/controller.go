@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/go-ai-agent/core/log"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/go-ai-agent/core/runtime/startup"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/time/rate"
@@ -36,13 +37,15 @@ type Threshold struct {
 type controllerCfg struct {
 	name      string
 	threshold Threshold
+	logFn     startup.AccessLogFn
 }
 
 // NewQueryController - create a new resiliency controller
-func NewQueryController(name string, threshold Threshold) QueryController {
+func NewQueryController(name string, threshold Threshold, logFn startup.AccessLogFn) QueryController {
 	ctrl := new(controllerCfg)
 	ctrl.name = name
 	ctrl.threshold = threshold
+	ctrl.logFn = logFn
 	return ctrl
 }
 
@@ -51,11 +54,11 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (pgx.Rows, *runtim
 	statusFlags := ""
 
 	rows, status := applyQuery(ctx, r)
-	logger := log.ContextAccessLogger(ctx)
+	logger := accessLogger(ctx, c.logFn)
 	if logger != nil {
 		req, _ := http.NewRequest(r.Method(), r.Uri(), nil)
 		resp := http.Response{StatusCode: status.Code()}
-		logger(egressTraffic, start, time.Since(start), req, &resp, statusFlags) // c.name, c.threshold.Limit, c.threshold.Burst, int(c.threshold.Timeout/time.Millisecond), statusFlags)
+		logger(log.EgressTraffic, start, time.Since(start), req, &resp, -1, statusFlags) // c.name, c.threshold.Limit, c.threshold.Burst, int(c.threshold.Timeout/time.Millisecond), statusFlags)
 	}
 	return rows, status
 }
@@ -63,10 +66,11 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (pgx.Rows, *runtim
 type controllerCfgExec controllerCfg
 
 // NewExecController - create a new resiliency controller
-func NewExecController(name string, threshold Threshold) ExecController {
+func NewExecController(name string, threshold Threshold, logFn startup.AccessLogFn) ExecController {
 	ctrl := new(controllerCfgExec)
 	ctrl.name = name
 	ctrl.threshold = threshold
+	ctrl.logFn = logFn
 	return ctrl
 }
 
@@ -75,11 +79,11 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (pgconn.Comman
 	statusFlags := ""
 
 	cmd, status := applyExec(ctx, r)
-	logger := log.ContextAccessLogger(ctx)
+	logger := accessLogger(ctx, c.logFn)
 	if logger != nil {
 		req, _ := http.NewRequest(r.Method(), r.Uri(), nil)
 		resp := http.Response{StatusCode: status.Code()}
-		logger(egressTraffic, start, time.Since(start), req, &resp, statusFlags) // c.name, c.threshold.Limit, c.threshold.Burst, int(c.threshold.Timeout/time.Millisecond), statusFlags)
+		logger(egressTraffic, start, time.Since(start), req, &resp, -1, statusFlags) // c.name, c.threshold.Limit, c.threshold.Burst, int(c.threshold.Timeout/time.Millisecond), statusFlags)
 	}
 	return cmd, status
 }
@@ -104,4 +108,11 @@ func applyExec(ctx context.Context, r Request) (pgconn.CommandTag, *runtime.Stat
 		return pgconn.CommandTag{}, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err)
 	}
 	return cmd, runtime.NewStatusOK()
+}
+
+func accessLogger(ctx context.Context, logFn startup.AccessLogFn) startup.AccessLogFn {
+	if logFn != nil {
+		return logFn
+	}
+	return log.ContextAccessLogger(ctx)
 }
