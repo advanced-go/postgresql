@@ -13,8 +13,15 @@ import (
 	"time"
 )
 
-var dbClient *pgxpool.Pool
-var clientLoc = PkgUri + "/Startup"
+var (
+	dbClient  *pgxpool.Pool
+	clientLoc = PkgUri + "/Startup"
+
+	queryControllerName = "query"
+	queryController     = NewQueryBypassController(queryControllerName, nil)
+	execControllerName  = "exec"
+	execController      = NewExecBypassController(execControllerName, nil)
+)
 
 var clientStartup startup.MessageHandler = func(msg startup.Message) {
 	if isStarted() {

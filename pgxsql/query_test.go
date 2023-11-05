@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/go-ai-agent/core/runtime"
 	"github.com/go-ai-agent/postgresql/pgxdml"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"
 	"time"
@@ -19,16 +21,33 @@ type TestConditions struct {
 type rowsT struct {
 }
 
+func (r *rowsT) CommandTag() pgconn.CommandTag {
+	//TODO implement me
+	return pgconn.CommandTag{}
+}
+
+func (r *rowsT) FieldDescriptions() []pgconn.FieldDescription {
+	//TODO implement me
+	return nil
+}
+
+func (r *rowsT) Conn() *pgx.Conn {
+	//TODO implement me
+	return nil
+}
+
 func (r *rowsT) Close()     {}
 func (r *rowsT) Err() error { return nil }
-func (r *rowsT) CommandTag() CommandTag {
-	return CommandTag{Sql: "select *", RowsAffected: 1, Insert: false, Update: false, Delete: false, Select: true}
-}
-func (r *rowsT) FieldDescriptions() []FieldDescription { return nil }
-func (r *rowsT) Next() bool                            { return false }
-func (r *rowsT) Scan(dest ...any) error                { return nil }
-func (r *rowsT) Values() ([]any, error)                { return nil, nil }
-func (r *rowsT) RawValues() [][]byte                   { return nil }
+
+//	func (r *rowsT) CommandTag() CommandTag {
+//		return pgconn.CommandTag{}//RowsAffected: 1, Insert: false, Update: false, Delete: false, Select: true}
+//	}
+//
+// func (r *rowsT) FieldDescriptions() []FieldDescription { return nil }
+func (r *rowsT) Next() bool             { return false }
+func (r *rowsT) Scan(dest ...any) error { return nil }
+func (r *rowsT) Values() ([]any, error) { return nil, nil }
+func (r *rowsT) RawValues() [][]byte    { return nil }
 
 const (
 	queryErrorSql = "select * from test"
@@ -43,12 +62,12 @@ const (
 
 var queryTestExchange = runtime.ContextWithProxy(nil, queryTestProxy)
 
-func queryTestProxy(req *Request) (Rows, error) {
-	switch req.Uri {
+func queryTestProxy(req Request) (pgx.Rows, error) {
+	switch req.Uri() {
 	case BuildQueryUri(queryErrorRsc):
 		return nil, errors.New("pgxsql query error")
 	case BuildQueryUri(queryRowsRsc):
-		var i Rows = &rowsT{}
+		var i pgx.Rows = &rowsT{}
 		return i, nil
 	}
 	return nil, nil
@@ -146,7 +165,7 @@ func ExampleQuery_Conditions_Where() {
 
 }
 
-func processResults(results Rows, msg string) (conditions []TestConditions, status *runtime.Status) {
+func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status *runtime.Status) {
 	conditions, status = scanRows(results)
 	if status.OK() && len(conditions) == 0 {
 		return nil, runtime.NewStatus(http.StatusNotFound)
@@ -154,7 +173,7 @@ func processResults(results Rows, msg string) (conditions []TestConditions, stat
 	return conditions, status
 }
 
-func scanRows(rows Rows) ([]TestConditions, *runtime.Status) {
+func scanRows(rows pgx.Rows) ([]TestConditions, *runtime.Status) {
 	if rows == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, "", errors.New("invalid request: Rows interface is empty"))
 	}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-ai-agent/core/runtime"
 	"github.com/go-ai-agent/postgresql/pgxdml"
+	"github.com/jackc/pgx/v5/pgconn"
 	"time"
 )
 
@@ -28,19 +29,23 @@ const (
 	execDeleteConditions = "DELETE FROM conditions"
 )
 
-func execTestProxy(req *Request) (tag CommandTag, err error) {
-	switch req.Uri {
+func execTestProxy(req Request) (tag pgconn.CommandTag, err error) {
+	switch req.Uri() {
 	case BuildUpdateUri(execUpdateRsc):
 		return tag, errors.New("exec error")
 	case BuildInsertUri(execInsertRsc):
-		return CommandTag{
-			Sql:          "INSERT 1",
-			RowsAffected: 1234,
-			Insert:       true,
-			Update:       false,
-			Delete:       false,
-			Select:       false,
-		}, nil
+		return pgconn.CommandTag{}, nil
+		/*
+			return pgconn.CommandTag{
+				Sql:          "INSERT 1",
+				RowsAffected: 1234,
+				Insert:       true,
+				Update:       false,
+				Delete:       false,
+				Select:       false,
+			}, nil
+
+		*/
 	}
 	return tag, nil
 }

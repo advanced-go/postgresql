@@ -2,6 +2,8 @@ package pgxsql
 
 import (
 	"errors"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // Scanner - templated interface for scanning rows
@@ -10,7 +12,7 @@ type Scanner[T any] interface {
 }
 
 // Scan - templated function for scanning rows
-func Scan[T Scanner[T]](rows Rows) ([]T, error) {
+func Scan[T Scanner[T]](rows pgx.Rows) ([]T, error) {
 	if rows == nil {
 		return nil, errors.New("invalid request: rows interface is nil")
 	}
@@ -39,7 +41,7 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 	return t, nil
 }
 
-func createColumnNames(fields []FieldDescription) []string {
+func createColumnNames(fields []pgconn.FieldDescription) []string {
 	var names []string
 	for _, fld := range fields {
 		names = append(names, fld.Name)

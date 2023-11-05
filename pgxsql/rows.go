@@ -1,16 +1,12 @@
 package pgxsql
 
-import (
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/jackc/pgx/v5/pgxpool"
-)
+/*
 
 // Stats - pool statistics
-type Stats = pgxpool.Stat
+type Stats2 = pgxpool.Stat
 
 // CommandTag - results from an Exec command
-type CommandTag struct {
+type CommandTag2 struct {
 	Sql          string
 	RowsAffected int64
 	Insert       bool
@@ -20,7 +16,7 @@ type CommandTag struct {
 }
 
 // FieldDescription - data for defining the returned Query fields/columns
-type FieldDescription struct {
+type FieldDescription2 struct {
 	Name                 string
 	TableOID             uint32
 	TableAttributeNumber uint16
@@ -31,7 +27,7 @@ type FieldDescription struct {
 }
 
 // Rows - interface that proxies the postgresql Rows interface
-type Rows interface {
+type Rows2 interface {
 	// Close closes the rows, making the connection ready for use again. It is safe
 	// to call Close after rows is already closed.
 	Close()
@@ -40,9 +36,9 @@ type Rows interface {
 	Err() error
 
 	// CommandTag returns the command tag from this query. It is only available after Rows is closed.
-	CommandTag() CommandTag
+	CommandTag() CommandTag2
 
-	FieldDescriptions() []FieldDescription
+	FieldDescriptions() []FieldDescription2
 
 	// Next prepares the next row for reading. It returns true if there is another
 	// row and false if no more rows are available. It automatically closes rows
@@ -72,7 +68,7 @@ type Rows interface {
 
 type proxyRows struct {
 	pgxRows pgx.Rows
-	fd      []FieldDescription
+	fd      []FieldDescription2
 }
 
 func (r *proxyRows) Close() {
@@ -88,15 +84,15 @@ func (r *proxyRows) Err() error {
 	return r.pgxRows.Err()
 }
 
-func (r *proxyRows) CommandTag() CommandTag {
+func (r *proxyRows) CommandTag() CommandTag2 {
 	if r == nil {
-		return CommandTag{}
+		return CommandTag2{}
 	}
 	t := r.pgxRows.CommandTag()
-	return CommandTag{RowsAffected: t.RowsAffected(), Sql: t.String()}
+	return CommandTag2{RowsAffected: t.RowsAffected(), Sql: t.String()}
 }
 
-func (r *proxyRows) FieldDescriptions() []FieldDescription {
+func (r *proxyRows) FieldDescriptions() []FieldDescription2 {
 	if r == nil {
 		return nil
 	}
@@ -131,10 +127,10 @@ func (r *proxyRows) RawValues() [][]byte {
 	return r.pgxRows.RawValues()
 }
 
-func createFieldDescriptions(fields []pgconn.FieldDescription) []FieldDescription {
-	var result []FieldDescription
+func createFieldDescriptions(fields []pgconn.FieldDescription) []FieldDescription2 {
+	var result []FieldDescription2
 	for _, f := range fields {
-		result = append(result, FieldDescription{Name: f.Name,
+		result = append(result, FieldDescription2{Name: f.Name,
 			TableOID:             f.TableOID,
 			TableAttributeNumber: f.TableAttributeNumber,
 			DataTypeOID:          f.DataTypeOID,
@@ -144,3 +140,6 @@ func createFieldDescriptions(fields []pgconn.FieldDescription) []FieldDescriptio
 	}
 	return result
 }
+
+
+*/

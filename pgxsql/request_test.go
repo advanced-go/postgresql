@@ -1,8 +1,19 @@
 package pgxsql
 
 import (
+	"errors"
 	"fmt"
 )
+
+func validate(r *request) error {
+	if r.uri == "" {
+		return errors.New("invalid argument: request Uri is empty")
+	}
+	if r.template == "" {
+		return errors.New("invalid argument: request template is empty")
+	}
+	return nil
+}
 
 func ExampleBuildRequest() {
 	rsc := "exec-test-resource.dev"
@@ -24,23 +35,23 @@ func ExampleBuildRequest() {
 func ExampleRequest_Validate() {
 	uri := "urn:postgres:query.resource"
 	sql := "select * from table"
-	req := Request{}
+	req := request{}
 
-	err := req.Validate()
+	err := validate(&req)
 	fmt.Printf("test: Validate(empty) -> %v\n", err)
 
-	req.Uri = uri
-	err = req.Validate()
+	req.uri = uri
+	err = validate(&req)
 	fmt.Printf("test: Validate(%v) -> %v\n", uri, err)
 
-	req.Uri = ""
-	req.Template = sql
-	err = req.Validate()
+	req.uri = ""
+	req.template = sql
+	err = validate(&req)
 	fmt.Printf("test: Validate(%v) -> %v\n", sql, err)
 
-	req.Uri = uri
-	req.Template = sql
-	err = req.Validate()
+	req.uri = uri
+	req.template = sql
+	err = validate(&req)
 	fmt.Printf("test: Validate(all) -> %v\n", err)
 
 	//rsc := "access-log"

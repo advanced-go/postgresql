@@ -3,14 +3,14 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 var execLoc = PkgUri + "/Exec"
 
 // Exec - function for executing a SQL statement
-func Exec(ctx context.Context, req *Request) (tag CommandTag, status *runtime.Status) {
+func Exec(ctx context.Context, req Request) (tag pgconn.CommandTag, status *runtime.Status) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -33,18 +33,16 @@ func Exec(ctx context.Context, req *Request) (tag CommandTag, status *runtime.St
 	if err0 != nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err0).SetRequestId(ctx)
 	}
-	t, err := dbClient.Exec(ctx, BuildSql(req), req.Args)
-	if err != nil {
+	t, status1 := execController.Apply(ctx, req)
+	if !status1.OK() {
 		err0 = txn.Rollback(ctx)
-		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, recast(err), err0).SetRequestId(ctx)
+		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, recast(status1.FirstError()), err0).SetRequestId(ctx)
 	}
-	if req.ExpectedCount != NullExpectedCount && t.RowsAffected() != req.ExpectedCount {
-		err0 = txn.Rollback(ctx)
-		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New(fmt.Sprintf("error exec statement [%v] : actual RowsAffected %v != expected RowsAffected %v", t.String(), t.RowsAffected(), req.ExpectedCount)), err0).SetRequestId(ctx)
-	}
-	err = txn.Commit(ctx)
+	err := txn.Commit(ctx)
 	if err != nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
 	}
-	return CommandTag{Sql: t.String(), RowsAffected: t.RowsAffected(), Insert: t.Insert(), Update: t.Update(), Delete: t.Delete(), Select: t.Select()}, runtime.NewStatusOK()
+	return t, status1
 }
+
+//t, err := dbClient.Exec(ctx, req.Sql(), req.Args())

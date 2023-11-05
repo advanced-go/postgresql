@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/go-ai-agent/core v0.0.0-20231104155658-8c17f6e8adfb
 	github.com/jackc/pgx/v5 v5.2.0
+	golang.org/x/time v0.4.0
 )
 
 require (

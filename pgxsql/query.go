@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/go-ai-agent/core/runtime"
+	"github.com/jackc/pgx/v5"
 )
 
 var (
@@ -11,7 +12,7 @@ var (
 )
 
 // Query - function for a Query
-func Query(ctx context.Context, req *Request) (result Rows, status *runtime.Status) {
+func Query(ctx context.Context, req Request) (result pgx.Rows, status *runtime.Status) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -27,14 +28,7 @@ func Query(ctx context.Context, req *Request) (result Rows, status *runtime.Stat
 			}
 		}
 	}
-	if dbClient == nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
-	}
-	pgxRows, err := dbClient.Query(ctx, BuildSql(req), req.Args)
-	if err != nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, recast(err)).SetRequestId(ctx)
-	}
-	return &proxyRows{pgxRows: pgxRows, fd: createFieldDescriptions(pgxRows.FieldDescriptions())}, runtime.NewStatusOK()
+	return queryController.Apply(ctx, req)
 }
 
 // Scrap

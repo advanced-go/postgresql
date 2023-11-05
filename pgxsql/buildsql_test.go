@@ -7,12 +7,12 @@ func _ExampleBuildSql() {
 	t := "delete from access_log"
 	req := NewDeleteRequest(rsc, t, nil)
 
-	sql := BuildSql(req)
+	sql := req.Sql() //BuildSql(req)
 	fmt.Printf("test: Delete.BuildSql(%v) -> %v\n", t, sql)
 
 	t = "update access_log"
 	req = NewUpdateRequest(rsc, t, nil, nil)
-	sql = BuildSql(req)
+	sql = req.Sql() //BuildSql(req)
 	fmt.Printf("test: Update.BuildSql(%v) -> %v\n", t, sql)
 
 	//Output:
