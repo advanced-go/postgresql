@@ -17,6 +17,10 @@ github.com/go-ai-agent/core v0.0.0-20231106113954-eb91c709ffc5 h1:yYblik4dQVOmU0
 github.com/go-ai-agent/core v0.0.0-20231106113954-eb91c709ffc5/go.mod h1:K25Nm1JSMCfyivjVFcEzXpKQGXa8a/pIHiWaRbXzqYg=
 github.com/go-ai-agent/core v0.0.0-20231106122313-671623be85de h1:uTVVrAtqqwnbEu6NgbbTiWyedeinGgGhXBzeuDljP9E=
 github.com/go-ai-agent/core v0.0.0-20231106122313-671623be85de/go.mod h1:K25Nm1JSMCfyivjVFcEzXpKQGXa8a/pIHiWaRbXzqYg=
+github.com/go-ai-agent/core v0.0.0-20231106173854-6a705a6a9c48 h1:CiT+a1C3eMJjcnte8GIljRbYjoJgXn3x2h36sg3fYzw=
+github.com/go-ai-agent/core v0.0.0-20231106173854-6a705a6a9c48/go.mod h1:K25Nm1JSMCfyivjVFcEzXpKQGXa8a/pIHiWaRbXzqYg=
+github.com/go-ai-agent/core v0.0.0-20231106183840-af56aa0e8ad1 h1:9FjHGMPc7dWnXFuFK6iv/72MWbmf5JrStz88gKsuku4=
+github.com/go-ai-agent/core v0.0.0-20231106183840-af56aa0e8ad1/go.mod h1:K25Nm1JSMCfyivjVFcEzXpKQGXa8a/pIHiWaRbXzqYg=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=

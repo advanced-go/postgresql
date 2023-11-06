@@ -21,11 +21,13 @@ const (
 // QueryController - an interface that manages query resiliency
 type QueryController interface {
 	Apply(ctx context.Context, r Request) (pgx.Rows, *runtime.Status)
+	updateRateLimiter(limit rate.Limit, burst int)
 }
 
 // ExecController - an interface that manages exec resiliency
 type ExecController interface {
 	Apply(ctx context.Context, r Request) (pgconn.CommandTag, *runtime.Status)
+	updateRateLimiter(limit rate.Limit, burst int)
 }
 
 // PingController - an interface that manages ping resiliency
@@ -103,6 +105,11 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	return rows, status
 }
 
+func (c controllerCfg) updateRateLimiter(limit rate.Limit, burst int) {
+	c.limiter.SetLimit(limit)
+	c.limiter.SetBurst(burst)
+}
+
 type controllerCfgExec controllerCfg
 
 // NewExecController - create a new resiliency controller
@@ -159,6 +166,11 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 		logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
 	}
 	return
+}
+
+func (c *controllerCfgExec) updateRateLimiter(limit rate.Limit, burst int) {
+	c.limiter.SetLimit(limit)
+	c.limiter.SetBurst(burst)
 }
 
 func accessFn(ctx context.Context, logFn startup.AccessLogFn) startup.AccessLogFn {
