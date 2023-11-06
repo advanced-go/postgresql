@@ -54,11 +54,10 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (pgx.Rows, *runtim
 	statusFlags := ""
 
 	rows, status := applyQuery(ctx, r)
-	logger := accessLogger(ctx, c.logFn)
-	if logger != nil {
+	if fn := accessFn(ctx, c.logFn); fn != nil {
 		req, _ := http.NewRequest(r.Method(), r.Uri(), nil)
 		resp := http.Response{StatusCode: status.Code()}
-		logger(log.EgressTraffic, start, time.Since(start), req, &resp, -1, statusFlags) // c.name, c.threshold.Limit, c.threshold.Burst, int(c.threshold.Timeout/time.Millisecond), statusFlags)
+		fn(log.EgressTraffic, start, time.Since(start), req, &resp, -1, statusFlags) // c.name, c.threshold.Limit, c.threshold.Burst, int(c.threshold.Timeout/time.Millisecond), statusFlags)
 	}
 	return rows, status
 }
@@ -79,11 +78,10 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (pgconn.Comman
 	statusFlags := ""
 
 	cmd, status := applyExec(ctx, r)
-	logger := accessLogger(ctx, c.logFn)
-	if logger != nil {
+	if fn := accessFn(ctx, c.logFn); fn != nil {
 		req, _ := http.NewRequest(r.Method(), r.Uri(), nil)
 		resp := http.Response{StatusCode: status.Code()}
-		logger(egressTraffic, start, time.Since(start), req, &resp, -1, statusFlags) // c.name, c.threshold.Limit, c.threshold.Burst, int(c.threshold.Timeout/time.Millisecond), statusFlags)
+		fn(egressTraffic, start, time.Since(start), req, &resp, -1, statusFlags) // c.name, c.threshold.Limit, c.threshold.Burst, int(c.threshold.Timeout/time.Millisecond), statusFlags)
 	}
 	return cmd, status
 }
@@ -110,9 +108,9 @@ func applyExec(ctx context.Context, r Request) (pgconn.CommandTag, *runtime.Stat
 	return cmd, runtime.NewStatusOK()
 }
 
-func accessLogger(ctx context.Context, logFn startup.AccessLogFn) startup.AccessLogFn {
+func accessFn(ctx context.Context, logFn startup.AccessLogFn) startup.AccessLogFn {
 	if logFn != nil {
 		return logFn
 	}
-	return log.ContextAccessLogger(ctx)
+	return log.AccessFromContext(ctx)
 }

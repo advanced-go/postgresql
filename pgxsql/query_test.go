@@ -60,7 +60,7 @@ const (
 	queryRowsRsc         = "rows"
 )
 
-var queryTestExchange = runtime.ContextWithProxy(nil, queryTestProxy)
+var queryTestExchange = runtime.NewProxyContext(nil, queryTestProxy)
 
 func queryTestProxy(req Request) (pgx.Rows, error) {
 	switch req.Uri() {

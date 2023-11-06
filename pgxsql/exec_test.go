@@ -51,7 +51,7 @@ func execTestProxy(req Request) (tag pgconn.CommandTag, err error) {
 }
 
 func ExampleExec_Proxy() {
-	ctx := runtime.ContextWithProxy(nil, execTestProxy)
+	ctx := runtime.NewProxyContext(nil, execTestProxy)
 
 	cmd, status := Exec(ctx, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)

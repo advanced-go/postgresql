@@ -3,7 +3,7 @@ module github.com/go-ai-agent/postgresql
 go 1.18
 
 require (
-	github.com/go-ai-agent/core v0.0.0-20231105231621-9d120f127a06
+	github.com/go-ai-agent/core v0.0.0-20231106113954-eb91c709ffc5
 	github.com/jackc/pgx/v5 v5.2.0
 	golang.org/x/time v0.4.0
 )
