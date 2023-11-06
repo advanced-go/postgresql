@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"github.com/go-ai-agent/core/runtime"
 	"github.com/go-ai-agent/postgresql/pgxdml"
+	"net/http"
 )
 
 const (
@@ -32,6 +33,7 @@ type Request interface {
 	Sql() string
 	Args() []any
 	String() string
+	HttpRequest() *http.Request
 }
 
 // Request - contains data needed to build the SQL statement related to the uri
@@ -75,6 +77,11 @@ func (r *request) Args() []any {
 
 func (r *request) String() string {
 	return r.template
+}
+
+func (r *request) HttpRequest() *http.Request {
+	req, _ := http.NewRequest(r.Method(), r.Uri(), nil)
+	return req
 }
 
 func BuildUri(nid string, nss, resource string) string {
