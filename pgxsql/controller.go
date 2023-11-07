@@ -21,18 +21,21 @@ const (
 // QueryController - an interface that manages query resiliency
 type QueryController interface {
 	Apply(ctx context.Context, r Request) (pgx.Rows, *runtime.Status)
+	getThreshold() Threshold
 	updateRateLimiter(limit rate.Limit, burst int)
 }
 
 // ExecController - an interface that manages exec resiliency
 type ExecController interface {
 	Apply(ctx context.Context, r Request) (pgconn.CommandTag, *runtime.Status)
+	getThreshold() Threshold
 	updateRateLimiter(limit rate.Limit, burst int)
 }
 
 // PingController - an interface that manages ping resiliency
 type PingController interface {
 	Apply(ctx context.Context) *runtime.Status
+	getThreshold() Threshold
 }
 
 // Threshold - rate limiting and timeout
@@ -105,7 +108,11 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	return rows, status
 }
 
-func (c controllerCfg) updateRateLimiter(limit rate.Limit, burst int) {
+func (c *controllerCfg) getThreshold() Threshold {
+	return c.threshold
+}
+
+func (c *controllerCfg) updateRateLimiter(limit rate.Limit, burst int) {
 	c.limiter.SetLimit(limit)
 	c.limiter.SetBurst(burst)
 }
@@ -168,6 +175,10 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	return
 }
 
+func (c *controllerCfgExec) getThreshold() Threshold {
+	return c.threshold
+}
+
 func (c *controllerCfgExec) updateRateLimiter(limit rate.Limit, burst int) {
 	c.limiter.SetLimit(limit)
 	c.limiter.SetBurst(burst)
@@ -203,32 +214,34 @@ func (c *controllerCfgPing) Apply(ctx context.Context) (status *runtime.Status) 
 	if dbClient == nil {
 		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetRequestId(ctx)
 	}
+	//var newCtx context.Context
 	if c.threshold.Timeout > 0 {
-		childCtx, cancel := context.WithTimeout(ctx, c.threshold.Timeout)
+		newCtx, cancel := context.WithTimeout(ctx, c.threshold.Timeout)
+		ctx = newCtx
 		defer cancel()
-		if err := dbClient.Ping(childCtx); err != nil {
-			if err == context.DeadlineExceeded {
-				statusFlags = upstreamTimeoutFlag
-				threshold = int(c.threshold.Timeout / time.Millisecond)
-				status = runtime.NewStatus(runtime.StatusDeadlineExceeded)
-			} else {
-				return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err).SetRequestId(ctx)
-			}
-		}
-	} else {
-		if err := dbClient.Ping(ctx); err != nil {
-			if err != nil {
-				return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err).SetRequestId(ctx)
-			}
+	}
+	err := dbClient.Ping(ctx)
+	dur := time.Since(start)
+	if err != nil {
+		if err == context.DeadlineExceeded {
+			statusFlags = upstreamTimeoutFlag
+			threshold = int(c.threshold.Timeout / time.Millisecond)
+			status = runtime.NewStatus(runtime.StatusDeadlineExceeded)
+		} else {
+			return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err).SetRequestId(ctx)
 		}
 	}
 	if status == nil {
 		status = runtime.NewStatusOK()
 	}
+	status.SetDuration(dur)
 	if logFn != nil {
 		req, _ := http.NewRequest(pingControllerName, PingUri, nil)
-		resp := http.Response{StatusCode: status.Code()}
-		logFn(log.EgressTraffic, start, time.Since(start), req, &resp, threshold, statusFlags)
+		logFn(log.EgressTraffic, start, dur, req, &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
 	}
 	return
+}
+
+func (c *controllerCfgPing) getThreshold() Threshold {
+	return c.threshold
 }

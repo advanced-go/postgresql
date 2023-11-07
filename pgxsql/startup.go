@@ -6,7 +6,14 @@ import (
 )
 
 var (
-	c = make(chan startup.Message, 1)
+	c                   = make(chan startup.Message, 1)
+	queryControllerName = "query"
+	queryController     = NewQueryController(queryControllerName, Threshold{}, nil)
+	execControllerName  = "exec"
+	execController      = NewExecController(execControllerName, Threshold{}, nil)
+	pingControllerName  = "exec"
+	pingController      = NewPingController(pingControllerName, Threshold{}, nil)
+	statusAgent         StatusAgent
 )
 
 func init() {
@@ -17,13 +24,30 @@ func init() {
 var messageHandler startup.MessageHandler = func(msg startup.Message) {
 	switch msg.Event {
 	case startup.StartupEvent:
-		clientStartup(msg)
+		if configControllers(msg) {
+			clientStartup(msg)
+		}
 	case startup.ShutdownEvent:
+		if statusAgent != nil {
+			statusAgent.Stop()
+		}
 		ClientShutdown()
 	case startup.PingEvent:
 		start := time.Now()
 		startup.ReplyTo(msg, Ping(nil).SetDuration(time.Since(start)))
 	}
+}
+
+func configControllers(msg startup.Message) bool {
+	// Need to also configure all controllers, query, exec and ping
+	var err error
+	statusAgent, err = NewStatusAgent(10, time.Second*2, &queryController, &execController)
+	if err != nil {
+		//Send error message
+		return false
+	}
+	statusAgent.Run()
+	return true
 }
 
 func receive() {

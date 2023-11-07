@@ -3,12 +3,13 @@ module github.com/go-ai-agent/postgresql
 go 1.18
 
 require (
-	github.com/go-ai-agent/core v0.0.0-20231106183840-af56aa0e8ad1
+	github.com/go-ai-agent/core v0.0.0-20231107101857-29bcd851b769
 	github.com/jackc/pgx/v5 v5.2.0
 	golang.org/x/time v0.4.0
 )
 
 require (
+	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
