@@ -1,12 +1,10 @@
 package pgxsql
 
-/*
-
 // Stats - pool statistics
-type Stats2 = pgxpool.Stat
-
+//type Stats2 = pgxpool.Stat
+/*
 // CommandTag - results from an Exec command
-type CommandTag2 struct {
+type CommandTag struct {
 	Sql          string
 	RowsAffected int64
 	Insert       bool

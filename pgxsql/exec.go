@@ -4,13 +4,12 @@ import (
 	"context"
 	"errors"
 	"github.com/go-ai-agent/core/runtime"
-	"github.com/jackc/pgx/v5/pgconn"
 )
 
 var execLoc = PkgUri + "/Exec"
 
 // Exec - function for executing a SQL statement
-func Exec(ctx context.Context, req Request) (tag pgconn.CommandTag, status *runtime.Status) {
+func Exec(ctx context.Context, req Request) (tag CommandTag, status *runtime.Status) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -21,7 +20,7 @@ func Exec(ctx context.Context, req Request) (tag pgconn.CommandTag, status *runt
 		if proxies, ok := runtime.IsProxyable(ctx); ok {
 			if pExec := findExecProxy(proxies); pExec != nil {
 				result, err := pExec(req)
-				return result, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
+				return newCmdTag(result), runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
 			}
 		}
 	}
@@ -42,7 +41,7 @@ func Exec(ctx context.Context, req Request) (tag pgconn.CommandTag, status *runt
 	if err != nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
 	}
-	return t, status1
+	return newCmdTag(t), status1
 }
 
 //t, err := dbClient.Exec(ctx, req.Sql(), req.Args())
