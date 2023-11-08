@@ -61,6 +61,9 @@ func NewQueryController(name string, threshold Threshold, logFn startup.AccessLo
 		ctrl.limiter = rate.NewLimiter(threshold.Limit, threshold.Burst)
 	}
 	ctrl.logFn = logFn
+	if ctrl.logFn == nil {
+		ctrl.logFn = log.AnyAccess
+	}
 	return ctrl
 }
 
@@ -69,7 +72,6 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	statusFlags := ""
 	threshold := -1
 	var err error
-	logFn := accessFn(ctx, c.logFn)
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -79,9 +81,7 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	}
 	if c.limiter != nil && !c.limiter.Allow() {
 		status = runtime.NewStatus(runtime.StatusRateLimited)
-		if logFn != nil {
-			logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
-		}
+		c.logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
 		return
 	}
 	newCtx := ctx
@@ -102,9 +102,7 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	if status == nil {
 		status = runtime.NewStatusOK()
 	}
-	if logFn != nil {
-		logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
-	}
+	c.logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
 	return rows, status
 }
 
@@ -128,6 +126,9 @@ func NewExecController(name string, threshold Threshold, logFn startup.AccessLog
 		ctrl.limiter = rate.NewLimiter(threshold.Limit, threshold.Burst)
 	}
 	ctrl.logFn = logFn
+	if ctrl.logFn == nil {
+		ctrl.logFn = log.AnyAccess
+	}
 	return ctrl
 }
 
@@ -136,7 +137,6 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	statusFlags := ""
 	threshold := -1
 	var err error
-	logFn := accessFn(ctx, c.logFn)
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -146,9 +146,7 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	}
 	if c.limiter != nil && !c.limiter.Allow() {
 		status = runtime.NewStatus(runtime.StatusRateLimited)
-		if logFn != nil {
-			logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
-		}
+		c.logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
 		return
 	}
 	newCtx := ctx
@@ -169,9 +167,7 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	if status == nil {
 		status = runtime.NewStatusOK()
 	}
-	if logFn != nil {
-		logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
-	}
+	c.logFn(log.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
 	return
 }
 
@@ -184,13 +180,6 @@ func (c *controllerCfgExec) updateRateLimiter(limit rate.Limit, burst int) {
 	c.limiter.SetBurst(burst)
 }
 
-func accessFn(ctx context.Context, logFn startup.AccessLogFn) startup.AccessLogFn {
-	if logFn != nil {
-		return logFn
-	}
-	return log.AccessFromContext(ctx)
-}
-
 type controllerCfgPing controllerCfg
 
 // NewPingController - create a new resiliency controller
@@ -199,6 +188,9 @@ func NewPingController(name string, threshold Threshold, logFn startup.AccessLog
 	ctrl.name = name
 	ctrl.threshold = threshold
 	ctrl.logFn = logFn
+	if ctrl.logFn == nil {
+		ctrl.logFn = log.AnyAccess
+	}
 	return ctrl
 }
 
@@ -206,7 +198,6 @@ func (c *controllerCfgPing) Apply(ctx context.Context) (status *runtime.Status) 
 	start := time.Now().UTC()
 	statusFlags := ""
 	threshold := -1
-	logFn := accessFn(ctx, c.logFn)
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -235,10 +226,8 @@ func (c *controllerCfgPing) Apply(ctx context.Context) (status *runtime.Status) 
 		status = runtime.NewStatusOK()
 	}
 	status.SetDuration(dur)
-	if logFn != nil {
-		req, _ := http.NewRequest(pingControllerName, PingUri, nil)
-		logFn(log.EgressTraffic, start, dur, req, &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
-	}
+	req, _ := http.NewRequest(pingControllerName, PingUri, nil)
+	c.logFn(log.EgressTraffic, start, dur, req, &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
 	return
 }
 

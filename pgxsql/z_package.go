@@ -29,29 +29,17 @@ func resetStarted() {
 	atomic.StoreInt64(&started, 0)
 }
 
-// newTypeHandler - templated function providing a TypeHandlerFn via a closure
-//func newTypeHandler[E runtime.ErrorHandler]() runtime.TypeHandlerFn {
-//	return func(r *http.Request, body any) (any, *runtime.Status) {
-//		return typeHandler[E](r, body)
-//	}
-//}
-
-func TypeHandler(r *http.Request, body any) (any, *runtime.Status) {
-	return typeHandler[runtime.LogError](r, body)
+func GetStatus() *runtime.Status {
+	_, status := doHandler[runtime.LogError](nil, "", startup.StatusPath, "", nil)
+	return status
 }
 
-func typeHandler[E runtime.ErrorHandler](r *http.Request, body any) (any, *runtime.Status) {
-	//var e E
-
-	if r == nil {
-		return nil, runtime.NewStatus(http.StatusBadRequest)
-	}
-	if r.URL.Path == startup.StatusPath {
+func doHandler[E runtime.ErrorHandler](_ any, _, uri, _ string, _ any) (any, *runtime.Status) {
+	if uri == startup.StatusPath {
 		if isStarted() {
 			return nil, runtime.NewStatusOK()
 		}
 		return nil, runtime.NewStatus(runtime.StatusNotStarted)
 	}
-
 	return nil, runtime.NewStatus(http.StatusMethodNotAllowed)
 }
