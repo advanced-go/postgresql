@@ -3,14 +3,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
 github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
-github.com/go-ai-agent/core v0.0.0-20231107101857-29bcd851b769 h1:waQWYSM089KvY+wOLO5nkUtkeXdz9sLPGEdGvNz5Wpo=
-github.com/go-ai-agent/core v0.0.0-20231107101857-29bcd851b769/go.mod h1:7ReZEgt5wnossL/Rcx47VnXmRsmHOOK6WzCeDs4cEQI=
-github.com/go-ai-agent/core v0.0.0-20231108142940-7979896c6948 h1:1oOUjlhDQQmdTO7OdHwy1iWoAvIVsLtfydcm5rySDLQ=
-github.com/go-ai-agent/core v0.0.0-20231108142940-7979896c6948/go.mod h1:7ReZEgt5wnossL/Rcx47VnXmRsmHOOK6WzCeDs4cEQI=
-github.com/go-ai-agent/core v0.0.0-20231108151300-14c8a3d7f84c h1:5b43yhdorVmVF8o8B7/n42IQyzm6AjHwlZmFK+rKlus=
-github.com/go-ai-agent/core v0.0.0-20231108151300-14c8a3d7f84c/go.mod h1:7ReZEgt5wnossL/Rcx47VnXmRsmHOOK6WzCeDs4cEQI=
-github.com/go-ai-agent/core v0.0.0-20231108153036-f93586748022 h1:/JJJsVMyluiNKuvl6lviTDYu4RcBzqJKi89mz29NK8Q=
-github.com/go-ai-agent/core v0.0.0-20231108153036-f93586748022/go.mod h1:7ReZEgt5wnossL/Rcx47VnXmRsmHOOK6WzCeDs4cEQI=
+github.com/go-ai-agent/core v0.0.0-20231110134559-6343c8cc77c4 h1:gRNXHw8QDoole9sS/x4ig32eJqMf30SjNlJYp9q9Yp4=
+github.com/go-ai-agent/core v0.0.0-20231110134559-6343c8cc77c4/go.mod h1:7ReZEgt5wnossL/Rcx47VnXmRsmHOOK6WzCeDs4cEQI=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
