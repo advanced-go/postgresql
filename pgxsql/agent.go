@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/runtime"
+	"github.com/advanced-go/core/runtime"
 	"time"
 )
 

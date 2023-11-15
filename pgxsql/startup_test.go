@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/runtime/runtimetest"
-	"github.com/go-ai-agent/core/runtime/startup"
+	"github.com/advanced-go/core/runtime/runtimetest"
+	"github.com/advanced-go/core/runtime/startup"
 	"time"
 )
 

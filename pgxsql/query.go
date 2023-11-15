@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/go-ai-agent/core/runtime"
+	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 )
 

@@ -7,8 +7,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/core/runtime/startup"
+	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/core/runtime/startup"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )

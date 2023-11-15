@@ -1,7 +1,7 @@
 package pgxsql
 
 import (
-	"github.com/go-ai-agent/postgresql/pgxdml"
+	"github.com/advanced-go/postgresql/pgxdml"
 )
 
 func BuildSql(r *request) string {

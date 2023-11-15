@@ -1,8 +1,8 @@
 package pgxsql
 
 import (
-	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/postgresql/pgxdml"
+	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/postgresql/pgxdml"
 	"net/http"
 )
 

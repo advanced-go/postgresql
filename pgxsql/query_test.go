@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/postgresql/pgxdml"
+	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"

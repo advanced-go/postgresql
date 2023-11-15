@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/go-ai-agent/core/log2"
-	"github.com/go-ai-agent/core/runtime"
+	"github.com/advanced-go/core/log2"
+	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/time/rate"

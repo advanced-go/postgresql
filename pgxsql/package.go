@@ -1,18 +1,20 @@
 package pgxsql
 
 import (
-	"github.com/go-ai-agent/core/runtime"
-	"github.com/go-ai-agent/core/runtime/startup"
+	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/core/runtime/startup"
 	"net/http"
-	"reflect"
 	"sync/atomic"
 )
 
 type pkg struct{}
 
+const (
+	PkgUri  = "github.com/advanced-go/postgresql/pgxsql"
+	PkgPath = "/advanced-go/postgresql/pgxsql"
+)
+
 var (
-	PkgUri  = reflect.TypeOf(any(pkg{})).PkgPath()
-	pkgPath = runtime.PathFromUri(PkgUri)
 	started int64
 )
 
