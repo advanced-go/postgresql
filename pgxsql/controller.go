@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/log2"
+	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -48,11 +48,11 @@ type controllerCfg struct {
 	name      string
 	threshold Threshold
 	limiter   *rate.Limiter
-	logFn     log2.AccessHandler
+	logFn     access.AccessHandler
 }
 
 // NewQueryController - create a new resiliency controller
-func NewQueryController(name string, threshold Threshold, logFn log2.AccessHandler) QueryController {
+func NewQueryController(name string, threshold Threshold, logFn access.AccessHandler) QueryController {
 	ctrl := new(controllerCfg)
 	ctrl.name = name
 	ctrl.threshold = threshold
@@ -61,7 +61,7 @@ func NewQueryController(name string, threshold Threshold, logFn log2.AccessHandl
 	}
 	ctrl.logFn = logFn
 	if ctrl.logFn == nil {
-		ctrl.logFn = log2.AnyAccess
+		ctrl.logFn = access.Log
 	}
 	return ctrl
 }
@@ -80,7 +80,7 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	}
 	if c.limiter != nil && !c.limiter.Allow() {
 		status = runtime.NewStatus(runtime.StatusRateLimited)
-		c.logFn(log2.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
+		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
 		return
 	}
 	newCtx := ctx
@@ -101,7 +101,7 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	if status == nil {
 		status = runtime.NewStatusOK()
 	}
-	c.logFn(log2.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
+	c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
 	return rows, status
 }
 
@@ -117,7 +117,7 @@ func (c *controllerCfg) updateRateLimiter(limit rate.Limit, burst int) {
 type controllerCfgExec controllerCfg
 
 // NewExecController - create a new resiliency controller
-func NewExecController(name string, threshold Threshold, logFn log2.AccessHandler) ExecController {
+func NewExecController(name string, threshold Threshold, logFn access.AccessHandler) ExecController {
 	ctrl := new(controllerCfgExec)
 	ctrl.name = name
 	ctrl.threshold = threshold
@@ -126,7 +126,7 @@ func NewExecController(name string, threshold Threshold, logFn log2.AccessHandle
 	}
 	ctrl.logFn = logFn
 	if ctrl.logFn == nil {
-		ctrl.logFn = log2.AnyAccess
+		ctrl.logFn = access.Log
 	}
 	return ctrl
 }
@@ -145,7 +145,7 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	}
 	if c.limiter != nil && !c.limiter.Allow() {
 		status = runtime.NewStatus(runtime.StatusRateLimited)
-		c.logFn(log2.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
+		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
 		return
 	}
 	newCtx := ctx
@@ -166,7 +166,7 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	if status == nil {
 		status = runtime.NewStatusOK()
 	}
-	c.logFn(log2.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
+	c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
 	return
 }
 
@@ -182,13 +182,13 @@ func (c *controllerCfgExec) updateRateLimiter(limit rate.Limit, burst int) {
 type controllerCfgPing controllerCfg
 
 // NewPingController - create a new resiliency controller
-func NewPingController(name string, threshold Threshold, logFn log2.AccessHandler) PingController {
+func NewPingController(name string, threshold Threshold, logFn access.AccessHandler) PingController {
 	ctrl := new(controllerCfgPing)
 	ctrl.name = name
 	ctrl.threshold = threshold
 	ctrl.logFn = logFn
 	if ctrl.logFn == nil {
-		ctrl.logFn = log2.AnyAccess
+		ctrl.logFn = access.Log
 	}
 	return ctrl
 }
@@ -226,7 +226,7 @@ func (c *controllerCfgPing) Apply(ctx context.Context) (status *runtime.Status) 
 	}
 	status.SetDuration(dur)
 	req, _ := http.NewRequest(pingControllerName, PingUri, nil)
-	c.logFn(log2.EgressTraffic, start, dur, req, &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
+	c.logFn(access.EgressTraffic, start, dur, req, &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
 	return
 }
 

@@ -1,5 +1,7 @@
 github.com/advanced-go/core v0.0.0-20231115182833-b26c23c88dac h1:aB/99665nxnSaljAe7iy3ULEQk+Zi7+s5IsMxLjG/Gk=
 github.com/advanced-go/core v0.0.0-20231115182833-b26c23c88dac/go.mod h1:p58Ll2RUpEOeraoKxazyJpiPkWZelINYxxkcwCtwjUE=
+github.com/advanced-go/core v0.0.0-20231116191913-e71495d68965 h1:3QZS+P4vIx3CjhS6NI5yAx0ips3dgLFpi7kea4g5y1I=
+github.com/advanced-go/core v0.0.0-20231116191913-e71495d68965/go.mod h1:p58Ll2RUpEOeraoKxazyJpiPkWZelINYxxkcwCtwjUE=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
