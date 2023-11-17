@@ -9,7 +9,7 @@ import (
 var execLoc = PkgUri + "/Exec"
 
 // Exec - function for executing a SQL statement
-func Exec(ctx context.Context, req Request) (tag CommandTag, status *runtime.Status) {
+func Exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Status) {
 	if ctx == nil {
 		ctx = context.Background()
 	}

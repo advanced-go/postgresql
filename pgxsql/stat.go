@@ -12,7 +12,7 @@ var (
 )
 
 // Stat - function for retrieving runtime stats
-func Stat(ctx context.Context) (stat *pgxpool.Stat, status *runtime.Status) {
+func Stat(ctx context.Context) (stat *pgxpool.Stat, status runtime.Status) {
 	if dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetRequestId(ctx)
 	}

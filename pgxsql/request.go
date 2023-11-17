@@ -1,7 +1,7 @@
 package pgxsql
 
 import (
-	"github.com/advanced-go/core/runtime"
+	"fmt"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"net/http"
 )
@@ -84,8 +84,12 @@ func (r *request) HttpRequest() *http.Request {
 	return req
 }
 
+func OriginUrn(nid, nss, resource string) string {
+	return fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, "region", "zone", nss, resource)
+}
+
 func BuildUri(nid string, nss, resource string) string {
-	return runtime.OriginUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
+	return OriginUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
 // BuildQueryUri - build an uri with the Query NSS

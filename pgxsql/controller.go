@@ -19,21 +19,21 @@ const (
 
 // QueryController - an interface that manages query resiliency
 type QueryController interface {
-	Apply(ctx context.Context, r Request) (pgx.Rows, *runtime.Status)
+	Apply(ctx context.Context, r Request) (pgx.Rows, runtime.Status)
 	getThreshold() Threshold
 	updateRateLimiter(limit rate.Limit, burst int)
 }
 
 // ExecController - an interface that manages exec resiliency
 type ExecController interface {
-	Apply(ctx context.Context, r Request) (pgconn.CommandTag, *runtime.Status)
+	Apply(ctx context.Context, r Request) (pgconn.CommandTag, runtime.Status)
 	getThreshold() Threshold
 	updateRateLimiter(limit rate.Limit, burst int)
 }
 
 // PingController - an interface that manages ping resiliency
 type PingController interface {
-	Apply(ctx context.Context) *runtime.Status
+	Apply(ctx context.Context) runtime.Status
 	getThreshold() Threshold
 }
 
@@ -66,7 +66,7 @@ func NewQueryController(name string, threshold Threshold, logFn access.LogHandle
 	return ctrl
 }
 
-func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, status *runtime.Status) {
+func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, status runtime.Status) {
 	start := time.Now().UTC()
 	statusFlags := ""
 	threshold := -1
@@ -131,7 +131,7 @@ func NewExecController(name string, threshold Threshold, logFn access.LogHandler
 	return ctrl
 }
 
-func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.CommandTag, status *runtime.Status) {
+func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.CommandTag, status runtime.Status) {
 	start := time.Now().UTC()
 	statusFlags := ""
 	threshold := -1
@@ -193,7 +193,7 @@ func NewPingController(name string, threshold Threshold, logFn access.LogHandler
 	return ctrl
 }
 
-func (c *controllerCfgPing) Apply(ctx context.Context) (status *runtime.Status) {
+func (c *controllerCfgPing) Apply(ctx context.Context) (status runtime.Status) {
 	start := time.Now().UTC()
 	statusFlags := ""
 	threshold := -1

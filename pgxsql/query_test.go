@@ -165,7 +165,7 @@ func ExampleQuery_Conditions_Where() {
 
 }
 
-func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status *runtime.Status) {
+func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status runtime.Status) {
 	conditions, status = scanRows(results)
 	if status.OK() && len(conditions) == 0 {
 		return nil, runtime.NewStatus(http.StatusNotFound)
@@ -173,7 +173,7 @@ func processResults(results pgx.Rows, msg string) (conditions []TestConditions, 
 	return conditions, status
 }
 
-func scanRows(rows pgx.Rows) ([]TestConditions, *runtime.Status) {
+func scanRows(rows pgx.Rows) ([]TestConditions, runtime.Status) {
 	if rows == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, "", errors.New("invalid request: Rows interface is empty"))
 	}

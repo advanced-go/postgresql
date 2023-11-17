@@ -12,7 +12,7 @@ var (
 )
 
 // Query - function for a Query
-func Query(ctx context.Context, req Request) (result pgx.Rows, status *runtime.Status) {
+func Query(ctx context.Context, req Request) (result pgx.Rows, status runtime.Status) {
 	if ctx == nil {
 		ctx = context.Background()
 	}

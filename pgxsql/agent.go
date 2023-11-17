@@ -56,7 +56,7 @@ func run(threshold int, interval, r time.Duration, quit <-chan struct{}, query *
 	reset := time.Tick(r)
 	var ticks int64
 	var failures int64
-	var status *runtime.Status
+	var status runtime.Status
 
 	for {
 		select {
