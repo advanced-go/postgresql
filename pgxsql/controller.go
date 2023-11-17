@@ -48,11 +48,11 @@ type controllerCfg struct {
 	name      string
 	threshold Threshold
 	limiter   *rate.Limiter
-	logFn     access.AccessHandler
+	logFn     access.LogHandler
 }
 
 // NewQueryController - create a new resiliency controller
-func NewQueryController(name string, threshold Threshold, logFn access.AccessHandler) QueryController {
+func NewQueryController(name string, threshold Threshold, logFn access.LogHandler) QueryController {
 	ctrl := new(controllerCfg)
 	ctrl.name = name
 	ctrl.threshold = threshold
@@ -117,7 +117,7 @@ func (c *controllerCfg) updateRateLimiter(limit rate.Limit, burst int) {
 type controllerCfgExec controllerCfg
 
 // NewExecController - create a new resiliency controller
-func NewExecController(name string, threshold Threshold, logFn access.AccessHandler) ExecController {
+func NewExecController(name string, threshold Threshold, logFn access.LogHandler) ExecController {
 	ctrl := new(controllerCfgExec)
 	ctrl.name = name
 	ctrl.threshold = threshold
@@ -182,7 +182,7 @@ func (c *controllerCfgExec) updateRateLimiter(limit rate.Limit, burst int) {
 type controllerCfgPing controllerCfg
 
 // NewPingController - create a new resiliency controller
-func NewPingController(name string, threshold Threshold, logFn access.AccessHandler) PingController {
+func NewPingController(name string, threshold Threshold, logFn access.LogHandler) PingController {
 	ctrl := new(controllerCfgPing)
 	ctrl.name = name
 	ctrl.threshold = threshold
