@@ -8,7 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/advanced-go/core/runtime"
-	"github.com/advanced-go/core/runtime/startup"
+	"github.com/advanced-go/messaging/content"
+	"github.com/advanced-go/messaging/core"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )
@@ -18,23 +19,23 @@ var (
 	clientLoc = PkgUri + "/Startup"
 )
 
-var clientStartup startup.MessageHandler = func(msg startup.Message) {
+var clientStartup core.MessageHandler = func(msg core.Message) {
 	if isStarted() {
 		return
 	}
 	start := time.Now()
-	rsc := startup.AccessResource(&msg)
-	credentials := startup.AccessCredentials(&msg)
+	rsc := content.AccessResource(&msg)
+	credentials := content.AccessCredentials(&msg)
 	err := ClientStartup(rsc, credentials)
 	if err != nil {
-		startup.ReplyTo(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
+		core.ReplyTo(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
 		return
 	}
-	startup.ReplyTo(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
+	core.ReplyTo(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
 }
 
 // ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
-func ClientStartup(rsc startup.Resource, credentials startup.Credentials) error {
+func ClientStartup(rsc content.Resource, credentials content.Credentials) error {
 	if isStarted() {
 		return nil
 	}
@@ -69,7 +70,7 @@ func ClientShutdown() {
 	}
 }
 
-func connectString(url string, credentials startup.Credentials) (string, error) {
+func connectString(url string, credentials content.Credentials) (string, error) {
 	// Username and password can be in the connect string Url
 	if credentials == nil {
 		return url, nil

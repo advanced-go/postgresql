@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"github.com/advanced-go/core/runtime"
-	"github.com/advanced-go/core/runtime/startup"
+	"github.com/advanced-go/messaging/startup"
 	"net/http"
 	"sync/atomic"
 )
@@ -31,17 +31,12 @@ func resetStarted() {
 	atomic.StoreInt64(&started, 0)
 }
 
-func GetStatus() runtime.Status {
-	_, status := doHandler[runtime.LogError](nil, "", startup.StatusPath, "", nil)
-	return status
-}
-
-func doHandler[E runtime.ErrorHandler](_ any, _, uri, _ string, _ any) (any, runtime.Status) {
+func GetStartupStatus(uri string) runtime.Status {
 	if uri == startup.StatusPath {
 		if isStarted() {
-			return nil, runtime.NewStatusOK()
+			return runtime.NewStatusOK()
 		}
-		return nil, runtime.NewStatus(runtime.StatusNotStarted)
+		return runtime.NewStatus(runtime.StatusNotStarted)
 	}
-	return nil, runtime.NewStatus(http.StatusMethodNotAllowed)
+	return runtime.NewStatus(http.StatusNotFound)
 }

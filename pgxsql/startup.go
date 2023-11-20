@@ -1,12 +1,12 @@
 package pgxsql
 
 import (
-	"github.com/advanced-go/core/runtime/startup"
+	"github.com/advanced-go/messaging/core"
 	"time"
 )
 
 var (
-	c                   = make(chan startup.Message, 1)
+	c                   = make(chan core.Message, 1)
 	queryControllerName = "query"
 	queryController     = NewQueryController(queryControllerName, Threshold{}, nil)
 	execControllerName  = "exec"
@@ -17,28 +17,28 @@ var (
 )
 
 func init() {
-	startup.Register(PkgUri, c)
+	core.Register(PkgUri, c)
 	go receive()
 }
 
-var messageHandler startup.MessageHandler = func(msg startup.Message) {
+var messageHandler core.MessageHandler = func(msg core.Message) {
 	switch msg.Event {
-	case startup.StartupEvent:
+	case core.StartupEvent:
 		if configControllers(msg) {
 			clientStartup(msg)
 		}
-	case startup.ShutdownEvent:
+	case core.ShutdownEvent:
 		if statusAgent != nil {
 			statusAgent.Stop()
 		}
 		ClientShutdown()
-	case startup.PingEvent:
+	case core.PingEvent:
 		start := time.Now()
-		startup.ReplyTo(msg, Ping(nil).SetDuration(time.Since(start)))
+		core.ReplyTo(msg, Ping(nil).SetDuration(time.Since(start)))
 	}
 }
 
-func configControllers(msg startup.Message) bool {
+func configControllers(msg core.Message) bool {
 	// Need to also configure all controllers, query, exec and ping
 	var err error
 	statusAgent, err = NewStatusAgent(10, time.Second*2, &queryController, &execController)

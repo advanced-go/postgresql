@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/advanced-go/core/runtime/runtimetest"
-	"github.com/advanced-go/core/runtime/startup"
+	"github.com/advanced-go/messaging/content"
+	"github.com/advanced-go/messaging/core"
+	"github.com/advanced-go/messaging/startup"
 	"time"
 )
 
@@ -45,12 +47,12 @@ func testStartup() error {
 		return nil
 	}
 
-	c <- startup.Message{
+	c <- core.Message{
 		To:      "",
 		From:    "",
-		Event:   startup.StartupEvent,
+		Event:   core.StartupEvent,
 		Status:  nil,
-		Content: []any{startup.Resource{Uri: serviceUrl}},
+		Content: []any{content.Resource{Uri: serviceUrl}},
 		ReplyTo: nil,
 	}
 	time.Sleep(time.Second * 3)

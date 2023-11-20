@@ -2,6 +2,10 @@ github.com/advanced-go/core v0.0.0-20231117153504-29c397222083 h1:EQxhvmnw/vZZhr
 github.com/advanced-go/core v0.0.0-20231117153504-29c397222083/go.mod h1:p58Ll2RUpEOeraoKxazyJpiPkWZelINYxxkcwCtwjUE=
 github.com/advanced-go/core v0.0.0-20231117164021-e56bc6e58994 h1:Q+AHL5UW9/ZVXT+RPRrzDypn81CgrlspkOG5ozjIkfU=
 github.com/advanced-go/core v0.0.0-20231117164021-e56bc6e58994/go.mod h1:p58Ll2RUpEOeraoKxazyJpiPkWZelINYxxkcwCtwjUE=
+github.com/advanced-go/core v0.0.0-20231120123810-0674ef2b3534 h1:jlFPuUpThwKtcgulyoTddz+rZzVYUX/nnTqMicYiSVs=
+github.com/advanced-go/core v0.0.0-20231120123810-0674ef2b3534/go.mod h1:p58Ll2RUpEOeraoKxazyJpiPkWZelINYxxkcwCtwjUE=
+github.com/advanced-go/messaging v0.0.0-20231119120322-b673215b8955 h1:3I7x/ykXFUzO/B709VB4pTIqi8BZy5572Ef+E3gif5Y=
+github.com/advanced-go/messaging v0.0.0-20231119120322-b673215b8955/go.mod h1:+X8DouJD7386GM4uUKewB1+vofKd8OAe5l6p3F+ei8M=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
