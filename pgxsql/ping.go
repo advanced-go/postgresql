@@ -5,7 +5,7 @@ import (
 	"github.com/advanced-go/core/runtime"
 )
 
-var (
+const (
 	pingLoc = PkgUri + "/Ping"
 )
 

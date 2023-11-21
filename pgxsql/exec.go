@@ -6,7 +6,9 @@ import (
 	"github.com/advanced-go/core/runtime"
 )
 
-var execLoc = PkgUri + "/Exec"
+const (
+	execLoc = PkgUri + "/Exec"
+)
 
 // Exec - function for executing a SQL statement
 func Exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Status) {

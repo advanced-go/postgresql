@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-var (
+const (
 	queryLoc = PkgUri + "/Query"
 )
 
