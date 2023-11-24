@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	queryLoc = PkgUri + "/Query"
+	queryLoc = PkgPath + "/Query"
 )
 
 // Query - function for a Query

@@ -3,10 +3,9 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/advanced-go/core/runtime/runtimetest"
-	"github.com/advanced-go/messaging/content"
+	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/messaging/core"
-	"github.com/advanced-go/messaging/startup"
+	"github.com/advanced-go/messaging/exchange"
 	"time"
 )
 
@@ -26,7 +25,7 @@ func Example_Startup() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", isStarted())
 
-		status := startup.Ping[runtimetest.DebugError](nil, postgresUri)
+		status := exchange.Ping[runtime.TestError](nil, postgresUri)
 		fmt.Printf("test: messaging.Ping() -> %v\n", status)
 
 	}
@@ -52,7 +51,7 @@ func testStartup() error {
 		From:    "",
 		Event:   core.StartupEvent,
 		Status:  nil,
-		Content: []any{content.Resource{Uri: serviceUrl}},
+		Content: []any{core.Resource{Uri: serviceUrl}},
 		ReplyTo: nil,
 	}
 	time.Sleep(time.Second * 3)

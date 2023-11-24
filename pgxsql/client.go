@@ -8,15 +8,17 @@ import (
 	"errors"
 	"fmt"
 	"github.com/advanced-go/core/runtime"
-	"github.com/advanced-go/messaging/content"
 	"github.com/advanced-go/messaging/core"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )
 
 var (
-	dbClient  *pgxpool.Pool
-	clientLoc = PkgUri + "/Startup"
+	dbClient *pgxpool.Pool
+)
+
+const (
+	clientLoc = PkgPath + "/Startup"
 )
 
 var clientStartup core.MessageHandler = func(msg core.Message) {
@@ -24,8 +26,8 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 		return
 	}
 	start := time.Now()
-	rsc := content.AccessResource(&msg)
-	credentials := content.AccessCredentials(&msg)
+	rsc := core.AccessResource(&msg)
+	credentials := core.AccessCredentials(&msg)
 	err := ClientStartup(rsc, credentials)
 	if err != nil {
 		core.ReplyTo(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
@@ -35,7 +37,7 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 }
 
 // ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
-func ClientStartup(rsc content.Resource, credentials content.Credentials) error {
+func ClientStartup(rsc core.Resource, credentials core.Credentials) error {
 	if isStarted() {
 		return nil
 	}
@@ -70,7 +72,7 @@ func ClientShutdown() {
 	}
 }
 
-func connectString(url string, credentials content.Credentials) (string, error) {
+func connectString(url string, credentials core.Credentials) (string, error) {
 	// Username and password can be in the connect string Url
 	if credentials == nil {
 		return url, nil

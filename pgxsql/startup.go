@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"github.com/advanced-go/messaging/core"
+	"github.com/advanced-go/messaging/exchange"
 	"time"
 )
 
@@ -17,7 +18,7 @@ var (
 )
 
 func init() {
-	core.Register(PkgUri, c)
+	exchange.Register(PkgPath, c)
 	go receive()
 }
 

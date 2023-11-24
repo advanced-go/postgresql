@@ -2,12 +2,12 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/advanced-go/messaging/content"
+	"github.com/advanced-go/messaging/core"
 )
 
 func ExampleClientStartup() {
 
-	rsc := content.Resource{Uri: ""}
+	rsc := core.Resource{Uri: ""}
 	err := ClientStartup(rsc, nil)
 	if err == nil {
 		defer ClientShutdown()

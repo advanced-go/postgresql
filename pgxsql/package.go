@@ -2,7 +2,6 @@ package pgxsql
 
 import (
 	"github.com/advanced-go/core/runtime"
-	"github.com/advanced-go/messaging/startup"
 	"net/http"
 	"sync/atomic"
 )
@@ -10,8 +9,8 @@ import (
 type pkg struct{}
 
 const (
-	PkgUri  = "github.com/advanced-go/postgresql/pgxsql"
-	PkgPath = "/advanced-go/postgresql/pgxsql"
+	PkgPath    = "github.com/advanced-go/postgresql/pgxsql"
+	StatusPath = PkgPath + "/Status"
 )
 
 var (
@@ -32,7 +31,7 @@ func resetStarted() {
 }
 
 func GetStartupStatus(uri string) runtime.Status {
-	if uri == startup.StatusPath {
+	if uri == StatusPath {
 		if isStarted() {
 			return runtime.NewStatusOK()
 		}
