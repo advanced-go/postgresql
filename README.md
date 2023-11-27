@@ -89,7 +89,7 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 }
 ~~~
 
-Resiliency for PostgresSQL database client calls is provided by an agent and controller types.
+Resiliency and access logging for PostgresSQL database client calls is provided by an agent and controller types.
 
 
 [rgriesemer]: <https://www.youtube.com/watch?v=0ReKdcpNyQg>
