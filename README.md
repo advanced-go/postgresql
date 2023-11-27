@@ -91,15 +91,9 @@ func Scan[T Scanner[T]](rows Rows) ([]T, error) {
 }
 ~~~
 
-Resiliency for PostgresSQL database client calls is provided by an [Controller][controllercall] function call that is initialized by the host on startup:
-~~~
-var controller messaging.ControllerApply
+Resiliency for PostgresSQL database client calls is provided by an agent and controller types.
 
-fn, ctx, limited = controlerApply(ctx, statusCode func() int, req.Uri, runtime.ContextRequestId(ctx), "GET")
-defer fn()
-~~~
 
 [rgriesemer]: <https://www.youtube.com/watch?v=0ReKdcpNyQg>
 [pgxdmlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxdml>
 [pgxsqlpkg]: <https://pkg.go.dev/github.com/gotemplates/postgresql/pgxsql>
-[controllercall]: <https://pkg.go.dev/github.com/gotemplates/host/controller#EgressApply>
