@@ -32,22 +32,22 @@ The processing of host generated messaging for startup and ping events is also s
 
 ~~~
 // Exec - templated function for executing a SQL statement
-func Exec[E runtime.ErrorHandler](ctx context.Context, expectedCount int64, req *Request, args ...any) (tag CommandTag, status *runtime.Status) {
+func Exec[E runtime.ErrorHandler](ctx context.Context, req Request) (tag CommandTag, status *runtime.Status) {
     // implementation details
 }
 
-// Query - templated function for a Query
-func Query[E runtime.ErrorHandler](ctx context.Context, req *Request, args ...any) (result Rows, status *runtime.Status) {
+// Query - function for a Query
+func Query(ctx context.Context, req Request) (result Rows, status *runtime.Status) {
 // implementation details
 }
 
-// Ping - templated function for pinging the database cluster
-func Ping[E runtime.ErrorHandler](ctx context.Context) (status *runtime.Status) {
+// Ping - function for pinging the database cluster
+func Ping(ctx context.Context) (status *runtime.Status) {
 // implementation details
 }
 
 // Stat - templated function for retrieving runtime stats
-func Stat[E runtime.ErrorHandler](ctx context.Context) (stat *Stats, status *runtime.Status) {
+func Stat(ctx context.Context) (stat *Stats, status *runtime.Status) {
 // implementation details
 }
 ~~~
