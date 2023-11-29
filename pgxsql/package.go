@@ -33,7 +33,7 @@ func resetStarted() {
 func GetStartupStatus(uri string) runtime.Status {
 	if uri == StatusPath {
 		if isStarted() {
-			return runtime.NewStatusOK()
+			return runtime.StatusOK()
 		}
 		return runtime.NewStatus(runtime.StatusNotStarted)
 	}

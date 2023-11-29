@@ -16,7 +16,7 @@ func Stat(ctx context.Context) (stat *pgxpool.Stat, status runtime.Status) {
 	if dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetRequestId(ctx)
 	}
-	return dbClient.Stat(), runtime.NewStatusOK()
+	return dbClient.Stat(), runtime.StatusOK()
 }
 
 // Scrap

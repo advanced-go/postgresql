@@ -191,7 +191,7 @@ func scanRows(rows pgx.Rows) ([]TestConditions, runtime.Status) {
 		}
 		conditions = append(conditions, scanColumns(values))
 	}
-	return conditions, runtime.NewStatusOK()
+	return conditions, runtime.StatusOK()
 }
 
 func scanColumns(values []any) TestConditions {
