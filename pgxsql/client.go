@@ -18,7 +18,7 @@ var (
 )
 
 const (
-	clientLoc = PkgPath + "/Startup"
+	clientLoc = PkgPath + ":Startup"
 )
 
 var clientStartup core.MessageHandler = func(msg core.Message) {

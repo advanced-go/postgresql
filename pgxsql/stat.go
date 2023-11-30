@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	statLoc = PkgPath + "/Stat"
+	statLoc = PkgPath + ":Stat"
 )
 
 // Stat - function for retrieving runtime stats

@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	execLoc = PkgPath + "/Exec"
+	execLoc = PkgPath + ":Exec"
 )
 
 // Exec - function for executing a SQL statement

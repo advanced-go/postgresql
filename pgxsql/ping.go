@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	pingLoc = PkgPath + "/Ping"
+	pingLoc = PkgPath + ":Ping"
 )
 
 // Ping - function for pinging the database cluster
