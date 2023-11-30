@@ -25,27 +25,27 @@ func WriteDelete(sql string, where []Attr) (string, error) {
 
 ## pgxsql
 
-[PostgresSQL][pgxsqlpkg] provides the templated functions for query, exec, ping, and stat. Testing proxies are implemented for exec and query functions.
+[PostgresSQL][pgxsqlpkg] provides functions for query, exec, ping, and stat. Testing proxies are implemented for exec and query functions.
 The processing of host generated messaging for startup and ping events is also supported. 
 
 ~~~
 // Exec - templated function for executing a SQL statement
-func Exec[E runtime.ErrorHandler](ctx context.Context, req Request) (tag CommandTag, status *runtime.Status) {
+func Exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Status) {
     // implementation details
 }
 
 // Query - function for a Query
-func Query(ctx context.Context, req Request) (result Rows, status *runtime.Status) {
+func Query(ctx context.Context, req Request) (result pgx.Rows, status runtime.Status) {
 // implementation details
 }
 
 // Ping - function for pinging the database cluster
-func Ping(ctx context.Context) (status *runtime.Status) {
+func Ping(ctx context.Context) (status runtime.Status) {
 // implementation details
 }
 
 // Stat - templated function for retrieving runtime stats
-func Stat(ctx context.Context) (stat *Stats, status *runtime.Status) {
+func Stat(ctx context.Context) (stat *pgxpool.Stat, status runtime.Status) {
 // implementation details
 }
 ~~~
