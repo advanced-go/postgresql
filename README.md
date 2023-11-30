@@ -84,7 +84,7 @@ type Scanner[T any] interface {
 }
 
 // Scan - templated function for scanning rows
-func Scan[T Scanner[T]](rows Rows) ([]T, error) {
+func Scan[T Scanner[T]](rows pgx.Rows) ([]T, error) {
     // implementation details
 }
 ~~~
