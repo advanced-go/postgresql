@@ -1,13 +1,13 @@
 package pgxsql
 
 import (
+	"fmt"
 	"github.com/advanced-go/messaging/core"
 	"github.com/advanced-go/messaging/exchange"
 	"time"
 )
 
 var (
-	c                   = make(chan core.Message, 1)
 	queryControllerName = "query"
 	queryController     = NewQueryController(queryControllerName, Threshold{}, nil)
 	execControllerName  = "exec"
@@ -15,11 +15,18 @@ var (
 	pingControllerName  = "exec"
 	pingController      = NewPingController(pingControllerName, Threshold{}, nil)
 	statusAgent         StatusAgent
+	agent               exchange.Agent
 )
 
 func init() {
-	exchange.Register(PkgPath, c)
-	go receive()
+	status := exchange.Register(exchange.NewMailbox(PkgPath, false))
+	if status.OK() {
+		agent, status = exchange.NewAgent(PkgPath, messageHandler, nil, nil)
+	}
+	if !status.OK() {
+		fmt.Printf("init() failure: [%v]\n", PkgPath)
+	}
+	agent.Run()
 }
 
 var messageHandler core.MessageHandler = func(msg core.Message) {
@@ -35,7 +42,7 @@ var messageHandler core.MessageHandler = func(msg core.Message) {
 		ClientShutdown()
 	case core.PingEvent:
 		start := time.Now()
-		core.ReplyTo(msg, Ping(nil).SetDuration(time.Since(start)))
+		core.SendReply(msg, Ping(nil).SetDuration(time.Since(start)))
 	}
 }
 
@@ -49,19 +56,6 @@ func configControllers(msg core.Message) bool {
 	}
 	statusAgent.Run()
 	return true
-}
-
-func receive() {
-	for {
-		select {
-		case msg, open := <-c:
-			if !open {
-				return
-			}
-			go messageHandler(msg)
-		default:
-		}
-	}
 }
 
 // Scrap

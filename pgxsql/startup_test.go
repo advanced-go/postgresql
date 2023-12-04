@@ -25,7 +25,7 @@ func Example_Startup() {
 		defer ClientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", isStarted())
 
-		status := exchange.Ping[runtime.TestError](nil, postgresUri)
+		status := exchange.Ping[runtime.Output](nil, postgresUri)
 		fmt.Printf("test: messaging.Ping() -> %v\n", status)
 
 	}
@@ -46,15 +46,14 @@ func testStartup() error {
 		return nil
 	}
 
-	c <- core.Message{
-		To:      "",
+	exchange.SendCtrl(core.Message{
+		To:      PkgPath,
 		From:    "",
 		Event:   core.StartupEvent,
 		Status:  nil,
 		Content: []any{core.Resource{Uri: serviceUrl}},
 		ReplyTo: nil,
-	}
+	})
 	time.Sleep(time.Second * 3)
-
 	return nil
 }

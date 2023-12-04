@@ -30,10 +30,10 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 	credentials := core.AccessCredentials(&msg)
 	err := ClientStartup(rsc, credentials)
 	if err != nil {
-		core.ReplyTo(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
+		core.SendReply(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
 		return
 	}
-	core.ReplyTo(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
+	core.SendReply(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
 }
 
 // ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
