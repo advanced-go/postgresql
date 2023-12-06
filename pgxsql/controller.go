@@ -80,7 +80,7 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	}
 	if c.limiter != nil && !c.limiter.Allow() {
 		status = runtime.NewStatus(runtime.StatusRateLimited)
-		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
+		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, c.name, int(c.limiter.Limit()), rateLimitedFlag)
 		return
 	}
 	newCtx := ctx
@@ -101,7 +101,7 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	if status == nil {
 		status = runtime.StatusOK()
 	}
-	c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
+	c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, c.name, threshold, statusFlags)
 	return rows, status
 }
 
@@ -145,7 +145,7 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	}
 	if c.limiter != nil && !c.limiter.Allow() {
 		status = runtime.NewStatus(runtime.StatusRateLimited)
-		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, int(c.limiter.Limit()), rateLimitedFlag)
+		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, c.name, int(c.limiter.Limit()), rateLimitedFlag)
 		return
 	}
 	newCtx := ctx
@@ -166,7 +166,7 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	if status == nil {
 		status = runtime.StatusOK()
 	}
-	c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
+	c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, c.name, threshold, statusFlags)
 	return
 }
 
@@ -226,7 +226,7 @@ func (c *controllerCfgPing) Apply(ctx context.Context) (status runtime.Status) {
 	}
 	//status.SetDuration(dur)
 	req, _ := http.NewRequest(pingControllerName, PingUri, nil)
-	c.logFn(access.EgressTraffic, start, dur, req, &http.Response{StatusCode: status.Code()}, threshold, statusFlags)
+	c.logFn(access.EgressTraffic, start, dur, req, &http.Response{StatusCode: status.Code()}, c.name, threshold, statusFlags)
 	return
 }
 

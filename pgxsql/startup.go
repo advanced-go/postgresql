@@ -12,7 +12,7 @@ var (
 	queryController     = NewQueryController(queryControllerName, Threshold{}, nil)
 	execControllerName  = "exec"
 	execController      = NewExecController(execControllerName, Threshold{}, nil)
-	pingControllerName  = "exec"
+	pingControllerName  = "ping"
 	pingController      = NewPingController(pingControllerName, Threshold{}, nil)
 	statusAgent         StatusAgent
 	agent               exchange.Agent
