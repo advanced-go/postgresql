@@ -37,6 +37,8 @@ func Scan[T Scanner[T]](rows pgx.Rows) ([]T, error) {
 			return t, err1
 		}
 		t = append(t, val)
+		// Test this
+		rows.Close()
 	}
 	return t, nil
 }
