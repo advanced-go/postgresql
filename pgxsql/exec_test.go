@@ -1,11 +1,10 @@
 package pgxsql
 
 import (
-	"errors"
 	"fmt"
 	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/postgresql/pgxdml"
-	"github.com/jackc/pgx/v5/pgconn"
+	"net/http"
 	"time"
 )
 
@@ -29,40 +28,38 @@ const (
 	execDeleteConditions = "DELETE FROM conditions"
 )
 
-func execTestProxy(req Request) (tag pgconn.CommandTag, err error) {
-	switch req.Uri() {
-	case BuildUpdateUri(execUpdateRsc):
-		return tag, errors.New("exec error")
-	case BuildInsertUri(execInsertRsc):
-		return pgconn.CommandTag{}, nil
-		/*
-			return pgconn.CommandTag{
-				Sql:          "INSERT 1",
-				RowsAffected: 1234,
-				Insert:       true,
-				Update:       false,
-				Delete:       false,
-				Select:       false,
-			}, nil
+func ExampleExec_Status() {
+	status1 := runtime.NewStatus(http.StatusGatewayTimeout)
+	ctx := NewStatusContext(nil, status1)
+	result, status := Exec(ctx, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
+	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
 
-		*/
-	}
-	return tag, nil
+	//Output:
+	//test: Exec(ctx,update test) -> [tag:{ 0 false false false false}] [status:Timeout]
+
+}
+
+func exec(req Request) (CommandTag, runtime.Status) {
+	return CommandTag{
+		Sql:          req.Sql(),
+		RowsAffected: 0,
+		Insert:       false,
+		Update:       true,
+		Delete:       false,
+		Select:       false,
+	}, runtime.StatusOK()
 }
 
 func ExampleExec_Proxy() {
-	ctx := runtime.NewProxyContext(nil, execTestProxy)
-
-	cmd, status := Exec(ctx, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
-	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execUpdateSql, status, cmd)
-
-	cmd, status = Exec(ctx, NewInsertRequest(execInsertRsc, execInsertSql, nil))
-	fmt.Printf("test: Exec(%v) -> %v [cmd:%v]\n", execInsertSql, status, cmd)
+	req := NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil)
+	if r, ok := any(req).(*request); ok {
+		r.setExecProxy(exec)
+	}
+	tag, status := Exec(nil, req)
+	fmt.Printf("test: Exec(%v) -> [cmd:%v] [status:%v]\n", execUpdateSql, tag, status)
 
 	//Output:
-	//[[] github.com/go-ai-agent/postgresql/pgxsql/exec [exec error]]
-	//test: Exec(update test) -> Internal [cmd:{ 0 false false false false}]
-	//test: Exec(insert test) -> OK [cmd:{INSERT 1 1234 true false false false}]
+	//test: Exec(update test) -> [cmd:{update test 0 false true false false}] [status:OK]
 
 }
 

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	queryLoc = PkgPath + "/Query"
+	queryLoc = PkgPath + ":Query"
 )
 
 // Query - function for a Query
@@ -20,11 +20,13 @@ func Query(ctx context.Context, req Request) (result pgx.Rows, status runtime.St
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
 	}
 	if runtime.IsDebugEnvironment() {
-		if proxies, ok := runtime.IsProxyable(ctx); ok {
-			if pQuery := findQueryProxy(proxies); pQuery != nil {
-				var err error
-				result, err = pQuery(req)
-				return result, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
+		status = StatusFromContext(ctx)
+		if status != nil {
+			return nil, status
+		}
+		if r, ok := any(req).(*request); ok {
+			if r.queryProxy() != nil {
+				return r.queryProxy()(req)
 			}
 		}
 	}

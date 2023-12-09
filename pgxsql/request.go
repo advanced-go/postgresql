@@ -2,7 +2,9 @@ package pgxsql
 
 import (
 	"fmt"
+	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/postgresql/pgxdml"
+	"github.com/jackc/pgx/v5"
 	"net/http"
 )
 
@@ -47,6 +49,8 @@ type request struct {
 	where         []pgxdml.Attr
 	args          []any
 	error         error
+	exec          func(Request) (CommandTag, runtime.Status)
+	query         func(Request) (pgx.Rows, runtime.Status)
 }
 
 func (r *request) Uri() string {
@@ -82,6 +86,22 @@ func (r *request) String() string {
 func (r *request) HttpRequest() *http.Request {
 	req, _ := http.NewRequest(r.Method(), r.Uri(), nil)
 	return req
+}
+
+func (r *request) setExecProxy(proxy func(Request) (CommandTag, runtime.Status)) {
+	r.exec = proxy
+}
+
+func (r *request) execProxy() func(Request) (CommandTag, runtime.Status) {
+	return r.exec
+}
+
+func (r *request) setQueryProxy(proxy func(Request) (pgx.Rows, runtime.Status)) {
+	r.query = proxy
+}
+
+func (r *request) queryProxy() func(Request) (pgx.Rows, runtime.Status) {
+	return r.query
 }
 
 func OriginUrn(nid, nss, resource string) string {

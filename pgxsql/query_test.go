@@ -60,37 +60,42 @@ const (
 	queryRowsRsc         = "rows"
 )
 
-var queryTestExchange = runtime.NewProxyContext(nil, queryTestProxy)
-
-func queryTestProxy(req Request) (pgx.Rows, error) {
-	switch req.Uri() {
-	case BuildQueryUri(queryErrorRsc):
-		return nil, errors.New("pgxsql query error")
-	case BuildQueryUri(queryRowsRsc):
-		var i pgx.Rows = &rowsT{}
-		return i, nil
-	}
-	return nil, nil
-}
-
 func ExampleQuery_TestError() {
-	ctx := queryTestExchange
-	result, status := Query(ctx, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
-	fmt.Printf("test: Query(ctx,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
+	//ctx := queryTestExchange
+	result, status := Query(nil, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
+	fmt.Printf("test: Query(nil,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
-	//[[] github.com/go-ai-agent/postgresql/pgxsql/exec [pgxsql query error]]
-	//test: Query(ctx,select * from test) -> [rows:<nil>] [status:Internal]
+	//test: Query(nil,select * from test) -> [rows:<nil>] [status:Invalid Argument [error on PostgreSQL database query call: dbClient is nil]]
 
 }
 
-func ExampleQuery_TestRows() {
-	ctx := queryTestExchange
+func ExampleQuery_Status() {
+	status1 := runtime.NewStatus(http.StatusGatewayTimeout)
+	ctx := NewStatusContext(nil, status1)
 	result, status := Query(ctx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
+	fmt.Printf("test: Query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, result, status)
+
+	//Output:
+	//test: Query(ctx,select * from table) -> [rows:<nil>] [status:Timeout]
+
+}
+
+func query(req Request) (pgx.Rows, runtime.Status) {
+	var i pgx.Rows = &rowsT{}
+	return i, runtime.StatusOK()
+}
+
+func ExampleQuery_Proxy() {
+	req := NewQueryRequest(queryRowsRsc, queryRowsSql, nil)
+	if r, ok := any(req).(*request); ok {
+		r.setQueryProxy(query)
+	}
+	result, status := Query(nil, req)
 	fmt.Printf("test: Query(ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, result.CommandTag())
 
 	//Output:
-	//test: Query(ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:{select * 1 false false false true}]
+	//test: Query(ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:]
 
 }
 

@@ -19,10 +19,13 @@ func Exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Stat
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetRequestId(ctx)
 	}
 	if runtime.IsDebugEnvironment() {
-		if proxies, ok := runtime.IsProxyable(ctx); ok {
-			if pExec := findExecProxy(proxies); pExec != nil {
-				result, err := pExec(req)
-				return newCmdTag(result), runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, err).SetRequestId(ctx)
+		status = StatusFromContext(ctx)
+		if status != nil {
+			return CommandTag{}, status
+		}
+		if r, ok := any(req).(*request); ok {
+			if r.execProxy() != nil {
+				return r.execProxy()(req)
 			}
 		}
 	}
