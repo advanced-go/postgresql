@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/postgresql/pgxdml"
-	"net/http"
 	"time"
 )
 
@@ -29,9 +28,9 @@ const (
 )
 
 func ExampleExec_Status() {
-	status1 := runtime.NewStatus(http.StatusGatewayTimeout)
-	ctx := NewStatusContext(nil, status1)
-	result, status := Exec(ctx, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
+	//status1 := runtime.NewStatus(http.StatusGatewayTimeout)
+	//ctx := nil//NewStatusContext(nil, status1)
+	result, status := Exec(nil, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
 
 	//Output:
@@ -52,9 +51,9 @@ func exec(req Request) (CommandTag, runtime.Status) {
 
 func ExampleExec_Proxy() {
 	req := NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil)
-	if r, ok := any(req).(*request); ok {
-		r.setExecProxy(exec)
-	}
+	//if r, ok := any(req).(*request); ok {
+	//	r.setExecProxy(exec)
+	//}
 	tag, status := Exec(nil, req)
 	fmt.Printf("test: Exec(%v) -> [cmd:%v] [status:%v]\n", execUpdateSql, tag, status)
 

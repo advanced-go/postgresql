@@ -71,9 +71,9 @@ func ExampleQuery_TestError() {
 }
 
 func ExampleQuery_Status() {
-	status1 := runtime.NewStatus(http.StatusGatewayTimeout)
-	ctx := NewStatusContext(nil, status1)
-	result, status := Query(ctx, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
+	//status1 := runtime.NewStatus(http.StatusGatewayTimeout)
+	//ctx := NewStatusContext(nil, status1)
+	result, status := Query(nil, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
 	fmt.Printf("test: Query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, result, status)
 
 	//Output:
@@ -88,11 +88,11 @@ func query(req Request) (pgx.Rows, runtime.Status) {
 
 func ExampleQuery_Proxy() {
 	req := NewQueryRequest(queryRowsRsc, queryRowsSql, nil)
-	if r, ok := any(req).(*request); ok {
-		r.setQueryProxy(query)
-	}
+	//if r, ok := any(req).(*request); ok {
+	//	r.setQueryProxy(query)
+	//}
 	result, status := Query(nil, req)
-	fmt.Printf("test: Query(ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, result.CommandTag())
+	fmt.Printf("test: Query(ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, CommandTag{})
 
 	//Output:
 	//test: Query(ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:]

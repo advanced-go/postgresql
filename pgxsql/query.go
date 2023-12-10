@@ -19,16 +19,8 @@ func Query(ctx context.Context, req Request) (result pgx.Rows, status runtime.St
 	if req == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
 	}
-	if runtime.IsDebugEnvironment() {
-		status = StatusFromContext(ctx)
-		if status != nil {
-			return nil, status
-		}
-		if r, ok := any(req).(*request); ok {
-			if r.queryProxy() != nil {
-				return r.queryProxy()(req)
-			}
-		}
+	if dbClient == nil {
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
 	}
 	return queryController.Apply(ctx, req)
 }

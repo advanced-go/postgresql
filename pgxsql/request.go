@@ -2,9 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/postgresql/pgxdml"
-	"github.com/jackc/pgx/v5"
 	"net/http"
 )
 
@@ -35,6 +33,7 @@ type Request interface {
 	Sql() string
 	Args() []any
 	String() string
+	Header() http.Header
 	HttpRequest() *http.Request
 }
 
@@ -49,8 +48,9 @@ type request struct {
 	where         []pgxdml.Attr
 	args          []any
 	error         error
-	exec          func(Request) (CommandTag, runtime.Status)
-	query         func(Request) (pgx.Rows, runtime.Status)
+	header        http.Header
+	//exec          func(Request) (CommandTag, runtime.Status)
+	//query         func(Request) (pgx.Rows, runtime.Status)
 }
 
 func (r *request) Uri() string {
@@ -83,27 +83,33 @@ func (r *request) String() string {
 	return r.template
 }
 
+func (r *request) Header() http.Header {
+	return r.header
+}
+
 func (r *request) HttpRequest() *http.Request {
 	req, _ := http.NewRequest(r.Method(), r.Uri(), nil)
+	req.Header = r.header
 	return req
 }
 
-func (r *request) setExecProxy(proxy func(Request) (CommandTag, runtime.Status)) {
-	r.exec = proxy
-}
+/*
+	func (r *request) setExecProxy(proxy func(Request) (CommandTag, runtime.Status)) {
+		r.exec = proxy
+	}
 
-func (r *request) execProxy() func(Request) (CommandTag, runtime.Status) {
-	return r.exec
-}
+	func (r *request) execProxy() func(Request) (CommandTag, runtime.Status) {
+		return r.exec
+	}
 
-func (r *request) setQueryProxy(proxy func(Request) (pgx.Rows, runtime.Status)) {
-	r.query = proxy
-}
+	func (r *request) setQueryProxy(proxy func(Request) (pgx.Rows, runtime.Status)) {
+		r.query = proxy
+	}
 
-func (r *request) queryProxy() func(Request) (pgx.Rows, runtime.Status) {
-	return r.query
-}
-
+	func (r *request) queryProxy() func(Request) (pgx.Rows, runtime.Status) {
+		return r.query
+	}
+*/
 func OriginUrn(nid, nss, resource string) string {
 	return fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, "region", "zone", nss, resource)
 }
@@ -134,6 +140,7 @@ func BuildDeleteUri(resource string) string {
 
 func NewQueryRequest(uri, template string, where []pgxdml.Attr, args ...any) Request {
 	r := new(request)
+	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = SelectCmd
 	r.uri = uri
@@ -146,6 +153,7 @@ func NewQueryRequest(uri, template string, where []pgxdml.Attr, args ...any) Req
 
 func NewQueryRequestFromValues(uri, template string, values map[string][]string, args ...any) Request {
 	r := new(request)
+	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = SelectCmd
 	r.uri = uri
@@ -158,6 +166,7 @@ func NewQueryRequestFromValues(uri, template string, values map[string][]string,
 
 func NewInsertRequest(uri, template string, values [][]any, args ...any) Request {
 	r := new(request)
+	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = InsertCmd
 	r.uri = uri
@@ -170,6 +179,7 @@ func NewInsertRequest(uri, template string, values [][]any, args ...any) Request
 
 func NewUpdateRequest(uri, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) Request {
 	r := new(request)
+	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = UpdateCmd
 	r.uri = uri
@@ -183,6 +193,7 @@ func NewUpdateRequest(uri, template string, attrs []pgxdml.Attr, where []pgxdml.
 
 func NewDeleteRequest(uri, template string, where []pgxdml.Attr, args ...any) Request {
 	r := new(request)
+	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = DeleteCmd
 	r.uri = uri

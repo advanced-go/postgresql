@@ -2,7 +2,6 @@ package pgxsql
 
 import (
 	"context"
-	"errors"
 	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
@@ -75,13 +74,17 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	if dbClient == nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
-	}
 	if c.limiter != nil && !c.limiter.Allow() {
 		status = runtime.NewStatus(runtime.StatusRateLimited)
 		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, c.name, int(c.limiter.Limit()), rateLimitedFlag)
 		return
+	}
+	// Override
+	location := r.Header().Get(ContentLocation)
+	if len(location) > 0 {
+		// TO DO : Need to read the Rows from the location
+		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: http.StatusOK}, c.name, threshold, statusFlags)
+		return nil, runtime.StatusOK()
 	}
 	newCtx := ctx
 	if c.threshold.Timeout > 0 {
@@ -140,13 +143,17 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	if dbClient == nil {
-		return pgconn.CommandTag{}, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
-	}
 	if c.limiter != nil && !c.limiter.Allow() {
 		status = runtime.NewStatus(runtime.StatusRateLimited)
 		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: status.Code()}, c.name, int(c.limiter.Limit()), rateLimitedFlag)
 		return
+	}
+	// Override
+	location := r.Header().Get(ContentLocation)
+	if len(location) > 0 {
+		// TO DO : Need to read the command tag from the location
+		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: http.StatusOK}, c.name, threshold, statusFlags)
+		return pgconn.CommandTag{}, runtime.StatusOK()
 	}
 	newCtx := ctx
 	if c.threshold.Timeout > 0 {
@@ -200,9 +207,6 @@ func (c *controllerCfgPing) Apply(ctx context.Context) (status runtime.Status) {
 
 	if ctx == nil {
 		ctx = context.Background()
-	}
-	if dbClient == nil {
-		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetRequestId(ctx)
 	}
 	//var newCtx context.Context
 	if c.threshold.Timeout > 0 {

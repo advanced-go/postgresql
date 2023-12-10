@@ -1,11 +1,6 @@
 package pgxsql
 
-import (
-	"fmt"
-	"github.com/advanced-go/core/runtime"
-	"net/http"
-)
-
+/*
 func Example_StatusContext() {
 	status := runtime.NewStatus(http.StatusGatewayTimeout)
 	ctx := NewStatusContext(nil, status)
@@ -18,3 +13,6 @@ func Example_StatusContext() {
 	//test: NewStatusContext() -> Timeout
 
 }
+
+
+*/

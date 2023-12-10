@@ -1,10 +1,6 @@
 package pgxsql
 
-import (
-	"context"
-	"github.com/advanced-go/core/runtime"
-)
-
+/*
 type statusT struct{}
 
 var (
@@ -37,3 +33,6 @@ func StatusFromContext(ctx any) runtime.Status {
 	}
 	return nil
 }
+
+
+*/
