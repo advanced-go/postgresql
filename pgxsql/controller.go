@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	upstreamTimeoutFlag = "UT"
-	rateLimitedFlag     = "RL"
+	//upstreamTimeoutFlag = "UT"
+	rateLimitedFlag = "RL"
 )
 
 // QueryController - an interface that manages query resiliency
