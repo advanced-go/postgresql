@@ -62,7 +62,7 @@ const (
 
 func ExampleQuery_TestError() {
 	//ctx := queryTestExchange
-	result, status := query(nil, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
+	result, status := query(nil, NewQueryRequest(nil, queryErrorRsc, queryErrorSql, nil))
 	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
@@ -73,7 +73,7 @@ func ExampleQuery_TestError() {
 func ExampleQuery_Status() {
 	//status1 := runtime.NewStatus(http.StatusGatewayTimeout)
 	//ctx := NewStatusContext(nil, status1)
-	result, status := query(nil, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
+	result, status := query(nil, NewQueryRequest(nil, queryRowsRsc, queryRowsSql, nil))
 	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, result, status)
 
 	//Output:
@@ -87,7 +87,7 @@ func queryTest(req Request) (pgx.Rows, runtime.Status) {
 }
 
 func ExampleQuery_Proxy() {
-	req := NewQueryRequest(queryRowsRsc, queryRowsSql, nil)
+	req := NewQueryRequest(nil, queryRowsRsc, queryRowsSql, nil)
 	//if r, ok := any(req).(*request); ok {
 	//	r.setQueryProxy(query)
 	//}
@@ -105,7 +105,7 @@ func ExampleQuery_Conditions_Error() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		req := NewQueryRequest(queryRowsRsc, queryConditionsError, nil)
+		req := NewQueryRequest(nil, queryRowsRsc, queryConditionsError, nil)
 		results, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditionsError, status)
@@ -128,7 +128,7 @@ func ExampleQuery_Conditions() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer ClientShutdown()
-		req := NewQueryRequest(queryRowsRsc, queryConditions, nil)
+		req := NewQueryRequest(nil, queryRowsRsc, queryConditions, nil)
 		results, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditions, status)
@@ -153,7 +153,7 @@ func ExampleQuery_Conditions_Where() {
 		defer ClientShutdown()
 
 		where := []pgxdml.Attr{{"location", "garage"}}
-		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
+		req := NewQueryRequest(nil, queryRowsRsc, queryConditionsWhere, where)
 		results, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditionsWhere, status)

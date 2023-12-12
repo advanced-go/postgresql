@@ -85,16 +85,16 @@ func ExampleRequest_Validate() {
 }
 
 func ExampleNewRequest_File() {
-	r := NewQueryRequest("file://[cwd]/example-domain/activitytest/test.json", "", nil)
+	r := NewQueryRequest(nil, "file://[cwd]/example-domain/activitytest/test.json", "", nil)
 	fmt.Printf("test: NewQueryRequest() -> %v\n", r.Uri())
 
-	r = NewInsertRequest("file://[cwd]/example-domain/activitytest/test.json", "", nil)
+	r = NewInsertRequest(nil, "file://[cwd]/example-domain/activitytest/test.json", "", nil)
 	fmt.Printf("test: NewInsertRequest() -> %v\n", r.Uri())
 
-	r = NewUpdateRequest("file://[cwd]/example-domain/activitytest/test.json", "", nil, nil)
+	r = NewUpdateRequest(nil, "file://[cwd]/example-domain/activitytest/test.json", "", nil, nil)
 	fmt.Printf("test: NewUpdateRequest() -> %v\n", r.Uri())
 
-	r = NewDeleteRequest("file://[cwd]/example-domain/activitytest/test.json", "", nil, nil)
+	r = NewDeleteRequest(nil, "file://[cwd]/example-domain/activitytest/test.json", "", nil, nil)
 	fmt.Printf("test: NewDeleteRequest() -> %v\n", r.Uri())
 
 	//Output:

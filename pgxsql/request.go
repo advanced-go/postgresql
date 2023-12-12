@@ -17,14 +17,15 @@ const (
 	statNSS   = "stat"
 
 	postgresNID = "postgresql"
-	PingUri     = "urn:" + postgresNID + ":" + pingNSS
-	StatUri     = "urn:" + postgresNID + ":" + statNSS
+	PingUri     = postgresNID + ":" + pingNSS
+	StatUri     = postgresNID + ":" + statNSS
 
 	fileScheme = "file://"
 	selectCmd  = 0
 	insertCmd  = 1
 	updateCmd  = 2
 	deleteCmd  = 3
+	pingCmd    = 4
 
 	NullExpectedCount = int64(-1)
 )
@@ -74,6 +75,8 @@ func (r *request) Method() string {
 		return updateNSS
 	case deleteCmd:
 		return deleteNSS
+	case pingCmd:
+		return pingNSS
 	}
 	return "unknown"
 }
@@ -153,9 +156,9 @@ func buildFileUri(resource string) string {
 	return buildUri(postgresNID, queryNSS, resource)
 }
 
-func NewQueryRequest(resource, template string, where []pgxdml.Attr, args ...any) Request {
+func NewQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) Request {
 	r := new(request)
-	r.header = make(http.Header)
+	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = selectCmd
 	if strings.HasPrefix(resource, fileScheme) {
@@ -170,9 +173,9 @@ func NewQueryRequest(resource, template string, where []pgxdml.Attr, args ...any
 	//return &Request{ExpectedCount:NullExpectedCount , Cmd: SelectCmd, Uri: uri, Template: template, Where: where, Args: args}
 }
 
-func NewQueryRequestFromValues(resource, template string, values map[string][]string, args ...any) Request {
+func NewQueryRequestFromValues(h http.Header, resource, template string, values map[string][]string, args ...any) Request {
 	r := new(request)
-	r.header = make(http.Header)
+	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = selectCmd
 	if strings.HasPrefix(resource, fileScheme) {
@@ -187,9 +190,9 @@ func NewQueryRequestFromValues(resource, template string, values map[string][]st
 	//return &Request{ExpectedCount: NullExpectedCount, Cmd: SelectCmd, Uri: uri, Template: template, Where: BuildWhere(values), Args: args}
 }
 
-func NewInsertRequest(resource, template string, values [][]any, args ...any) Request {
+func NewInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) Request {
 	r := new(request)
-	r.header = make(http.Header)
+	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = insertCmd
 	if strings.HasPrefix(resource, fileScheme) {
@@ -204,9 +207,9 @@ func NewInsertRequest(resource, template string, values [][]any, args ...any) Re
 	//return &Request{ExpectedCount: NullExpectedCount, Cmd: InsertCmd, Uri: uri, Template: template, Values: values, Args: args}
 }
 
-func NewUpdateRequest(resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) Request {
+func NewUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) Request {
 	r := new(request)
-	r.header = make(http.Header)
+	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = updateCmd
 	if strings.HasPrefix(resource, fileScheme) {
@@ -222,9 +225,9 @@ func NewUpdateRequest(resource, template string, attrs []pgxdml.Attr, where []pg
 	//return &Request{ExpectedCount: NullExpectedCount, Cmd: UpdateCmd, Uri: uri, Template: template, Attrs: attrs, Where: where, Args: args}
 }
 
-func NewDeleteRequest(resource, template string, where []pgxdml.Attr, args ...any) Request {
+func NewDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) Request {
 	r := new(request)
-	r.header = make(http.Header)
+	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = deleteCmd
 	if strings.HasPrefix(resource, fileScheme) {
@@ -238,6 +241,15 @@ func NewDeleteRequest(resource, template string, where []pgxdml.Attr, args ...an
 	r.args = args
 	return r
 	//return &Request{ExpectedCount: NullExpectedCount, Cmd: DeleteCmd, Uri: uri, Template: template, Attrs: nil, Where: where, Args: args}
+}
+
+func newPingRequest(h http.Header) Request {
+	r := new(request)
+	r.header = h //make(http.Header)
+	r.expectedCount = NullExpectedCount
+	r.cmd = pingCmd
+	r.uri = PingUri
+	return r
 }
 
 // BuildWhere - build the []Attr based on the URL query parameters

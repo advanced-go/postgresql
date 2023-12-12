@@ -20,7 +20,7 @@ func ping(ctx context.Context) (status runtime.Status) {
 	if dbClient == nil {
 		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetRequestId(ctx)
 	}
-	fn, ctx = apply(ctx, access.NewStatusCodeClosure(&status), PingUri, runtime.RequestId(ctx), "PING", pingRouteName, pingThreshold)
+	fn, ctx = apply(ctx, newPingRequest(nil), access.NewStatusCodeClosure(&status), pingRouteName, pingThreshold)
 	defer fn()
 	err := dbClient.Ping(ctx)
 	if err != nil {

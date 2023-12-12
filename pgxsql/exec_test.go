@@ -30,7 +30,7 @@ const (
 func ExampleExec_Status() {
 	//status1 := runtime.NewStatus(http.StatusGatewayTimeout)
 	//ctx := nil//NewStatusContext(nil, status1)
-	result, status := exec(nil, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
+	result, status := exec(nil, NewUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
 
 	//Output:
@@ -50,7 +50,7 @@ func execTest(req Request) (CommandTag, runtime.Status) {
 }
 
 func ExampleExec_Proxy() {
-	req := NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil)
+	req := NewUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil)
 	//if r, ok := any(req).(*request); ok {
 	//	r.setExecProxy(exec)
 	//}
@@ -73,7 +73,7 @@ func ExampleExec_Insert() {
 			Location:    "plano",
 			Temperature: 101.33,
 		}
-		req := NewInsertRequest(execInsertRsc, execInsertConditions, pgxdml.NewInsertValues([]any{pgxdml.TimestampFn, cond.Location, cond.Temperature}))
+		req := NewInsertRequest(nil, execInsertRsc, execInsertConditions, pgxdml.NewInsertValues([]any{pgxdml.TimestampFn, cond.Location, cond.Temperature}))
 
 		results, status := exec(nil, req)
 		if !status.OK() {
@@ -96,7 +96,7 @@ func ExampleExec_Update() {
 		defer ClientShutdown()
 		attrs := []pgxdml.Attr{{"Temperature", 45.1234}}
 		where := []pgxdml.Attr{{"Location", "plano"}}
-		req := NewUpdateRequest(execUpdateRsc, execUpdateConditions, attrs, where)
+		req := NewUpdateRequest(nil, execUpdateRsc, execUpdateConditions, attrs, where)
 
 		results, status := exec(nil, req)
 		if !status.OK() {
@@ -118,7 +118,7 @@ func ExampleExec_Delete() {
 	} else {
 		defer ClientShutdown()
 		where := []pgxdml.Attr{{"Location", "plano"}}
-		req := NewDeleteRequest(execDeleteRsc, execDeleteConditions, where)
+		req := NewDeleteRequest(nil, execDeleteRsc, execDeleteConditions, where)
 
 		results, status := exec(nil, req)
 		if !status.OK() {
