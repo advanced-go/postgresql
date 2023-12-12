@@ -12,7 +12,7 @@ import (
 type PingFn func(ctx context.Context) *runtime.Status
 
 // StatusAgent - an agent that will manage returning an endpoint back to receiving traffic
-type StatusAgent interface {
+type statusAgent interface {
 	Run()
 	Stop()
 }
@@ -22,12 +22,12 @@ type agentConfig struct {
 	reset     time.Duration
 	threshold int
 	quit      chan struct{}
-	query     *QueryController
-	exec      *ExecController
+	query     *queryControllerT
+	exec      *execControllerT
 }
 
 // NewStatusAgent - creation of an agent with configuration
-func NewStatusAgent(threshold int, interval time.Duration, query *QueryController, exec *ExecController) (StatusAgent, error) {
+func newStatusAgent(threshold int, interval time.Duration, query *queryControllerT, exec *execControllerT) (statusAgent, error) {
 	if interval <= 0 {
 		return nil, errors.New(fmt.Sprintf("error: interval is less than or equal to zero [%v]", interval))
 	}
@@ -51,7 +51,7 @@ func (a *agentConfig) Stop() {
 	//a.quit <- struct{}{}
 }
 
-func run(threshold int, interval, r time.Duration, quit <-chan struct{}, query *QueryController, exec *ExecController) {
+func run(threshold int, interval, r time.Duration, quit <-chan struct{}, query *queryControllerT, exec *execControllerT) {
 	tick := time.Tick(interval)
 	reset := time.Tick(r)
 	var ticks int64

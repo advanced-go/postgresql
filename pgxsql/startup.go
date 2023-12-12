@@ -10,12 +10,12 @@ import (
 
 var (
 	queryControllerName = "query"
-	queryController     = NewQueryController(queryControllerName, Threshold{}, nil)
+	queryController     = newQueryController(queryControllerName, thresholdValues{}, nil)
 	execControllerName  = "exec"
-	execController      = NewExecController(execControllerName, Threshold{}, nil)
+	execController      = newExecController(execControllerName, thresholdValues{}, nil)
 	pingControllerName  = "ping"
-	pingController      = NewPingController(pingControllerName, Threshold{}, nil)
-	statusAgent         StatusAgent
+	pingController      = newPingController(pingControllerName, thresholdValues{}, nil)
+	statAgent           statusAgent
 	agent               exchange.Agent
 	ready               int64
 	pingThreshold       = 500
@@ -53,8 +53,8 @@ var messageHandler core.MessageHandler = func(msg core.Message) {
 			clientStartup(msg)
 		}
 	case core.ShutdownEvent:
-		if statusAgent != nil {
-			statusAgent.Stop()
+		if statAgent != nil {
+			statAgent.Stop()
 		}
 		ClientShutdown()
 	case core.PingEvent:
@@ -66,12 +66,12 @@ var messageHandler core.MessageHandler = func(msg core.Message) {
 func configControllers(msg core.Message) bool {
 	// Need to also configure all controllers, query, exec and ping
 	var err error
-	statusAgent, err = NewStatusAgent(10, time.Second*2, &queryController, &execController)
+	statAgent, err = newStatusAgent(10, time.Second*2, &queryController, &execController)
 	if err != nil {
 		//Send error message
 		return false
 	}
-	statusAgent.Run()
+	statAgent.Run()
 	return true
 }
 

@@ -17,27 +17,27 @@ const (
 )
 
 // QueryController - an interface that manages query resiliency
-type QueryController interface {
+type queryControllerT interface {
 	Apply(ctx context.Context, r Request) (pgx.Rows, runtime.Status)
-	getThreshold() Threshold
+	getThreshold() thresholdValues
 	updateRateLimiter(limit rate.Limit, burst int)
 }
 
 // ExecController - an interface that manages exec resiliency
-type ExecController interface {
+type execControllerT interface {
 	Apply(ctx context.Context, r Request) (pgconn.CommandTag, runtime.Status)
-	getThreshold() Threshold
+	getThreshold() thresholdValues
 	updateRateLimiter(limit rate.Limit, burst int)
 }
 
 // PingController - an interface that manages ping resiliency
-type PingController interface {
+type pingControllerT interface {
 	Apply(ctx context.Context) runtime.Status
-	getThreshold() Threshold
+	getThreshold() thresholdValues
 }
 
 // Threshold - rate limiting and timeout
-type Threshold struct {
+type thresholdValues struct {
 	Limit   rate.Limit // request per second
 	Burst   int
 	Timeout time.Duration
@@ -45,13 +45,13 @@ type Threshold struct {
 
 type controllerCfg struct {
 	name      string
-	threshold Threshold
+	threshold thresholdValues
 	limiter   *rate.Limiter
 	logFn     access.LogHandler
 }
 
-// NewQueryController - create a new resiliency controller
-func NewQueryController(name string, threshold Threshold, logFn access.LogHandler) QueryController {
+// newQueryController - create a new resiliency controller
+func newQueryController(name string, threshold thresholdValues, logFn access.LogHandler) queryControllerT {
 	ctrl := new(controllerCfg)
 	ctrl.name = name
 	ctrl.threshold = threshold
@@ -108,7 +108,7 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 	return rows, status
 }
 
-func (c *controllerCfg) getThreshold() Threshold {
+func (c *controllerCfg) getThreshold() thresholdValues {
 	return c.threshold
 }
 
@@ -119,8 +119,8 @@ func (c *controllerCfg) updateRateLimiter(limit rate.Limit, burst int) {
 
 type controllerCfgExec controllerCfg
 
-// NewExecController - create a new resiliency controller
-func NewExecController(name string, threshold Threshold, logFn access.LogHandler) ExecController {
+// newExecController - create a new resiliency controller
+func newExecController(name string, threshold thresholdValues, logFn access.LogHandler) execControllerT {
 	ctrl := new(controllerCfgExec)
 	ctrl.name = name
 	ctrl.threshold = threshold
@@ -177,7 +177,7 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 	return
 }
 
-func (c *controllerCfgExec) getThreshold() Threshold {
+func (c *controllerCfgExec) getThreshold() thresholdValues {
 	return c.threshold
 }
 
@@ -188,8 +188,8 @@ func (c *controllerCfgExec) updateRateLimiter(limit rate.Limit, burst int) {
 
 type controllerCfgPing controllerCfg
 
-// NewPingController - create a new resiliency controller
-func NewPingController(name string, threshold Threshold, logFn access.LogHandler) PingController {
+// newPingController - create a new resiliency controller
+func newPingController(name string, threshold thresholdValues, logFn access.LogHandler) pingControllerT {
 	ctrl := new(controllerCfgPing)
 	ctrl.name = name
 	ctrl.threshold = threshold
@@ -234,6 +234,6 @@ func (c *controllerCfgPing) Apply(ctx context.Context) (status runtime.Status) {
 	return
 }
 
-func (c *controllerCfgPing) getThreshold() Threshold {
+func (c *controllerCfgPing) getThreshold() thresholdValues {
 	return c.threshold
 }

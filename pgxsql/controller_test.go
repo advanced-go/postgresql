@@ -3,7 +3,7 @@ package pgxsql
 import "fmt"
 
 func Example_QueryController() {
-	qc := NewQueryController("query", Threshold{}, nil)
+	qc := newQueryController("query", thresholdValues{}, nil)
 
 	fmt.Printf("test: NewQueryController() -> %v\n", qc)
 

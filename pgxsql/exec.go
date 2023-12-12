@@ -21,7 +21,7 @@ func exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Stat
 	if dbClient == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetRequestId(ctx)
 	}
-	fn, ctx = Apply(ctx, access.NewStatusCodeClosure(&status), req.Uri(), runtime.RequestId(ctx), req.Method(), execRouteName, execThreshold)
+	fn, ctx = apply(ctx, access.NewStatusCodeClosure(&status), req.Uri(), runtime.RequestId(ctx), req.Method(), execRouteName, execThreshold)
 	defer fn()
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)

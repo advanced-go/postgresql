@@ -6,7 +6,7 @@ import (
 )
 
 func Example_NewStatusAgent() {
-	a, err := NewStatusAgent(10, time.Second*2, nil, nil)
+	a, err := newStatusAgent(10, time.Second*2, nil, nil)
 
 	fmt.Printf("test: NewStatusAgent() -> %v [err:%v]\n", a, err)
 

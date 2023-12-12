@@ -23,7 +23,7 @@ func query(ctx context.Context, req Request) (result pgx.Rows, status runtime.St
 	if dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
 	}
-	fn, ctx = Apply(ctx, access.NewStatusCodeClosure(&status), req.Uri(), runtime.RequestId(ctx), req.Method(), queryRouteName, queryThreshold)
+	fn, ctx = apply(ctx, access.NewStatusCodeClosure(&status), req.Uri(), runtime.RequestId(ctx), req.Method(), queryRouteName, queryThreshold)
 	defer fn()
 	rows, err := dbClient.Query(ctx, req.Sql(), req.Args())
 	if err != nil {
