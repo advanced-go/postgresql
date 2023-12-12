@@ -9,7 +9,7 @@ import (
 )
 
 // PingFn - ping function
-type PingFn func(ctx context.Context) *runtime.Status
+type pingFn func(ctx context.Context) *runtime.Status
 
 // StatusAgent - an agent that will manage returning an endpoint back to receiving traffic
 type statusAgent interface {

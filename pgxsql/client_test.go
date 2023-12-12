@@ -8,9 +8,9 @@ import (
 func ExampleClientStartup() {
 
 	rsc := core.Resource{Uri: ""}
-	err := ClientStartup(rsc, nil)
+	err := clientStartup2(rsc, nil)
 	if err == nil {
-		defer ClientShutdown()
+		defer clientShutdown()
 	}
 	fmt.Printf("test: ClientStartup() -> %v\n", err)
 

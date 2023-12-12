@@ -12,9 +12,8 @@ import (
 type pkg struct{}
 
 const (
-	PkgPath         = "github.com/advanced-go/postgresql/pgxsql"
-	ReadinessPath   = PkgPath + ":Readiness"
-	ContentLocation = "Content-Location"
+	PkgPath       = "github.com/advanced-go/postgresql/pgxsql"
+	ReadinessPath = PkgPath + ":Readiness"
 )
 
 // Readiness - package readiness

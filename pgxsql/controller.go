@@ -80,12 +80,12 @@ func (c *controllerCfg) Apply(ctx context.Context, r Request) (rows pgx.Rows, st
 		return
 	}
 	// Override
-	location := r.Header().Get(ContentLocation)
-	if len(location) > 0 {
-		// TO DO : Need to read the Rows from the location
-		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: http.StatusOK}, c.name, threshold, statusFlags)
-		return nil, runtime.StatusOK()
-	}
+	//location := r.Header().Get(ContentLocation)
+	//if len(location) > 0 {
+	// TO DO : Need to read the Rows from the location
+	//	c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: http.StatusOK}, c.name, threshold, statusFlags)
+	//	return nil, runtime.StatusOK()
+	//}
 	newCtx := ctx
 	if c.threshold.Timeout > 0 {
 		childCtx, cancel := context.WithTimeout(ctx, c.threshold.Timeout)
@@ -149,12 +149,12 @@ func (c *controllerCfgExec) Apply(ctx context.Context, r Request) (cmd pgconn.Co
 		return
 	}
 	// Override
-	location := r.Header().Get(ContentLocation)
-	if len(location) > 0 {
-		// TO DO : Need to read the command tag from the location
-		c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: http.StatusOK}, c.name, threshold, statusFlags)
-		return pgconn.CommandTag{}, runtime.StatusOK()
-	}
+	//location := r.Header().Get(ContentLocation)
+	//if len(location) > 0 {
+	// TO DO : Need to read the command tag from the location
+	//	c.logFn(access.EgressTraffic, start, time.Since(start), r.HttpRequest(), &http.Response{StatusCode: http.StatusOK}, c.name, threshold, statusFlags)
+	//	return pgconn.CommandTag{}, runtime.StatusOK()
+	//}
 	newCtx := ctx
 	if c.threshold.Timeout > 0 {
 		childCtx, cancel := context.WithTimeout(ctx, c.threshold.Timeout)

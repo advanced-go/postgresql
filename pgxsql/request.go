@@ -7,22 +7,22 @@ import (
 )
 
 const (
-	QueryNSS  = "query"
-	SelectNSS = "select"
-	InsertNSS = "insert"
-	UpdateNSS = "update"
-	DeleteNSS = "delete"
-	PingNSS   = "ping"
-	StatNSS   = "stat"
+	queryNSS  = "query"
+	selectNSS = "select"
+	insertNSS = "insert"
+	updateNSS = "update"
+	deleteNSS = "delete"
+	pingNSS   = "ping"
+	statNSS   = "stat"
 
-	PostgresNID = "postgresql"
-	PingUri     = "urn:" + PostgresNID + ":" + PingNSS
-	StatUri     = "urn:" + PostgresNID + ":" + StatNSS
+	postgresNID = "postgresql"
+	PingUri     = "urn:" + postgresNID + ":" + pingNSS
+	StatUri     = "urn:" + postgresNID + ":" + statNSS
 
-	SelectCmd = 0
-	InsertCmd = 1
-	UpdateCmd = 2
-	DeleteCmd = 3
+	selectCmd = 0
+	insertCmd = 1
+	updateCmd = 2
+	deleteCmd = 3
 
 	NullExpectedCount = int64(-1)
 )
@@ -59,20 +59,20 @@ func (r *request) Uri() string {
 
 func (r *request) Method() string {
 	switch r.cmd {
-	case SelectCmd:
-		return SelectNSS
-	case InsertCmd:
-		return InsertNSS
-	case UpdateCmd:
-		return UpdateNSS
-	case DeleteCmd:
-		return DeleteNSS
+	case selectCmd:
+		return selectNSS
+	case insertCmd:
+		return insertNSS
+	case updateCmd:
+		return updateNSS
+	case deleteCmd:
+		return deleteNSS
 	}
 	return "unknown"
 }
 
 func (r *request) Sql() string {
-	return BuildSql(r)
+	return buildSql(r)
 }
 
 func (r *request) Args() []any {
@@ -110,39 +110,39 @@ func (r *request) HttpRequest() *http.Request {
 		return r.query
 	}
 */
-func OriginUrn(nid, nss, resource string) string {
+func originUrn(nid, nss, resource string) string {
 	return fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, "region", "zone", nss, resource)
 }
 
-func BuildUri(nid string, nss, resource string) string {
-	return OriginUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
+func buildUri(nid string, nss, resource string) string {
+	return originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
 // BuildQueryUri - build an uri with the Query NSS
 func BuildQueryUri(resource string) string {
-	return BuildUri(PostgresNID, QueryNSS, resource)
+	return buildUri(postgresNID, queryNSS, resource)
 }
 
 // BuildInsertUri - build an uri with the Insert NSS
 func BuildInsertUri(resource string) string {
-	return BuildUri(PostgresNID, InsertNSS, resource)
+	return buildUri(postgresNID, insertNSS, resource)
 }
 
 // BuildUpdateUri - build an uri with the Update NSS
 func BuildUpdateUri(resource string) string {
-	return BuildUri(PostgresNID, UpdateNSS, resource)
+	return buildUri(postgresNID, updateNSS, resource)
 }
 
 // BuildDeleteUri - build an uri with the Delete NSS
 func BuildDeleteUri(resource string) string {
-	return BuildUri(PostgresNID, DeleteNSS, resource)
+	return buildUri(postgresNID, deleteNSS, resource)
 }
 
 func NewQueryRequest(uri, template string, where []pgxdml.Attr, args ...any) Request {
 	r := new(request)
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
-	r.cmd = SelectCmd
+	r.cmd = selectCmd
 	r.uri = uri
 	r.template = template
 	r.where = where
@@ -155,10 +155,10 @@ func NewQueryRequestFromValues(uri, template string, values map[string][]string,
 	r := new(request)
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
-	r.cmd = SelectCmd
+	r.cmd = selectCmd
 	r.uri = uri
 	r.template = template
-	r.where = BuildWhere(values)
+	r.where = buildWhere(values)
 	r.args = args
 	return r
 	//return &Request{ExpectedCount: NullExpectedCount, Cmd: SelectCmd, Uri: uri, Template: template, Where: BuildWhere(values), Args: args}
@@ -168,7 +168,7 @@ func NewInsertRequest(uri, template string, values [][]any, args ...any) Request
 	r := new(request)
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
-	r.cmd = InsertCmd
+	r.cmd = insertCmd
 	r.uri = uri
 	r.template = template
 	r.values = values
@@ -181,7 +181,7 @@ func NewUpdateRequest(uri, template string, attrs []pgxdml.Attr, where []pgxdml.
 	r := new(request)
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
-	r.cmd = UpdateCmd
+	r.cmd = updateCmd
 	r.uri = uri
 	r.template = template
 	r.attrs = attrs
@@ -195,7 +195,7 @@ func NewDeleteRequest(uri, template string, where []pgxdml.Attr, args ...any) Re
 	r := new(request)
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
-	r.cmd = DeleteCmd
+	r.cmd = deleteCmd
 	r.uri = uri
 	r.template = template
 	r.attrs = nil
@@ -206,7 +206,7 @@ func NewDeleteRequest(uri, template string, where []pgxdml.Attr, args ...any) Re
 }
 
 // BuildWhere - build the []Attr based on the URL query parameters
-func BuildWhere(values map[string][]string) []pgxdml.Attr {
+func buildWhere(values map[string][]string) []pgxdml.Attr {
 	if len(values) == 0 {
 		return nil
 	}
