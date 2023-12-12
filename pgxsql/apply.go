@@ -12,47 +12,30 @@ const (
 	upstreamTimeoutFlag = "UT"
 )
 
-// Apply - function to be used to apply a controller
-func Apply(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
-	statusFlags := ""
-	limited := false
+// Apply - function to be used to access log and apply a timeout
+func Apply(ctx context.Context, statusCode func() int, uri, requestId, method, routeName string, threshold int) (func(), context.Context) {
+	thresholdFlags := ""
 	start := time.Now()
 	newCtx := ctx
-	var cancelCtx context.CancelFunc
+	var cancelFunc context.CancelFunc
 	req, _ := http.NewRequest(method, uri, nil)
-	threshold := 500
+	req.Header.Set(runtime.XRequestId, requestId)
 
-	/*
-		ctrl, err := EgressLookup(req)
-		if err != nil {
-			statusFlags = err.Error()
-		} else {
-			if rlc := ctrl.RateLimiter(); rlc.IsEnabled() && !rlc.Allow() {
-				limited = true
-				statusFlags = RateLimitFlag
-			}
-			if !limited {
-				if to := ctrl.Timeout(); to.IsEnabled() {
-					newCtx, cancelCtx = context.WithTimeout(ctx, to.Duration())
-				}
-			}
-		}
-
-	*/
-
-	////if to := ctrl.Timeout(); to.IsEnabled() {
-	//	newCtx, cancelCtx = context.WithTimeout(ctx, to.Duration())
-	//}
+	// TO DO : determine if the current context already contains a CancelCtx
+	if ctx != nil {
+	} else {
+		newCtx, cancelFunc = context.WithTimeout(context.Background(), time.Millisecond*time.Duration(threshold))
+	}
 	return func() {
-		if cancelCtx != nil {
-			cancelCtx()
+		if cancelFunc != nil {
+			cancelFunc()
 		}
 		code := statusCode()
 		if code == runtime.StatusDeadlineExceeded {
-			statusFlags = upstreamTimeoutFlag
+			thresholdFlags = upstreamTimeoutFlag
 		} else {
 			threshold = -1
 		}
-		access.Log(access.EgressTraffic, start, time.Since(start), req, &http.Response{StatusCode: code}, "", threshold, statusFlags)
-	}, newCtx, limited
+		access.Log(access.EgressTraffic, start, time.Since(start), req, &http.Response{StatusCode: code}, routeName, threshold, thresholdFlags)
+	}, newCtx
 }

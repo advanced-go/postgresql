@@ -18,6 +18,9 @@ var (
 	statusAgent         StatusAgent
 	agent               exchange.Agent
 	ready               int64
+	pingThreshold       = 500
+	queryThreshold      = 2000
+	execThreshold       = 2000
 )
 
 func isReady() bool {

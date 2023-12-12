@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"context"
+	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -27,13 +28,15 @@ func Readiness(uri string) runtime.Status {
 	return runtime.NewStatus(http.StatusNotFound)
 }
 
-// Query - function for a Query
-func Query(ctx context.Context, req Request) (pgx.Rows, runtime.Status) {
+// Query - function for a query
+func Query(ctx context.Context, req Request) (rows pgx.Rows, status runtime.Status) {
+	defer access.LogDeferred(access.InternalTraffic, access.NewRequest(req.Header(), req.Method(), req.Uri()), "Query", -1, "", access.NewStatusCodeClosure(&status))()
 	return query(ctx, req)
 }
 
 // Exec - function for executing a SQL statement
-func Exec(ctx context.Context, req Request) (CommandTag, runtime.Status) {
+func Exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Status) {
+	defer access.LogDeferred(access.InternalTraffic, access.NewRequest(req.Header(), req.Method(), req.Uri()), "Exec", -1, "", access.NewStatusCodeClosure(&status))()
 	return exec(ctx, req)
 }
 
