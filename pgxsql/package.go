@@ -6,25 +6,21 @@ import (
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"net/http"
 )
 
 type pkg struct{}
 
 const (
-	PkgPath       = "github.com/advanced-go/postgresql/pgxsql"
-	ReadinessPath = PkgPath + ":Readiness"
+	PkgPath = "github.com/advanced-go/postgresql/pgxsql"
+	//ReadinessPath = PkgPath + ":Readiness"
 )
 
 // Readiness - package readiness
-func Readiness(uri string) runtime.Status {
-	if uri == ReadinessPath {
-		if isReady() {
-			return runtime.StatusOK()
-		}
-		return runtime.NewStatus(runtime.StatusNotStarted)
+func Readiness() runtime.Status {
+	if isReady() {
+		return runtime.StatusOK()
 	}
-	return runtime.NewStatus(http.StatusNotFound)
+	return runtime.NewStatus(runtime.StatusNotStarted)
 }
 
 // Query - function for a query
