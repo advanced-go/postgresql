@@ -13,7 +13,7 @@ const (
 )
 
 // Apply - function to be used to access log and apply a timeout
-func apply(ctx context.Context, r Request, statusCode func() int, routeName string, threshold int) (func(), context.Context) {
+func apply(ctx context.Context, r Request, routeName string, threshold int, statusCode func() int) (func(), context.Context) {
 	thresholdFlags := ""
 	start := time.Now()
 	newCtx := ctx
