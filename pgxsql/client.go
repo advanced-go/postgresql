@@ -22,7 +22,7 @@ const (
 )
 
 var clientStartup core.MessageHandler = func(msg core.Message) {
-	if isStarted() {
+	if isReady() {
 		return
 	}
 	start := time.Now()
@@ -38,7 +38,7 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 
 // ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
 func ClientStartup(rsc core.Resource, credentials core.Credentials) error {
-	if isStarted() {
+	if isReady() {
 		return nil
 	}
 	if rsc.Uri == "" {
@@ -60,13 +60,13 @@ func ClientStartup(rsc core.Resource, credentials core.Credentials) error {
 		return errors.New(fmt.Sprintf("unable to acquire connection from pool: %v\n", err1))
 	}
 	conn.Release()
-	setStarted()
+	setReady()
 	return nil
 }
 
 func ClientShutdown() {
 	if dbClient != nil {
-		resetStarted()
+		resetReady()
 		dbClient.Close()
 		dbClient = nil
 	}

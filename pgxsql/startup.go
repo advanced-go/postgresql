@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/advanced-go/messaging/core"
 	"github.com/advanced-go/messaging/exchange"
+	"sync/atomic"
 	"time"
 )
 
@@ -16,7 +17,20 @@ var (
 	pingController      = NewPingController(pingControllerName, Threshold{}, nil)
 	statusAgent         StatusAgent
 	agent               exchange.Agent
+	ready               int64
 )
+
+func isReady() bool {
+	return atomic.LoadInt64(&ready) != 0
+}
+
+func setReady() {
+	atomic.StoreInt64(&ready, 1)
+}
+
+func resetReady() {
+	atomic.StoreInt64(&ready, 0)
+}
 
 func init() {
 	status := exchange.Register(exchange.NewMailbox(PkgPath, false))
