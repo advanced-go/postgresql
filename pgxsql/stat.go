@@ -8,11 +8,10 @@ import (
 )
 
 const (
-	statLoc = PkgPath + ":Stat"
+	statLoc = PkgPath + ":stat"
 )
 
-// Stat - function for retrieving runtime stats
-func Stat(ctx context.Context) (stat *pgxpool.Stat, status runtime.Status) {
+func stat(ctx context.Context) (*pgxpool.Stat, runtime.Status) {
 	if dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil")).SetRequestId(ctx)
 	}

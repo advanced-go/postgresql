@@ -56,7 +56,7 @@ var messageHandler core.MessageHandler = func(msg core.Message) {
 		ClientShutdown()
 	case core.PingEvent:
 		start := time.Now()
-		core.SendReply(msg, Ping(nil).SetDuration(time.Since(start)))
+		core.SendReply(msg, ping(nil).SetDuration(time.Since(start)))
 	}
 }
 

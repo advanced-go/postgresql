@@ -62,26 +62,26 @@ const (
 
 func ExampleQuery_TestError() {
 	//ctx := queryTestExchange
-	result, status := Query(nil, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
-	fmt.Printf("test: Query(nil,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
+	result, status := query(nil, NewQueryRequest(queryErrorRsc, queryErrorSql, nil))
+	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
-	//test: Query(nil,select * from test) -> [rows:<nil>] [status:Invalid Argument [error on PostgreSQL database query call: dbClient is nil]]
+	//test: query(nil,select * from test) -> [rows:<nil>] [status:Invalid Argument [error on PostgreSQL database query call: dbClient is nil]]
 
 }
 
 func ExampleQuery_Status() {
 	//status1 := runtime.NewStatus(http.StatusGatewayTimeout)
 	//ctx := NewStatusContext(nil, status1)
-	result, status := Query(nil, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
-	fmt.Printf("test: Query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, result, status)
+	result, status := query(nil, NewQueryRequest(queryRowsRsc, queryRowsSql, nil))
+	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, result, status)
 
 	//Output:
-	//test: Query(ctx,select * from table) -> [rows:<nil>] [status:Timeout]
+	//test: query(ctx,select * from table) -> [rows:<nil>] [status:Timeout]
 
 }
 
-func query(req Request) (pgx.Rows, runtime.Status) {
+func queryTest(req Request) (pgx.Rows, runtime.Status) {
 	var i pgx.Rows = &rowsT{}
 	return i, runtime.StatusOK()
 }
@@ -91,11 +91,11 @@ func ExampleQuery_Proxy() {
 	//if r, ok := any(req).(*request); ok {
 	//	r.setQueryProxy(query)
 	//}
-	result, status := Query(nil, req)
-	fmt.Printf("test: Query(ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, CommandTag{})
+	result, status := query(nil, req)
+	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, CommandTag{})
 
 	//Output:
-	//test: Query(ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:]
+	//test: query(ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:]
 
 }
 
@@ -106,11 +106,11 @@ func ExampleQuery_Conditions_Error() {
 	} else {
 		defer ClientShutdown()
 		req := NewQueryRequest(queryRowsRsc, queryConditionsError, nil)
-		results, status := Query(nil, req)
+		results, status := query(nil, req)
 		if !status.OK() {
-			fmt.Printf("test: Query(nil,%v) -> [status:%v]\n", queryConditionsError, status)
+			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditionsError, status)
 		} else {
-			fmt.Printf("test: Query(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
+			fmt.Printf("test: query(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
 			conditions, status1 := processResults(results, "")
 			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
 		}
@@ -118,7 +118,7 @@ func ExampleQuery_Conditions_Error() {
 
 	//Output:
 	//[[] github.com/gotemplates/postgresql/pgxsql/query [serverity:ERROR, code:42703, message:column "test" does not exist, position:8, SQLState:42703]]
-	//test: Query(nil,select test,test2 from conditions) -> [status:Internal]
+	//test: query(nil,select test,test2 from conditions) -> [status:Internal]
 
 }
 
@@ -129,18 +129,18 @@ func ExampleQuery_Conditions() {
 	} else {
 		defer ClientShutdown()
 		req := NewQueryRequest(queryRowsRsc, queryConditions, nil)
-		results, status := Query(nil, req)
+		results, status := query(nil, req)
 		if !status.OK() {
-			fmt.Printf("test: Query(nil,%v) -> [status:%v]\n", queryConditions, status)
+			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditions, status)
 		} else {
-			fmt.Printf("test: Query(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
+			fmt.Printf("test: query(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
 			conditions, status1 := processResults(results, "")
 			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
 		}
 	}
 
 	//Output:
-	//test: Query(nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
+	//test: query(nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
 	//test: processResults(results) -> [status:OK] [rows:[{2023-01-26 12:09:12.426535 -0600 CST office 70} {2023-01-26 12:09:12.426535 -0600 CST basement 66.5} {2023-01-26 12:09:12.426535 -0600 CST garage 45.1234}]]
 
 }
@@ -154,18 +154,18 @@ func ExampleQuery_Conditions_Where() {
 
 		where := []pgxdml.Attr{{"location", "garage"}}
 		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
-		results, status := Query(nil, req)
+		results, status := query(nil, req)
 		if !status.OK() {
-			fmt.Printf("test: Query(nil,%v) -> [status:%v]\n", queryConditionsWhere, status)
+			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditionsWhere, status)
 		} else {
-			fmt.Printf("test: Query(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
+			fmt.Printf("test: query(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
 			conditions, status1 := processResults(results, "")
 			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
 		}
 	}
 
 	//Output:
-	//test: Query(nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
+	//test: query(nil,select * from conditions) -> [status:OK] [cmd:{ 0 false false false false}]
 	//test: processResults(results) -> [status:OK] [rows:[{2023-01-26 12:09:12.426535 -0600 CST garage 45.1234}]]
 
 }

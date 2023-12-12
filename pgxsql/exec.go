@@ -7,11 +7,10 @@ import (
 )
 
 const (
-	execLoc = PkgPath + ":Exec"
+	execLoc = PkgPath + ":exec"
 )
 
-// Exec - function for executing a SQL statement
-func Exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Status) {
+func exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Status) {
 	if ctx == nil {
 		ctx = context.Background()
 	}

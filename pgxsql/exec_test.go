@@ -30,7 +30,7 @@ const (
 func ExampleExec_Status() {
 	//status1 := runtime.NewStatus(http.StatusGatewayTimeout)
 	//ctx := nil//NewStatusContext(nil, status1)
-	result, status := Exec(nil, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
+	result, status := exec(nil, NewUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
 
 	//Output:
@@ -38,7 +38,7 @@ func ExampleExec_Status() {
 
 }
 
-func exec(req Request) (CommandTag, runtime.Status) {
+func execTest(req Request) (CommandTag, runtime.Status) {
 	return CommandTag{
 		Sql:          req.Sql(),
 		RowsAffected: 0,
@@ -54,7 +54,7 @@ func ExampleExec_Proxy() {
 	//if r, ok := any(req).(*request); ok {
 	//	r.setExecProxy(exec)
 	//}
-	tag, status := Exec(nil, req)
+	tag, status := exec(nil, req)
 	fmt.Printf("test: Exec(%v) -> [cmd:%v] [status:%v]\n", execUpdateSql, tag, status)
 
 	//Output:
@@ -75,7 +75,7 @@ func ExampleExec_Insert() {
 		}
 		req := NewInsertRequest(execInsertRsc, execInsertConditions, pgxdml.NewInsertValues([]any{pgxdml.TimestampFn, cond.Location, cond.Temperature}))
 
-		results, status := Exec(nil, req)
+		results, status := exec(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Insert(nil,%v) -> [status:%v] [tag:%v}\n", execInsertConditions, status, results)
 		} else {
@@ -98,7 +98,7 @@ func ExampleExec_Update() {
 		where := []pgxdml.Attr{{"Location", "plano"}}
 		req := NewUpdateRequest(execUpdateRsc, execUpdateConditions, attrs, where)
 
-		results, status := Exec(nil, req)
+		results, status := exec(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Update(nil,%v) -> [status:%v] [tag:%v}\n", execUpdateConditions, status, results)
 		} else {
@@ -120,7 +120,7 @@ func ExampleExec_Delete() {
 		where := []pgxdml.Attr{{"Location", "plano"}}
 		req := NewDeleteRequest(execDeleteRsc, execDeleteConditions, where)
 
-		results, status := Exec(nil, req)
+		results, status := exec(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: Delete(nil,%v) -> [status:%v] [tag:%v}\n", execDeleteConditions, status, results)
 		} else {

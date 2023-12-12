@@ -62,7 +62,7 @@ func run(threshold int, interval, r time.Duration, quit <-chan struct{}, query *
 		select {
 		case <-tick:
 			ticks++
-			status = Ping(nil)
+			status = ping(nil)
 			if !status.OK() {
 				failures++
 			}
