@@ -67,7 +67,7 @@ func ExampleExec_Insert() {
 	if err != nil {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
-		defer ClientShutdown()
+		defer clientShutdown()
 		cond := TestConditions{
 			Time:        time.Now().UTC(),
 			Location:    "plano",
@@ -93,7 +93,7 @@ func ExampleExec_Update() {
 	if err != nil {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
-		defer ClientShutdown()
+		defer clientShutdown()
 		attrs := []pgxdml.Attr{{"Temperature", 45.1234}}
 		where := []pgxdml.Attr{{"Location", "plano"}}
 		req := NewUpdateRequest(nil, execUpdateRsc, execUpdateConditions, attrs, where)
@@ -116,7 +116,7 @@ func ExampleExec_Delete() {
 	if err != nil {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
-		defer ClientShutdown()
+		defer clientShutdown()
 		where := []pgxdml.Attr{{"Location", "plano"}}
 		req := NewDeleteRequest(nil, execDeleteRsc, execDeleteConditions, where)
 

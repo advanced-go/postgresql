@@ -9,7 +9,7 @@ func ExamplePing() {
 	if err != nil {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
-		defer ClientShutdown()
+		defer clientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", isReady())
 
 		status := ping(nil)

@@ -56,7 +56,7 @@ func clientStartup2(rsc core.Resource, credentials core.Credentials) error {
 	}
 	conn, err1 := dbClient.Acquire(context.Background())
 	if err1 != nil {
-		ClientShutdown()
+		clientShutdown()
 		return errors.New(fmt.Sprintf("unable to acquire connection from pool: %v\n", err1))
 	}
 	conn.Release()
@@ -64,7 +64,7 @@ func clientStartup2(rsc core.Resource, credentials core.Credentials) error {
 	return nil
 }
 
-func ClientShutdown() {
+func clientShutdown() {
 	if dbClient != nil {
 		resetReady()
 		dbClient.Close()
