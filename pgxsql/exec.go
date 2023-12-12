@@ -18,11 +18,14 @@ func exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Stat
 	if req == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetRequestId(ctx)
 	}
-	if dbClient == nil {
+	if !req.IsFileScheme() && dbClient == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetRequestId(ctx)
 	}
 	fn, ctx = apply(ctx, access.NewStatusCodeClosure(&status), req.Uri(), runtime.RequestId(ctx), req.Method(), execRouteName, execThreshold)
 	defer fn()
+	if req.IsFileScheme() {
+		return CommandTag{}, runtime.StatusOK()
+	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)
 	if err0 != nil {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -19,16 +20,18 @@ const (
 	PingUri     = "urn:" + postgresNID + ":" + pingNSS
 	StatUri     = "urn:" + postgresNID + ":" + statNSS
 
-	selectCmd = 0
-	insertCmd = 1
-	updateCmd = 2
-	deleteCmd = 3
+	fileScheme = "file://"
+	selectCmd  = 0
+	insertCmd  = 1
+	updateCmd  = 2
+	deleteCmd  = 3
 
 	NullExpectedCount = int64(-1)
 )
 
 type Request interface {
 	Uri() string
+	IsFileScheme() bool
 	Method() string
 	Sql() string
 	Args() []any
@@ -55,6 +58,10 @@ type request struct {
 
 func (r *request) Uri() string {
 	return r.uri
+}
+
+func (r *request) IsFileScheme() bool {
+	return strings.HasPrefix(r.uri, fileScheme)
 }
 
 func (r *request) Method() string {
@@ -111,7 +118,10 @@ func (r *request) HttpRequest() *http.Request {
 	}
 */
 func originUrn(nid, nss, resource string) string {
-	return fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, "region", "zone", nss, resource)
+	return fmt.Sprintf("%v.%v.%v:%v.%v", nid, "region", "zone", nss, resource)
+}
+func originFileUrn(nid, resource string) string {
+	return fmt.Sprintf("%v.%v.%v:%v", nid, "region", "zone", resource)
 }
 
 func buildUri(nid string, nss, resource string) string {
@@ -138,12 +148,21 @@ func buildDeleteUri(resource string) string {
 	return buildUri(postgresNID, deleteNSS, resource)
 }
 
+// buildFileUri - build an uri with the Query NSS
+func buildFileUri(resource string) string {
+	return buildUri(postgresNID, queryNSS, resource)
+}
+
 func NewQueryRequest(resource, template string, where []pgxdml.Attr, args ...any) Request {
 	r := new(request)
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = selectCmd
-	r.uri = buildQueryUri(resource)
+	if strings.HasPrefix(resource, fileScheme) {
+		r.uri = resource
+	} else {
+		r.uri = buildQueryUri(resource)
+	}
 	r.template = template
 	r.where = where
 	r.args = args
@@ -156,7 +175,11 @@ func NewQueryRequestFromValues(resource, template string, values map[string][]st
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = selectCmd
-	r.uri = buildQueryUri(resource)
+	if strings.HasPrefix(resource, fileScheme) {
+		r.uri = resource
+	} else {
+		r.uri = buildQueryUri(resource)
+	}
 	r.template = template
 	r.where = buildWhere(values)
 	r.args = args
@@ -169,7 +192,11 @@ func NewInsertRequest(resource, template string, values [][]any, args ...any) Re
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = insertCmd
-	r.uri = buildInsertUri(resource)
+	if strings.HasPrefix(resource, fileScheme) {
+		r.uri = resource
+	} else {
+		r.uri = buildInsertUri(resource)
+	}
 	r.template = template
 	r.values = values
 	r.args = args
@@ -182,7 +209,11 @@ func NewUpdateRequest(resource, template string, attrs []pgxdml.Attr, where []pg
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = updateCmd
-	r.uri = buildUpdateUri(resource)
+	if strings.HasPrefix(resource, fileScheme) {
+		r.uri = resource
+	} else {
+		r.uri = buildUpdateUri(resource)
+	}
 	r.template = template
 	r.attrs = attrs
 	r.where = where
@@ -196,7 +227,11 @@ func NewDeleteRequest(resource, template string, where []pgxdml.Attr, args ...an
 	r.header = make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = deleteCmd
-	r.uri = buildDeleteUri(resource)
+	if strings.HasPrefix(resource, fileScheme) {
+		r.uri = resource
+	} else {
+		r.uri = buildDeleteUri(resource)
+	}
 	r.template = template
 	r.attrs = nil
 	r.where = where

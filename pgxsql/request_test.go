@@ -19,16 +19,22 @@ func ExampleBuildRequest() {
 	rsc := "exec-test-resource.dev"
 	uri := buildInsertUri(rsc)
 
-	fmt.Printf("test: BuildInsertUri(%v) -> %v\n", rsc, uri)
+	fmt.Printf("test: buildInsertUri(%v) -> %v\n", rsc, uri)
 
 	rsc = "query-test-resource.prod"
 	uri = buildQueryUri(rsc)
 
-	fmt.Printf("test: BuildQueryUri(%v) -> %v\n", rsc, uri)
+	fmt.Printf("test: buildQueryUri(%v) -> %v\n", rsc, uri)
+
+	rsc = "file://[cwd]/example-domain/activitytest/test.json"
+	uri = buildQueryUri(rsc)
+
+	fmt.Printf("test: buildQueryUri(%v) -> %v\n", rsc, uri)
 
 	//Output:
-	//test: BuildInsertUri(exec-test-resource.dev) -> urn:postgresql.region.zone:insert.exec-test-resource.dev
-	//test: BuildQueryUri(query-test-resource.prod) -> urn:postgresql.region.zone:query.query-test-resource.prod
+	//test: buildInsertUri(exec-test-resource.dev) -> postgresql.region.zone:insert.exec-test-resource.dev
+	//test: buildQueryUri(query-test-resource.prod) -> postgresql.region.zone:query.query-test-resource.prod
+	//test: buildQueryUri(file://[cwd]/example-domain/activitytest/test.json) -> postgresql.region.zone:query.file://[cwd]/example-domain/activitytest/test.json
 
 }
 
@@ -75,5 +81,26 @@ func ExampleRequest_Validate() {
 	//test: Validate(urn:postgres:query.resource) -> invalid argument: request template is empty
 	//test: Validate(select * from table) -> invalid argument: request Uri is empty
 	//test: Validate(all) -> <nil>
+
+}
+
+func ExampleNewRequest_File() {
+	r := NewQueryRequest("file://[cwd]/example-domain/activitytest/test.json", "", nil)
+	fmt.Printf("test: NewQueryRequest() -> %v\n", r.Uri())
+
+	r = NewInsertRequest("file://[cwd]/example-domain/activitytest/test.json", "", nil)
+	fmt.Printf("test: NewInsertRequest() -> %v\n", r.Uri())
+
+	r = NewUpdateRequest("file://[cwd]/example-domain/activitytest/test.json", "", nil, nil)
+	fmt.Printf("test: NewUpdateRequest() -> %v\n", r.Uri())
+
+	r = NewDeleteRequest("file://[cwd]/example-domain/activitytest/test.json", "", nil, nil)
+	fmt.Printf("test: NewDeleteRequest() -> %v\n", r.Uri())
+
+	//Output:
+	//test: NewQueryRequest() -> file://[cwd]/example-domain/activitytest/test.json
+	//test: NewInsertRequest() -> file://[cwd]/example-domain/activitytest/test.json
+	//test: NewUpdateRequest() -> file://[cwd]/example-domain/activitytest/test.json
+	//test: NewDeleteRequest() -> file://[cwd]/example-domain/activitytest/test.json
 
 }

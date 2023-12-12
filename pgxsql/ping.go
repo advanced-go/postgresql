@@ -22,7 +22,6 @@ func ping(ctx context.Context) (status runtime.Status) {
 	}
 	fn, ctx = apply(ctx, access.NewStatusCodeClosure(&status), PingUri, runtime.RequestId(ctx), "PING", pingRouteName, pingThreshold)
 	defer fn()
-
 	err := dbClient.Ping(ctx)
 	if err != nil {
 		return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err).SetRequestId(ctx)
