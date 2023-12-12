@@ -28,7 +28,7 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 	start := time.Now()
 	rsc := core.AccessResource(&msg)
 	credentials := core.AccessCredentials(&msg)
-	err := ClientStartup(rsc, credentials)
+	err := clientStartup2(rsc, credentials)
 	if err != nil {
 		core.SendReply(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
 		return
@@ -36,8 +36,8 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 	core.SendReply(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
 }
 
-// ClientStartup - entry point for creating the pooling client and verifying a connection can be acquired
-func ClientStartup(rsc core.Resource, credentials core.Credentials) error {
+// clientStartup - entry point for creating the pooling client and verifying a connection can be acquired
+func clientStartup2(rsc core.Resource, credentials core.Credentials) error {
 	if isReady() {
 		return nil
 	}
@@ -56,7 +56,7 @@ func ClientStartup(rsc core.Resource, credentials core.Credentials) error {
 	}
 	conn, err1 := dbClient.Acquire(context.Background())
 	if err1 != nil {
-		ClientShutdown()
+		clientShutdown()
 		return errors.New(fmt.Sprintf("unable to acquire connection from pool: %v\n", err1))
 	}
 	conn.Release()
@@ -64,7 +64,7 @@ func ClientStartup(rsc core.Resource, credentials core.Credentials) error {
 	return nil
 }
 
-func ClientShutdown() {
+func clientShutdown() {
 	if dbClient != nil {
 		resetReady()
 		dbClient.Close()
