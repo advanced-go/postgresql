@@ -17,12 +17,12 @@ func validate(r *request) error {
 
 func ExampleBuildRequest() {
 	rsc := "exec-test-resource.dev"
-	uri := BuildInsertUri(rsc)
+	uri := buildInsertUri(rsc)
 
 	fmt.Printf("test: BuildInsertUri(%v) -> %v\n", rsc, uri)
 
 	rsc = "query-test-resource.prod"
-	uri = BuildQueryUri(rsc)
+	uri = buildQueryUri(rsc)
 
 	fmt.Printf("test: BuildQueryUri(%v) -> %v\n", rsc, uri)
 
