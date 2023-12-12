@@ -2,8 +2,13 @@ package pgxsql
 
 import (
 	"errors"
+	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+)
+
+const (
+	scanLoc = PkgPath + ":Scan"
 )
 
 // Scanner - templated interface for scanning rows
@@ -12,9 +17,9 @@ type Scanner[T any] interface {
 }
 
 // Scan - templated function for scanning rows
-func Scan[T Scanner[T]](rows pgx.Rows) ([]T, error) {
+func Scan[T Scanner[T]](rows pgx.Rows) ([]T, runtime.Status) {
 	if rows == nil {
-		return nil, errors.New("invalid request: rows interface is nil")
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, scanLoc, errors.New("invalid request: rows interface is nil"))
 	}
 	var s T
 	var t []T
@@ -26,21 +31,21 @@ func Scan[T Scanner[T]](rows pgx.Rows) ([]T, error) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return t, err
+			return t, runtime.NewStatusError(runtime.StatusInvalidArgument, scanLoc, err)
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return t, err
+			return t, runtime.NewStatusError(runtime.StatusInvalidArgument, scanLoc, err)
 		}
 		val, err1 := s.Scan(names, values)
 		if err1 != nil {
-			return t, err1
+			return t, runtime.NewStatusError(runtime.StatusInvalidArgument, scanLoc, err1)
 		}
 		t = append(t, val)
 		// Test this
 		rows.Close()
 	}
-	return t, nil
+	return t, runtime.StatusOK()
 }
 
 func createColumnNames(fields []pgconn.FieldDescription) []string {
