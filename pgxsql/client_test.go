@@ -10,7 +10,7 @@ func ExampleClientStartup() {
 	rsc := core.Resource{Uri: ""}
 	err := clientStartup2(rsc, nil)
 	if err == nil {
-		defer clientShutdown()
+		defer ClientShutdown()
 	}
 	fmt.Printf("test: ClientStartup() -> %v\n", err)
 

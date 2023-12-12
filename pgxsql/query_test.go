@@ -104,7 +104,7 @@ func ExampleQuery_Conditions_Error() {
 	if err != nil {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
-		defer clientShutdown()
+		defer ClientShutdown()
 		req := NewQueryRequest(queryRowsRsc, queryConditionsError, nil)
 		results, status := query(nil, req)
 		if !status.OK() {
@@ -127,7 +127,7 @@ func ExampleQuery_Conditions() {
 	if err != nil {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
-		defer clientShutdown()
+		defer ClientShutdown()
 		req := NewQueryRequest(queryRowsRsc, queryConditions, nil)
 		results, status := query(nil, req)
 		if !status.OK() {
@@ -150,7 +150,7 @@ func ExampleQuery_Conditions_Where() {
 	if err != nil {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
-		defer clientShutdown()
+		defer ClientShutdown()
 
 		where := []pgxdml.Attr{{"location", "garage"}}
 		req := NewQueryRequest(queryRowsRsc, queryConditionsWhere, where)
