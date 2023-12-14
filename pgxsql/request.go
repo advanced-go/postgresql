@@ -21,6 +21,7 @@ const (
 	StatUri     = postgresNID + ":" + statNSS
 
 	fileScheme = "file://"
+	urnScheme  = "urn:"
 	selectCmd  = 0
 	insertCmd  = 1
 	updateCmd  = 2
@@ -62,7 +63,7 @@ func (r *request) Uri() string {
 }
 
 func (r *request) IsFileScheme() bool {
-	return strings.HasPrefix(r.uri, fileScheme)
+	return strings.HasPrefix(r.uri, fileScheme) || strings.HasPrefix(r.uri, urnScheme)
 }
 
 func (r *request) Method() string {
