@@ -162,7 +162,7 @@ func NewQueryRequest(h http.Header, resource, template string, where []pgxdml.At
 	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = selectCmd
-	if strings.HasPrefix(resource, fileScheme) {
+	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
 		r.uri = resource
 	} else {
 		r.uri = buildQueryUri(resource)
@@ -179,7 +179,7 @@ func NewQueryRequestFromValues(h http.Header, resource, template string, values 
 	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = selectCmd
-	if strings.HasPrefix(resource, fileScheme) {
+	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
 		r.uri = resource
 	} else {
 		r.uri = buildQueryUri(resource)
@@ -196,7 +196,7 @@ func NewInsertRequest(h http.Header, resource, template string, values [][]any, 
 	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = insertCmd
-	if strings.HasPrefix(resource, fileScheme) {
+	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
 		r.uri = resource
 	} else {
 		r.uri = buildInsertUri(resource)
@@ -213,7 +213,7 @@ func NewUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.A
 	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = updateCmd
-	if strings.HasPrefix(resource, fileScheme) {
+	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
 		r.uri = resource
 	} else {
 		r.uri = buildUpdateUri(resource)
@@ -231,7 +231,7 @@ func NewDeleteRequest(h http.Header, resource, template string, where []pgxdml.A
 	r.header = h //make(http.Header)
 	r.expectedCount = NullExpectedCount
 	r.cmd = deleteCmd
-	if strings.HasPrefix(resource, fileScheme) {
+	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
 		r.uri = resource
 	} else {
 		r.uri = buildDeleteUri(resource)
