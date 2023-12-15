@@ -9,18 +9,20 @@ import (
 )
 
 var (
-	queryControllerName = "query"
-	queryController     = newQueryController(queryControllerName, thresholdValues{}, nil)
-	execControllerName  = "exec"
-	execController      = newExecController(execControllerName, thresholdValues{}, nil)
-	pingControllerName  = "ping"
-	pingController      = newPingController(pingControllerName, thresholdValues{}, nil)
-	statAgent           statusAgent
-	agent               exchange.Agent
-	ready               int64
-	pingThreshold       = 500
-	queryThreshold      = 2000
-	execThreshold       = 2000
+	//queryControllerName = "query"
+	//queryController     = newQueryController(queryControllerName, thresholdValues{}, nil)
+	//execControllerName  = "exec"
+	//execController      = newExecController(execControllerName, thresholdValues{}, nil)
+	//pingControllerName  = "ping"
+	//pingController      = newPingController(pingControllerName, thresholdValues{}, nil)
+	//statAgent           statusAgent
+	agent           exchange.Agent
+	ready           int64
+	pingThreshold   = 500
+	queryThreshold  = 2000
+	insertThreshold = 2000
+	updateThreshold = 2000
+	deleteThreshold = 2000
 )
 
 func isReady() bool {
@@ -49,30 +51,13 @@ func init() {
 var messageHandler core.MessageHandler = func(msg core.Message) {
 	switch msg.Event {
 	case core.StartupEvent:
-		if configControllers(msg) {
-			clientStartup(msg)
-		}
+		clientStartup(msg)
 	case core.ShutdownEvent:
-		if statAgent != nil {
-			statAgent.Stop()
-		}
 		clientShutdown()
 	case core.PingEvent:
 		start := time.Now()
 		core.SendReply(msg, ping(nil).SetDuration(time.Since(start)))
 	}
-}
-
-func configControllers(msg core.Message) bool {
-	// Need to also configure all controllers, query, exec and ping
-	var err error
-	statAgent, err = newStatusAgent(10, time.Second*2, &queryController, &execController)
-	if err != nil {
-		//Send error message
-		return false
-	}
-	statAgent.Run()
-	return true
 }
 
 // Scrap

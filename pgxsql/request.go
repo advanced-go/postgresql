@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"net/http"
-	"strings"
 )
 
 const (
@@ -20,53 +19,55 @@ const (
 	PingUri     = postgresNID + ":" + pingNSS
 	StatUri     = postgresNID + ":" + statNSS
 
-	fileScheme = "file://"
-	urnScheme  = "urn:"
-	selectCmd  = 0
-	insertCmd  = 1
-	updateCmd  = 2
-	deleteCmd  = 3
-	pingCmd    = 4
+	selectCmd = 0
+	insertCmd = 1
+	updateCmd = 2
+	deleteCmd = 3
+	pingCmd   = 4
 
-	NullExpectedCount = int64(-1)
+	queryRouteName  = "query"
+	insertRouteName = "insert"
+	updateRouteName = "update"
+	deleteRouteName = "delete"
+
+	nullExpectedCount = int64(-1)
 )
-
-type Request interface {
-	Uri() string
-	IsFileScheme() bool
-	Method() string
-	Sql() string
-	Args() []any
-	String() string
-	Header() http.Header
-	HttpRequest() *http.Request
-}
 
 // Request - contains data needed to build the SQL statement related to the uri
 type request struct {
 	expectedCount int64
 	cmd           int
-	uri           string
-	template      string
-	values        [][]any
-	attrs         []pgxdml.Attr
-	where         []pgxdml.Attr
-	args          []any
-	error         error
-	header        http.Header
-	//exec          func(Request) (CommandTag, runtime.Status)
-	//query         func(Request) (pgx.Rows, runtime.Status)
+	threshold     int
+
+	resource  string
+	template  string
+	uri       string
+	routeName string
+
+	values [][]any
+	attrs  []pgxdml.Attr
+	where  []pgxdml.Attr
+	args   []any
+	error  error
+	header http.Header
 }
 
-func (r *request) Uri() string {
-	return r.uri
+func newRequest(h http.Header, cmd, threshold int, resource, template, uri, routeName string) *request {
+	r := new(request)
+	r.expectedCount = nullExpectedCount
+	r.cmd = cmd
+	r.threshold = threshold
+
+	r.resource = resource
+	r.template = template
+	r.uri = uri
+	r.routeName = routeName
+
+	r.header = h
+	return r
 }
 
-func (r *request) IsFileScheme() bool {
-	return strings.HasPrefix(r.uri, fileScheme) || strings.HasPrefix(r.uri, urnScheme)
-}
-
-func (r *request) Method() string {
+func method(r *request) string {
 	switch r.cmd {
 	case selectCmd:
 		return selectNSS
@@ -82,50 +83,18 @@ func (r *request) Method() string {
 	return "unknown"
 }
 
-func (r *request) Sql() string {
-	return buildSql(r)
-}
-
-func (r *request) Args() []any {
-	return r.args
-}
-
-func (r *request) String() string {
-	return r.template
-}
-
-func (r *request) Header() http.Header {
+func header(r *request) http.Header {
 	return r.header
 }
 
-func (r *request) HttpRequest() *http.Request {
-	req, _ := http.NewRequest(r.Method(), r.Uri(), nil)
+func NewHttpRequest(r *request) *http.Request {
+	req, _ := http.NewRequest(method(r), r.uri, nil)
 	req.Header = r.header
 	return req
 }
 
-/*
-	func (r *request) setExecProxy(proxy func(Request) (CommandTag, runtime.Status)) {
-		r.exec = proxy
-	}
-
-	func (r *request) execProxy() func(Request) (CommandTag, runtime.Status) {
-		return r.exec
-	}
-
-	func (r *request) setQueryProxy(proxy func(Request) (pgx.Rows, runtime.Status)) {
-		r.query = proxy
-	}
-
-	func (r *request) queryProxy() func(Request) (pgx.Rows, runtime.Status) {
-		return r.query
-	}
-*/
 func originUrn(nid, nss, resource string) string {
 	return fmt.Sprintf("%v.%v.%v:%v.%v", nid, "region", "zone", nss, resource)
-}
-func originFileUrn(nid, resource string) string {
-	return fmt.Sprintf("%v.%v.%v:%v", nid, "region", "zone", resource)
 }
 
 func buildUri(nid string, nss, resource string) string {
@@ -157,99 +126,44 @@ func buildFileUri(resource string) string {
 	return buildUri(postgresNID, queryNSS, resource)
 }
 
-func NewQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) Request {
-	r := new(request)
-	r.header = h //make(http.Header)
-	r.expectedCount = NullExpectedCount
-	r.cmd = selectCmd
-	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
-		r.uri = resource
-	} else {
-		r.uri = buildQueryUri(resource)
-	}
-	r.template = template
+func newQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
+	r := newRequest(h, selectCmd, queryThreshold, resource, template, buildQueryUri(resource), queryRouteName)
 	r.where = where
 	r.args = args
 	return r
-	//return &Request{ExpectedCount:NullExpectedCount , Cmd: SelectCmd, Uri: uri, Template: template, Where: where, Args: args}
 }
 
-func NewQueryRequestFromValues(h http.Header, resource, template string, values map[string][]string, args ...any) Request {
-	r := new(request)
-	r.header = h //make(http.Header)
-	r.expectedCount = NullExpectedCount
-	r.cmd = selectCmd
-	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
-		r.uri = resource
-	} else {
-		r.uri = buildQueryUri(resource)
-	}
-	r.template = template
+func newQueryRequestFromValues(h http.Header, resource, template string, values map[string][]string, args ...any) *request {
+	r := newRequest(h, selectCmd, queryThreshold, resource, template, buildQueryUri(resource), queryRouteName)
 	r.where = buildWhere(values)
 	r.args = args
 	return r
-	//return &Request{ExpectedCount: NullExpectedCount, Cmd: SelectCmd, Uri: uri, Template: template, Where: BuildWhere(values), Args: args}
 }
 
-func NewInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) Request {
-	r := new(request)
-	r.header = h //make(http.Header)
-	r.expectedCount = NullExpectedCount
-	r.cmd = insertCmd
-	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
-		r.uri = resource
-	} else {
-		r.uri = buildInsertUri(resource)
-	}
-	r.template = template
+func newInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) *request {
+	r := newRequest(h, insertCmd, insertThreshold, resource, template, buildInsertUri(resource), insertRouteName)
 	r.values = values
 	r.args = args
 	return r
-	//return &Request{ExpectedCount: NullExpectedCount, Cmd: InsertCmd, Uri: uri, Template: template, Values: values, Args: args}
 }
 
-func NewUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) Request {
-	r := new(request)
-	r.header = h //make(http.Header)
-	r.expectedCount = NullExpectedCount
-	r.cmd = updateCmd
-	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
-		r.uri = resource
-	} else {
-		r.uri = buildUpdateUri(resource)
-	}
-	r.template = template
+func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
+	r := newRequest(h, updateCmd, updateThreshold, resource, template, buildUpdateUri(resource), updateRouteName)
 	r.attrs = attrs
 	r.where = where
 	r.args = args
 	return r
-	//return &Request{ExpectedCount: NullExpectedCount, Cmd: UpdateCmd, Uri: uri, Template: template, Attrs: attrs, Where: where, Args: args}
 }
 
-func NewDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) Request {
-	r := new(request)
-	r.header = h //make(http.Header)
-	r.expectedCount = NullExpectedCount
-	r.cmd = deleteCmd
-	if strings.HasPrefix(resource, fileScheme) || strings.HasPrefix(resource, urnScheme) {
-		r.uri = resource
-	} else {
-		r.uri = buildDeleteUri(resource)
-	}
-	r.template = template
-	r.attrs = nil
+func newDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
+	r := newRequest(h, deleteCmd, deleteThreshold, resource, template, buildDeleteUri(resource), deleteRouteName)
 	r.where = where
 	r.args = args
 	return r
-	//return &Request{ExpectedCount: NullExpectedCount, Cmd: DeleteCmd, Uri: uri, Template: template, Attrs: nil, Where: where, Args: args}
 }
 
-func newPingRequest(h http.Header) Request {
-	r := new(request)
-	r.header = h //make(http.Header)
-	r.expectedCount = NullExpectedCount
-	r.cmd = pingCmd
-	r.uri = PingUri
+func newPingRequest(h http.Header) *request {
+	r := newRequest(h, pingCmd, pingThreshold, "", "", PingUri, pingRouteName)
 	return r
 }
 

@@ -9,26 +9,31 @@ import (
 )
 
 const (
-	queryLoc       = PkgPath + ":query"
-	queryRouteName = "query"
+	queryLoc = PkgPath + ":query"
 )
 
 // Query - function for a Query
-func query(ctx context.Context, req Request) (result pgx.Rows, status runtime.Status) {
+func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Status) {
 	var fn func()
+	newRsc, ok := lookup(req.resource)
 
 	if req == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
 	}
-	if !req.IsFileScheme() && dbClient == nil {
+	if !ok && dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
 	}
-	fn, ctx = apply(ctx, req, queryRouteName, queryThreshold, access.NewStatusCodeClosure(&status))
+	fn, ctx = apply(ctx, req, access.NewStatusCodeClosure(&status))
 	defer fn()
-	if req.IsFileScheme() {
+	if ok {
+		if len(newRsc) == 0 {
+			return nil, runtime.StatusOK()
+		}
+		// TO DO : create rows rom file
 		return nil, runtime.StatusOK()
 	}
-	rows, err := dbClient.Query(ctx, req.Sql(), req.Args())
+	var err error
+	rows, err = dbClient.Query(ctx, buildSql(req), req.args)
 	if err != nil {
 		return nil, runtime.NewStatusError(runtime.StatusIOError, queryLoc, recast(err))
 	}

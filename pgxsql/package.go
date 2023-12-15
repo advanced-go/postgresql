@@ -6,6 +6,7 @@ import (
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"net/http"
 )
 
 type pkg struct{}
@@ -23,16 +24,17 @@ func Readiness() runtime.Status {
 }
 
 // Query - function for a query
-func Query(ctx context.Context, req Request) (rows pgx.Rows, status runtime.Status) {
-	defer access.LogDeferred(access.InternalTraffic, access.NewRequest(req.Header(), req.Method(), req.Uri()), "Query", -1, "", access.NewStatusCodeClosure(&status))()
+func Query(ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows pgx.Rows, status runtime.Status) {
+	req := newQueryRequestFromValues(h, resource, template, values, args...)
+	defer access.LogDeferred(access.InternalTraffic, access.NewRequest(h, method(req), req.uri), req.routeName, -1, "", access.NewStatusCodeClosure(&status))()
 	return query(ctx, req)
 }
 
 // Exec - function for executing a SQL statement
-func Exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Status) {
-	defer access.LogDeferred(access.InternalTraffic, access.NewRequest(req.Header(), req.Method(), req.Uri()), "Exec", -1, "", access.NewStatusCodeClosure(&status))()
-	return exec(ctx, req)
-}
+//func Exec(ctx context.Context, req Request) (tag CommandTag, status runtime.Status) {
+//	defer access.LogDeferred(access.InternalTraffic, access.NewRequest(req.Header(), req.Method(), req.Uri()), "Exec", -1, "", access.NewStatusCodeClosure(&status))()
+//	return exec(ctx, req)
+//}
 
 // Stat - function for retrieving runtime stats
 func Stat(ctx context.Context) (*pgxpool.Stat, runtime.Status) {
