@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/advanced-go/core/access"
-	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 )
 
@@ -14,7 +13,7 @@ const (
 
 func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Status) {
 	var fn func()
-	url, ok := lookup(req.resource)
+	urls, ok := lookup(req.resource)
 
 	if req == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetRequestId(ctx)
@@ -25,7 +24,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Sta
 	fn, ctx = apply(ctx, req, access.NewStatusCodeClosure(&status))
 	defer fn()
 	if ok {
-		return CommandTag{}, io2.ReadStatus(url)
+		return execOverride(urls)
 	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)

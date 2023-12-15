@@ -2,7 +2,6 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"time"
 )
@@ -27,10 +26,12 @@ const (
 	execDeleteConditions = "DELETE FROM conditions"
 
 	status504 = "file://[cwd]/pgxsqltest/status-504.json"
+
+	updateCmdTag = "file://[cwd]/pgxsqltest/update-cmd-tag.json"
 )
 
 func ExampleExec_Status() {
-	setOverrideLookup(status504)
+	setOverrideLookup([]string{"", status504})
 	result, status := exec(nil, newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
 
@@ -39,18 +40,8 @@ func ExampleExec_Status() {
 
 }
 
-func execTest(req *request) (CommandTag, runtime.Status) {
-	return CommandTag{
-		Sql:          buildSql(req),
-		RowsAffected: 0,
-		Insert:       false,
-		Update:       true,
-		Delete:       false,
-		Select:       false,
-	}, runtime.StatusOK()
-}
-
 func ExampleExec_Proxy() {
+	setOverrideLookup([]string{updateCmdTag})
 	req := newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil)
 	tag, status := exec(nil, req)
 	fmt.Printf("test: Exec(%v) -> [cmd:%v] [status:%v]\n", execUpdateSql, tag, status)
