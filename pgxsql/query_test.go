@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+const (
+	status504Q = "file://[cwd]/pgxsqltest/status-504.json"
+)
+
 type TestConditions struct {
 	Time        time.Time
 	Location    string
@@ -61,7 +65,6 @@ const (
 )
 
 func ExampleQuery_TestError() {
-	//ctx := queryTestExchange
 	result, status := query(nil, newQueryRequest(nil, queryErrorRsc, queryErrorSql, nil))
 	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
@@ -70,12 +73,13 @@ func ExampleQuery_TestError() {
 
 }
 
-func ExampleQuery_Status() {
+func ExampleQuery_StatusTimeout() {
+	setOverrideLookup([]string{"", status504Q})
 	rows, status := query(nil, newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil))
-	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
+	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
 
 	//Output:
-	//test: query(ctx,select * from table) -> [rows:<nil>] [status:Timeout]
+	//test: query(nil,select * from table) -> [rows:<nil>] [status:Timeout [error 1]]
 
 }
 

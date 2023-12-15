@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/advanced-go/core/access"
+	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 )
@@ -15,7 +16,7 @@ const (
 // Query - function for a Query
 func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Status) {
 	var fn func()
-	url, ok := lookup(req.resource)
+	urls, ok := lookup(req.resource)
 
 	if req == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
@@ -26,11 +27,8 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Sta
 	fn, ctx = apply(ctx, req, access.NewStatusCodeClosure(&status))
 	defer fn()
 	if ok {
-		if len(url) == 0 {
-			return nil, runtime.StatusOK()
-		}
-		// TO DO : create rows rom file
-		return nil, runtime.StatusOK()
+		// TO DO : create rows from file
+		return io2.ReadResults[pgx.Rows](urls)
 	}
 	var err error
 	rows, err = dbClient.Query(ctx, buildSql(req), req.args)
