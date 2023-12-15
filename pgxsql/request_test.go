@@ -17,7 +17,7 @@ func validate(r *request) error {
 
 func ExampleBuildRequest() {
 	rsc := "exec-test-resource.dev"
-	uri := buildInsertUri(rsc)
+	uri := buildUri(postgresNID, insertNSS, rsc)
 
 	fmt.Printf("test: buildInsertUri(%v) -> %v\n", rsc, uri)
 
@@ -81,26 +81,5 @@ func ExampleRequest_Validate() {
 	//test: Validate(urn:postgres:query.resource) -> invalid argument: request template is empty
 	//test: Validate(select * from table) -> invalid argument: request Uri is empty
 	//test: Validate(all) -> <nil>
-
-}
-
-func ExampleNewRequest_File() {
-	r := NewQueryRequest(nil, "file://[cwd]/example-domain/activitytest/test.json", "", nil)
-	fmt.Printf("test: NewQueryRequest() -> %v\n", r.Uri())
-
-	r = NewInsertRequest(nil, "file://[cwd]/example-domain/activitytest/test.json", "", nil)
-	fmt.Printf("test: NewInsertRequest() -> %v\n", r.Uri())
-
-	r = NewUpdateRequest(nil, "file://[cwd]/example-domain/activitytest/test.json", "", nil, nil)
-	fmt.Printf("test: NewUpdateRequest() -> %v\n", r.Uri())
-
-	r = NewDeleteRequest(nil, "file://[cwd]/example-domain/activitytest/test.json", "", nil, nil)
-	fmt.Printf("test: NewDeleteRequest() -> %v\n", r.Uri())
-
-	//Output:
-	//test: NewQueryRequest() -> file://[cwd]/example-domain/activitytest/test.json
-	//test: NewInsertRequest() -> file://[cwd]/example-domain/activitytest/test.json
-	//test: NewUpdateRequest() -> file://[cwd]/example-domain/activitytest/test.json
-	//test: NewDeleteRequest() -> file://[cwd]/example-domain/activitytest/test.json
 
 }

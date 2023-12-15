@@ -107,24 +107,24 @@ func buildQueryUri(resource string) string {
 }
 
 // buildInsertUri - build an uri with the Insert NSS
-func buildInsertUri(resource string) string {
-	return buildUri(postgresNID, insertNSS, resource)
-}
+//func buildInsertUri(resource string) string {
+//	return buildUri(postgresNID, insertNSS, resource)
+//}
 
 // buildUpdateUri - build an uri with the Update NSS
-func buildUpdateUri(resource string) string {
-	return buildUri(postgresNID, updateNSS, resource)
-}
+//func buildUpdateUri(resource string) string {
+//	return buildUri(postgresNID, updateNSS, resource)
+//}
 
 // buildDeleteUri - build an uri with the Delete NSS
-func buildDeleteUri(resource string) string {
-	return buildUri(postgresNID, deleteNSS, resource)
-}
+//func buildDeleteUri(resource string) string {
+//	return buildUri(postgresNID, deleteNSS, resource)
+//}
 
 // buildFileUri - build an uri with the Query NSS
-func buildFileUri(resource string) string {
-	return buildUri(postgresNID, queryNSS, resource)
-}
+//func buildFileUri(resource string) string {
+//	return buildUri(postgresNID, queryNSS, resource)
+//}
 
 func newQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
 	r := newRequest(h, selectCmd, queryThreshold, resource, template, buildQueryUri(resource), queryRouteName)
@@ -141,14 +141,14 @@ func newQueryRequestFromValues(h http.Header, resource, template string, values 
 }
 
 func newInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) *request {
-	r := newRequest(h, insertCmd, insertThreshold, resource, template, buildInsertUri(resource), insertRouteName)
+	r := newRequest(h, insertCmd, insertThreshold, resource, template, buildUri(postgresNID, insertNSS, resource), insertRouteName)
 	r.values = values
 	r.args = args
 	return r
 }
 
 func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, updateCmd, updateThreshold, resource, template, buildUpdateUri(resource), updateRouteName)
+	r := newRequest(h, updateCmd, updateThreshold, resource, template, buildUri(postgresNID, updateNSS, resource), updateRouteName)
 	r.attrs = attrs
 	r.where = where
 	r.args = args
@@ -156,7 +156,7 @@ func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.A
 }
 
 func newDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, deleteCmd, deleteThreshold, resource, template, buildDeleteUri(resource), deleteRouteName)
+	r := newRequest(h, deleteCmd, deleteThreshold, resource, template, buildUri(postgresNID, deleteNSS, resource), deleteRouteName)
 	r.where = where
 	r.args = args
 	return r
@@ -177,4 +177,12 @@ func buildWhere(values map[string][]string) []pgxdml.Attr {
 		where = append(where, pgxdml.Attr{Key: k, Val: v[0]})
 	}
 	return where
+}
+
+func convert(attrs []Attr) []pgxdml.Attr {
+	result := make([]pgxdml.Attr, len(attrs))
+	for _, pair := range attrs {
+		result = append(result, pgxdml.Attr{Key: pair.Key, Val: pair.Val})
+	}
+	return result
 }

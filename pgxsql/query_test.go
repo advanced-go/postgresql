@@ -62,7 +62,7 @@ const (
 
 func ExampleQuery_TestError() {
 	//ctx := queryTestExchange
-	result, status := query(nil, NewQueryRequest(nil, queryErrorRsc, queryErrorSql, nil))
+	result, status := query(nil, newQueryRequest(nil, queryErrorRsc, queryErrorSql, nil))
 	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
@@ -71,28 +71,18 @@ func ExampleQuery_TestError() {
 }
 
 func ExampleQuery_Status() {
-	//status1 := runtime.NewStatus(http.StatusGatewayTimeout)
-	//ctx := NewStatusContext(nil, status1)
-	result, status := query(nil, NewQueryRequest(nil, queryRowsRsc, queryRowsSql, nil))
-	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, result, status)
+	rows, status := query(nil, newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil))
+	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
 
 	//Output:
 	//test: query(ctx,select * from table) -> [rows:<nil>] [status:Timeout]
 
 }
 
-func queryTest(req Request) (pgx.Rows, runtime.Status) {
-	var i pgx.Rows = &rowsT{}
-	return i, runtime.StatusOK()
-}
-
 func ExampleQuery_Proxy() {
-	req := NewQueryRequest(nil, queryRowsRsc, queryRowsSql, nil)
-	//if r, ok := any(req).(*request); ok {
-	//	r.setQueryProxy(query)
-	//}
-	result, status := query(nil, req)
-	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, result, status, CommandTag{})
+	req := newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil)
+	rows, status := query(nil, req)
+	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, rows, status, CommandTag{})
 
 	//Output:
 	//test: query(ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:]
@@ -105,13 +95,13 @@ func ExampleQuery_Conditions_Error() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer clientShutdown()
-		req := NewQueryRequest(nil, queryRowsRsc, queryConditionsError, nil)
-		results, status := query(nil, req)
+		req := newQueryRequest(nil, queryRowsRsc, queryConditionsError, nil)
+		rows, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditionsError, status)
 		} else {
-			fmt.Printf("test: query(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, results.CommandTag())
-			conditions, status1 := processResults(results, "")
+			fmt.Printf("test: query(nil,%v) -> [status:%v] [cmd:%v]\n", queryConditions, status, rows.CommandTag())
+			conditions, status1 := processResults(rows, "")
 			fmt.Printf("test: processResults(results) -> [status:%v] [rows:%v]\n", status1, conditions)
 		}
 	}
@@ -128,7 +118,7 @@ func ExampleQuery_Conditions() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer clientShutdown()
-		req := NewQueryRequest(nil, queryRowsRsc, queryConditions, nil)
+		req := newQueryRequest(nil, queryRowsRsc, queryConditions, nil)
 		results, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditions, status)
@@ -153,7 +143,7 @@ func ExampleQuery_Conditions_Where() {
 		defer clientShutdown()
 
 		where := []pgxdml.Attr{{"location", "garage"}}
-		req := NewQueryRequest(nil, queryRowsRsc, queryConditionsWhere, where)
+		req := newQueryRequest(nil, queryRowsRsc, queryConditionsWhere, where)
 		results, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditionsWhere, status)

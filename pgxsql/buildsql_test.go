@@ -5,14 +5,14 @@ import "fmt"
 func _ExampleBuildSql() {
 	rsc := "access-log"
 	t := "delete from access_log"
-	req := NewDeleteRequest(nil, rsc, t, nil)
+	req := newDeleteRequest(nil, rsc, t, nil)
 
-	sql := req.Sql() //BuildSql(req)
+	sql := buildSql(req)
 	fmt.Printf("test: Delete.BuildSql(%v) -> %v\n", t, sql)
 
 	t = "update access_log"
-	req = NewUpdateRequest(nil, rsc, t, nil, nil)
-	sql = req.Sql() //BuildSql(req)
+	req = newUpdateRequest(nil, rsc, t, nil, nil)
+	sql = buildSql(req)
 	fmt.Printf("test: Update.BuildSql(%v) -> %v\n", t, sql)
 
 	//Output:
