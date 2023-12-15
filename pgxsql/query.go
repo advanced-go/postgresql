@@ -19,7 +19,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Sta
 	urls, ok := lookup(req.resource)
 
 	if req == nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
 	}
 	if !ok && dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
