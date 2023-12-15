@@ -25,16 +25,17 @@ const (
 	execUpdateConditions = "UPDATE conditions"
 
 	execDeleteConditions = "DELETE FROM conditions"
+
+	status504 = "file://[cwd]/pgxsqltest/status-504.json"
 )
 
 func ExampleExec_Status() {
-	//status1 := runtime.NewStatus(http.StatusGatewayTimeout)
-	//ctx := nil//NewStatusContext(nil, status1)
+	setOverrideLookup(status504)
 	result, status := exec(nil, newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
 
 	//Output:
-	//test: Exec(ctx,update test) -> [tag:{ 0 false false false false}] [status:Timeout]
+	//test: Exec(ctx,update test) -> [tag:{ 0 false false false false}] [status:Timeout [error 1]]
 
 }
 
@@ -51,9 +52,6 @@ func execTest(req *request) (CommandTag, runtime.Status) {
 
 func ExampleExec_Proxy() {
 	req := newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil)
-	//if r, ok := any(req).(*request); ok {
-	//	r.setExecProxy(exec)
-	//}
 	tag, status := exec(nil, req)
 	fmt.Printf("test: Exec(%v) -> [cmd:%v] [status:%v]\n", execUpdateSql, tag, status)
 
