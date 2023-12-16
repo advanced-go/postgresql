@@ -16,9 +16,10 @@ const (
 )
 
 // StartupCredentials - credentials function for authentication
-type StartupCredentials func() (username string, password string, err error)
+type StartupCredentials func() (user string, pswd string, err error)
 
 // StartupResource - PostgreSQL database URL for connectivity configuration
+// "postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
 type StartupResource struct {
 	Uri string
 }
