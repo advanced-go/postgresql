@@ -9,20 +9,14 @@ import (
 )
 
 var (
-	//queryControllerName = "query"
-	//queryController     = newQueryController(queryControllerName, thresholdValues{}, nil)
-	//execControllerName  = "exec"
-	//execController      = newExecController(execControllerName, thresholdValues{}, nil)
-	//pingControllerName  = "ping"
-	//pingController      = newPingController(pingControllerName, thresholdValues{}, nil)
-	//statAgent           statusAgent
-	agent           exchange.Agent
-	ready           int64
 	pingThreshold   = 500
 	queryThreshold  = 2000
 	insertThreshold = 2000
 	updateThreshold = 2000
 	deleteThreshold = 2000
+
+	ready int64
+	agent exchange.Agent
 )
 
 func isReady() bool {
@@ -59,8 +53,3 @@ var messageHandler core.MessageHandler = func(msg core.Message) {
 		core.SendReply(msg, ping(nil).SetDuration(time.Since(start)))
 	}
 }
-
-// Scrap
-//controllerApply = func(ctx context.Context, statusCode func() int, uri, requestId, method string) (func(), context.Context, bool) {
-//	return func() {}, ctx, false
-//}
