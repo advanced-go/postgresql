@@ -15,11 +15,11 @@ const (
 	PkgPath = "github.com/advanced-go/postgresql/pgxsql"
 )
 
-// Credentials - credentials function for authentication
-type Credentials func() (username string, password string, err error)
+// StartupCredentials - credentials function for authentication
+type StartupCredentials func() (username string, password string, err error)
 
-// Resource - database URL for connectivity configuration
-type Resource struct {
+// StartupResource - database URL for connectivity configuration
+type StartupResource struct {
 	Uri string
 }
 
