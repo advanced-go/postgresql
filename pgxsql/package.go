@@ -18,7 +18,7 @@ const (
 // StartupCredentials - credentials function for authentication
 type StartupCredentials func() (username string, password string, err error)
 
-// StartupResource - database URL for connectivity configuration
+// StartupResource - PostgreSQL database URL for connectivity configuration
 type StartupResource struct {
 	Uri string
 }
