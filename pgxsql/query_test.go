@@ -85,13 +85,13 @@ func ExampleQuery_StatusTimeout() {
 
 func ExampleQuery_Proxy() {
 	// Need to clear per test override
-	setOverrideLookup(nil)
+	setOverrideLookup([]string{"", ""})
 	req := newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil)
 	rows, status := query(nil, req)
-	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v] [cmd:%v]\n", queryRowsSql, rows, status, CommandTag{})
+	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
 
 	//Output:
-	//test: query(ctx,select * from table) -> [rows:&{}] [status:OK] [cmd:]
+	//test: query(ctx,select * from table) -> [rows:<nil>] [status:OK]
 
 }
 

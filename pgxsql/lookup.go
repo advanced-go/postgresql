@@ -4,12 +4,23 @@ var (
 	overrideLookup func(string) []string
 )
 
-func setOverrideLookup(t []string) {
+func setOverrideLookup(t any) {
 	if t == nil {
 		overrideLookup = nil
 		return
 	}
-	overrideLookup = func(key string) []string { return t }
+	if s, ok := t.(string); ok {
+		overrideLookup = func(key string) []string { return []string{s, ""} }
+		return
+	}
+	if s, ok := t.([]string); ok {
+		overrideLookup = func(key string) []string { return s }
+		return
+	}
+	if m, ok := t.(map[string][]string); ok {
+		overrideLookup = func(key string) []string { return m[key] }
+		return
+	}
 }
 
 func lookup(key string) ([]string, bool) {
