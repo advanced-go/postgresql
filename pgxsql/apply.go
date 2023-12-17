@@ -39,6 +39,6 @@ func apply(ctx context.Context, r *request, statusCode func() int) (func(), cont
 		} else {
 			threshold = -1
 		}
-		access.Log(access.EgressTraffic, start, time.Since(start), req, &http.Response{StatusCode: code}, r.routeName, threshold, thresholdFlags)
+		access.Log(access.EgressTraffic, start, time.Since(start), req, &http.Response{StatusCode: code}, r.routeName, "", threshold, thresholdFlags)
 	}, newCtx
 }

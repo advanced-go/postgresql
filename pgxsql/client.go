@@ -26,8 +26,8 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 		return
 	}
 	start := time.Now()
-	rsc := core.AccessResource(&msg)
-	credentials := core.AccessCredentials(&msg)
+	rsc := accessResource(&msg)
+	credentials := accessCredentials(&msg)
 	err := clientStartup2(rsc, credentials)
 	if err != nil {
 		core.SendReply(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
@@ -37,7 +37,7 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 }
 
 // clientStartup - entry point for creating the pooling client and verifying a connection can be acquired
-func clientStartup2(rsc core.Resource, credentials core.Credentials) error {
+func clientStartup2(rsc StartupResource, credentials StartupCredentials) error {
 	if isReady() {
 		return nil
 	}
@@ -72,7 +72,7 @@ func clientShutdown() {
 	}
 }
 
-func connectString(url string, credentials core.Credentials) (string, error) {
+func connectString(url string, credentials StartupCredentials) (string, error) {
 	// Username and password can be in the connect string Url
 	if credentials == nil {
 		return url, nil
@@ -82,4 +82,30 @@ func connectString(url string, credentials core.Credentials) (string, error) {
 		return "", errors.New(fmt.Sprintf("error accessing credentials: %v\n", err))
 	}
 	return fmt.Sprintf(url, username, password), nil
+}
+
+// accessCredentials - access function for Credentials in a message
+func accessCredentials(msg *core.Message) StartupCredentials {
+	if msg == nil || msg.Content == nil {
+		return nil
+	}
+	for _, c := range msg.Content {
+		if fn, ok := c.(StartupCredentials); ok {
+			return fn
+		}
+	}
+	return nil
+}
+
+// accessResource - access function for a resource in a message
+func accessResource(msg *core.Message) StartupResource {
+	if msg == nil || msg.Content == nil {
+		return StartupResource{}
+	}
+	for _, c := range msg.Content {
+		if url, ok := c.(StartupResource); ok {
+			return url
+		}
+	}
+	return StartupResource{}
 }
