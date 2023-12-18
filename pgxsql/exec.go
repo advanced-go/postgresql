@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 )
@@ -22,7 +21,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Sta
 	if !ok && dbClient == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetRequestId(ctx)
 	}
-	fn, ctx = apply(ctx, req, access.NewStatusCodeClosure(&status))
+	fn, ctx = apply(ctx, req, &status)
 	defer fn()
 	if ok {
 		return io2.ReadResults[CommandTag](urls)

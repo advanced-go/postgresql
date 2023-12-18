@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
@@ -24,7 +23,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Sta
 	if !ok && dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
 	}
-	fn, ctx = apply(ctx, req, access.NewStatusCodeClosure(&status))
+	fn, ctx = apply(ctx, req, &status)
 	defer fn()
 	if ok {
 		// TO DO : create rows from file

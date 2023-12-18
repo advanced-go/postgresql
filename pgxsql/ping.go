@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/runtime"
 	"net/http"
 )
@@ -20,7 +19,7 @@ func ping(ctx context.Context) (status runtime.Status) {
 	if dbClient == nil {
 		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetRequestId(ctx)
 	}
-	fn, ctx = apply(ctx, newPingRequest(nil), access.NewStatusCodeClosure(&status))
+	fn, ctx = apply(ctx, newPingRequest(nil), &status)
 	defer fn()
 	err := dbClient.Ping(ctx)
 	if err != nil {

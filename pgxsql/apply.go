@@ -13,7 +13,7 @@ const (
 )
 
 // Apply - function to be used to access log and apply a timeout
-func apply(ctx context.Context, r *request, statusCode func() int) (func(), context.Context) {
+func apply(ctx context.Context, r *request, status *runtime.Status) (func(), context.Context) {
 	thresholdFlags := ""
 	start := time.Now()
 	newCtx := ctx
@@ -33,12 +33,12 @@ func apply(ctx context.Context, r *request, statusCode func() int) (func(), cont
 			cancelFunc()
 		}
 		threshold := r.threshold
-		code := statusCode()
+		code := (*status).Code()
 		if code == runtime.StatusDeadlineExceeded {
 			thresholdFlags = upstreamTimeoutFlag
 		} else {
 			threshold = -1
 		}
-		access.Log(access.EgressTraffic, start, time.Since(start), req, &http.Response{StatusCode: code}, r.routeName, "", threshold, thresholdFlags)
+		access.Log(access.EgressTraffic, start, time.Since(start), req, &http.Response{StatusCode: code, Status: (*status).Description()}, r.routeName, "", threshold, thresholdFlags)
 	}, newCtx
 }
