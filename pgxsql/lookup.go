@@ -1,5 +1,7 @@
 package pgxsql
 
+import "github.com/advanced-go/core/runtime"
+
 var (
 	overrideLookup func(string) []string
 )
@@ -9,18 +11,7 @@ func setOverrideLookup(t any) {
 		overrideLookup = nil
 		return
 	}
-	if s, ok := t.(string); ok {
-		overrideLookup = func(key string) []string { return []string{s, ""} }
-		return
-	}
-	if s, ok := t.([]string); ok {
-		overrideLookup = func(key string) []string { return s }
-		return
-	}
-	if m, ok := t.(map[string][]string); ok {
-		overrideLookup = func(key string) []string { return m[key] }
-		return
-	}
+	overrideLookup = runtime.LookupFromType[func(string) []string](t)
 }
 
 func lookup(key string) ([]string, bool) {
