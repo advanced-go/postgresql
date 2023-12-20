@@ -3,7 +3,7 @@ package pgxdml
 import (
 	"errors"
 	"fmt"
-	strings2 "github.com/advanced-go/core/strings"
+	"github.com/advanced-go/core/strings2"
 	"reflect"
 	"strings"
 	"time"

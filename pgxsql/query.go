@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/io2"
+	"github.com/advanced-go/core/io2/io2test"
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 )
@@ -27,7 +27,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Sta
 	defer fn()
 	if ok {
 		// TO DO : create rows from file
-		return io2.ReadResults[pgx.Rows](urls)
+		return io2test.ReadResults[pgx.Rows](urls)
 	}
 	var err error
 	rows, err = dbClient.Query(ctx, buildSql(req), req.args)

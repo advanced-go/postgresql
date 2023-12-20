@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/io2"
+	"github.com/advanced-go/core/io2/io2test"
 	"github.com/advanced-go/core/runtime"
 )
 
@@ -24,7 +24,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Sta
 	fn, ctx = apply(ctx, req, &status)
 	defer fn()
 	if ok {
-		return io2.ReadResults[CommandTag](urls)
+		return io2test.ReadResults[CommandTag](urls)
 	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)
