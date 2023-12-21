@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/io2/io2test"
+	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
 )
@@ -15,19 +15,19 @@ const (
 // Query - function for a Query
 func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Status) {
 	var fn func()
-	urls, ok := lookup(req.resource)
+	urls := lookup(req.resource)
 
 	if req == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
 	}
-	if !ok && dbClient == nil {
+	if urls == nil && dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
 	}
 	fn, ctx = apply(ctx, req, &status)
 	defer fn()
-	if ok {
+	if urls != nil {
 		// TO DO : create rows from file
-		return io2test.ReadResults[pgx.Rows](urls)
+		return io2.ReadResults[pgx.Rows](urls)
 	}
 	var err error
 	rows, err = dbClient.Query(ctx, buildSql(req), req.args)

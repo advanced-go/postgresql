@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/io2/io2test"
+	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 )
 
@@ -13,18 +13,18 @@ const (
 
 func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Status) {
 	var fn func()
-	urls, ok := lookup(req.resource)
+	urls := lookup(req.resource)
 
 	if req == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetRequestId(ctx)
 	}
-	if !ok && dbClient == nil {
+	if urls == nil && dbClient == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetRequestId(ctx)
 	}
 	fn, ctx = apply(ctx, req, &status)
 	defer fn()
-	if ok {
-		return io2test.ReadResults[CommandTag](urls)
+	if urls != nil {
+		return io2.ReadResults[CommandTag](urls)
 	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)

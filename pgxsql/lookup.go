@@ -14,13 +14,13 @@ func setOverrideLookup(t any) {
 	overrideLookup = runtime.LookupFromType[func(string) []string](t)
 }
 
-func lookup(key string) ([]string, bool) {
+func lookup(key string) []string {
 	if overrideLookup == nil || len(key) == 0 {
-		return nil, false
+		return nil
 	}
 	val := overrideLookup(key)
 	if len(val) > 0 {
-		return val, true
+		return val
 	}
-	return nil, false
+	return nil
 }
