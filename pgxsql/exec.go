@@ -13,18 +13,18 @@ const (
 
 func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Status) {
 	var fn func()
-	urls := lookup(req.resource)
+	url, override := lookup.Value(req.resource)
 
 	if req == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : request is nil")).SetRequestId(ctx)
 	}
-	if urls == nil && dbClient == nil {
+	if !override && dbClient == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil")).SetRequestId(ctx)
 	}
 	fn, ctx = apply(ctx, req, &status)
 	defer fn()
-	if urls != nil {
-		return io2.ReadResults[CommandTag](urls)
+	if override {
+		return io2.ReadValues[CommandTag](url)
 	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)

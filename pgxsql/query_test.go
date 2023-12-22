@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
+	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5"
@@ -74,7 +75,8 @@ func ExampleQuery_TestError() {
 }
 
 func ExampleQuery_StatusTimeout() {
-	setOverrideLookup([]string{"", status504Q})
+	//setOverrideLookup([]string{"", status504Q})
+	lookup.SetOverride(status504Q)
 	rows, status := query(nil, newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil))
 	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
 
@@ -85,7 +87,7 @@ func ExampleQuery_StatusTimeout() {
 
 func ExampleQuery_Proxy() {
 	// Need to clear per test override
-	setOverrideLookup([]string{"", ""})
+	lookup.SetOverride(io2.StatusOKUri) //setOverrideLookup([]string{"", ""})
 	req := newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil)
 	rows, status := query(nil, req)
 	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
