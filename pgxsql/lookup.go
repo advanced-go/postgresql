@@ -11,7 +11,7 @@ func setOverrideLookup(t any) {
 		overrideLookup = nil
 		return
 	}
-	overrideLookup = runtime.LookupFromType[func(string) []string](t)
+	overrideLookup = runtime.ListFromType(t)
 }
 
 func lookup(key string) []string {
