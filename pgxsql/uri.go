@@ -5,9 +5,5 @@ import (
 )
 
 var (
-	lookup uri.Lookup
-)
-
-func init() {
 	lookup = uri.NewLookup()
-}
+)
