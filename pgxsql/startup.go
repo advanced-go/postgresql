@@ -35,11 +35,8 @@ func resetReady() {
 func init() {
 	var status runtime.Status
 	agent, status = exchange.NewDefaultAgent(PkgPath)
-	if status.OK() {
-		status = agent.Register(exchange.HostDirectory)
-	}
 	if !status.OK() {
-		fmt.Printf("init() failure: [%v]\n", PkgPath)
+		fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, status)
 	}
 	agent.Run(nil, messageHandler)
 }
