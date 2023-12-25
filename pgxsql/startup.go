@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"fmt"
+	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/messaging/core"
 	"github.com/advanced-go/messaging/exchange"
 	"sync/atomic"
@@ -32,14 +33,15 @@ func resetReady() {
 }
 
 func init() {
-	status := exchange.Register(exchange.NewMailbox(PkgPath, false, false))
+	var status runtime.Status
+	agent, status = exchange.NewDefaultAgent(PkgPath)
 	if status.OK() {
-		agent, status = exchange.NewAgent(PkgPath, messageHandler, nil, nil)
+		status = agent.Register(exchange.HostDirectory)
 	}
 	if !status.OK() {
 		fmt.Printf("init() failure: [%v]\n", PkgPath)
 	}
-	agent.Run()
+	agent.Run(nil, messageHandler)
 }
 
 var messageHandler core.MessageHandler = func(msg core.Message) {
