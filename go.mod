@@ -4,9 +4,8 @@ go 1.21.4
 
 require (
 	github.com/advanced-go/core v0.0.0-20231222200601-673d05ff557f
-	github.com/advanced-go/messaging v0.0.0-20231225133917-831e9774238e
+	github.com/advanced-go/messaging v0.0.0-20231226105116-c6bcb5142548
 	github.com/jackc/pgx/v5 v5.5.0
-	golang.org/x/time v0.4.0
 )
 
 require (
