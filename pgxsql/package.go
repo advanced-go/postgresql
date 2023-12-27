@@ -15,13 +15,13 @@ const (
 	PkgPath = "github.com/advanced-go/postgresql/pgxsql"
 )
 
-// StartupCredentials - credentials function for authentication
-type StartupCredentials func() (user string, pswd string, err error)
+// startupCredentials - credentials function for authentication
+type startupCredentials func() (user string, pswd string, err error)
 
 // StartupResource - PostgreSQL database URL for connectivity configuration
 // DATABASE_URL="postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
 // https://pkg.go.dev/github.com/jackc/pgx/v5/pgtype
-type StartupResource struct {
+type startupResource struct {
 	Uri string
 }
 

@@ -51,7 +51,7 @@ func testStartup() error {
 		From:    "",
 		Event:   core.StartupEvent,
 		Status:  nil,
-		Content: []any{core.Resource{Uri: serviceUrl}},
+		Content: []any{startupResource{Uri: serviceUrl}},
 		ReplyTo: nil,
 	})
 	time.Sleep(time.Second * 3)

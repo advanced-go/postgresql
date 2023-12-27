@@ -6,7 +6,7 @@ import (
 
 func ExampleClientStartup() {
 
-	rsc := StartupResource{Uri: ""}
+	rsc := startupResource{Uri: ""}
 	err := clientStartup2(rsc, nil)
 	if err == nil {
 		defer clientShutdown()
