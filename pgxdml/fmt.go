@@ -3,7 +3,6 @@ package pgxdml
 import (
 	"errors"
 	"fmt"
-	"github.com/advanced-go/core/strings2"
 	"reflect"
 	"strings"
 	"time"
@@ -28,7 +27,7 @@ func FmtValue(v any) (string, error) {
 	}
 	// Process time.Time first
 	if t, ok := v.(time.Time); ok {
-		return fmt.Sprintf(stringFmt, strings2.FmtTimestamp(t)), nil
+		return fmt.Sprintf(stringFmt, FmtTimestamp(t)), nil
 	}
 	if t.Kind() != reflect.String {
 		return fmt.Sprintf(valueFmt, v), nil
