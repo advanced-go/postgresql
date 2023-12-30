@@ -31,7 +31,6 @@ const (
 )
 
 func ExampleExec_Status() {
-	//setOverrideLookup([]string{"", status504})
 	lookup.SetOverride(status504)
 	result, status := exec(nil, newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
@@ -42,7 +41,6 @@ func ExampleExec_Status() {
 }
 
 func ExampleExec_Proxy() {
-	//setOverrideLookup([]string{updateCmdTag})
 	lookup.SetOverride(updateCmdTag)
 	req := newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil)
 	tag, status := exec(nil, req)
