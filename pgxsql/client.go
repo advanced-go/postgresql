@@ -7,8 +7,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/advanced-go/core/messaging"
 	"github.com/advanced-go/core/runtime"
-	"github.com/advanced-go/messaging/core"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 )
@@ -21,7 +21,7 @@ const (
 	clientLoc = PkgPath + ":Startup"
 )
 
-var clientStartup core.MessageHandler = func(msg core.Message) {
+var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	if isReady() {
 		return
 	}
@@ -30,10 +30,10 @@ var clientStartup core.MessageHandler = func(msg core.Message) {
 	credentials := accessCredentials(&msg)
 	err := clientStartup2(rsc, credentials)
 	if err != nil {
-		core.SendReply(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
+		messaging.SendReply(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
 		return
 	}
-	core.SendReply(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
+	messaging.SendReply(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
 }
 
 // clientStartup - entry point for creating the pooling client and verifying a connection can be acquired
@@ -85,7 +85,7 @@ func connectString(url string, credentials startupCredentials) (string, error) {
 }
 
 // accessCredentials - access function for Credentials in a message
-func accessCredentials(msg *core.Message) startupCredentials {
+func accessCredentials(msg *messaging.Message) startupCredentials {
 	if msg == nil || msg.Content == nil {
 		return nil
 	}
@@ -98,7 +98,7 @@ func accessCredentials(msg *core.Message) startupCredentials {
 }
 
 // accessResource - access function for a resource in a message
-func accessResource(msg *core.Message) startupResource {
+func accessResource(msg *messaging.Message) startupResource {
 	if msg == nil || msg.Content == nil {
 		return startupResource{}
 	}

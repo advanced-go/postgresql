@@ -2,9 +2,8 @@ package pgxsql
 
 import (
 	"fmt"
+	"github.com/advanced-go/core/messaging"
 	"github.com/advanced-go/core/runtime"
-	"github.com/advanced-go/messaging/core"
-	"github.com/advanced-go/messaging/exchange"
 	"sync/atomic"
 	"time"
 )
@@ -17,7 +16,7 @@ var (
 	deleteThreshold = 2000
 
 	ready int64
-	agent exchange.Agent
+	agent messaging.Agent
 )
 
 func isReady() bool {
@@ -34,21 +33,21 @@ func resetReady() {
 
 func init() {
 	var status runtime.Status
-	agent, status = exchange.NewDefaultAgent(PkgPath, messageHandler, false)
+	agent, status = messaging.NewDefaultAgent(PkgPath, messageHandler, false)
 	if !status.OK() {
 		fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, status)
 	}
 	agent.Run()
 }
 
-var messageHandler core.MessageHandler = func(msg core.Message) {
+var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
 	switch msg.Event {
-	case core.StartupEvent:
+	case messaging.StartupEvent:
 		clientStartup(msg)
-	case core.ShutdownEvent:
+	case messaging.ShutdownEvent:
 		clientShutdown()
-	case core.PingEvent:
+	case messaging.PingEvent:
 		start := time.Now()
-		core.SendReply(msg, ping(nil).SetDuration(time.Since(start)))
+		messaging.SendReply(msg, ping(nil).SetDuration(time.Since(start)))
 	}
 }
