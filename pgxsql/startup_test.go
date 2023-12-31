@@ -45,7 +45,7 @@ func testStartup() error {
 		return nil
 	}
 
-	messaging.SendCtrl(messaging.Message{
+	messaging.HostExchange.SendCtrl(messaging.Message{
 		To:      PkgPath,
 		From:    "",
 		Event:   messaging.StartupEvent,
