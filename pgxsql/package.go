@@ -12,7 +12,7 @@ import (
 type pkg struct{}
 
 const (
-	PkgPath = "github.com/advanced-go/postgresql/pgxsql"
+	PkgPath = "github/advanced-go/postgresql/pgxsql"
 )
 
 // startupCredentials - credentials function for authentication

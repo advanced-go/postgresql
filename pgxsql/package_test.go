@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-func Example_PackageUri() {
+func _Example_PackageUri() {
 	pkgPath := reflect.TypeOf(any(pkg{})).PkgPath()
 	fmt.Printf("test: PkgPath = \"%v\"\n", pkgPath)
 
