@@ -6,14 +6,14 @@ import (
 )
 
 const (
-	UpdateTestEntryStmt = "UPDATE test_entry"
+	updateTestEntryStmt = "UPDATE test_entry"
 )
 
 func ExampleWriteUpdate() {
 	where := []Attr{{Key: "customer_id", Val: "customer1"}, {Key: "created_ts", Val: "2022/11/30 15:48:54.049496"}} //time.Now()}}
 	attrs := []Attr{{Key: "status_code", Val: "503"}, {Key: "minimum_code", Val: 99}, {Key: "created_ts", Val: Function("now()")}}
 
-	sql, err := WriteUpdate(UpdateTestEntryStmt, attrs, where)
+	sql, err := WriteUpdate(updateTestEntryStmt, attrs, where)
 	fmt.Printf("test: WriteUpdate(stmt,attrs,where) -> [error:%v] [stmt:%v]\n", err, NilEmpty(sql))
 
 	//fmt.Printf("Stmt       : %v\n", NilEmpty(sql))

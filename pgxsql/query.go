@@ -26,7 +26,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Sta
 	defer fn()
 	if override {
 		// TO DO : create rows from file
-		return runtime.New[pgx.Rows](url)
+		return runtime.New[pgx.Rows](url, nil)
 	}
 	var err error
 	rows, err = dbClient.Query(ctx, buildSql(req), req.args)

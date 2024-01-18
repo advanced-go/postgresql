@@ -23,7 +23,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Sta
 	fn, ctx = apply(ctx, req, &status)
 	defer fn()
 	if override {
-		return runtime.New[CommandTag](url)
+		return runtime.New[CommandTag](url, nil)
 	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)
