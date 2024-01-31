@@ -1,0 +1,8 @@
+// This is a config map
+// Note: comments are only allowed on a single line by themselves, cannot add a comment to the end of a value
+
+user : bobs-your-uncle
+pswd : let-me-in
+
+// Needs to change for each environment
+uri : postgres://{user}:{pswd}@{sub-domain}.{db-name}.cloud.timescale.com:31770/tsdb?sslmode=require

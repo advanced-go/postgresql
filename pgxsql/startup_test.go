@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
+	"github.com/advanced-go/core/host"
 	"github.com/advanced-go/core/messaging"
 	"github.com/advanced-go/core/runtime"
 	"time"
@@ -24,7 +25,7 @@ func Example_Startup() {
 		defer clientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", isReady())
 
-		status := messaging.Ping[runtime.Output](nil, postgresUri)
+		status := host.Ping[runtime.Output](nil, postgresUri)
 		fmt.Printf("test: messaging.Ping() -> %v\n", status)
 
 	}
@@ -45,12 +46,14 @@ func testStartup() error {
 		return nil
 	}
 
+	m := runtime.NewEmptyStringsMap()
+	m.Add(uriConfigKey, serviceUrl)
 	messaging.HostExchange.SendCtrl(messaging.Message{
 		To:      PkgPath,
 		From:    "",
 		Event:   messaging.StartupEvent,
 		Status:  nil,
-		Content: []any{startupResource{Uri: serviceUrl}},
+		Config:  m,
 		ReplyTo: nil,
 	})
 	time.Sleep(time.Second * 3)

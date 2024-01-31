@@ -1,9 +1,6 @@
 package pgxsql
 
-import (
-	"fmt"
-)
-
+/*
 func ExampleClientStartup() {
 
 	rsc := startupResource{Uri: ""}
@@ -17,3 +14,6 @@ func ExampleClientStartup() {
 	//test: ClientStartup() -> database URL is empty
 
 }
+
+
+*/

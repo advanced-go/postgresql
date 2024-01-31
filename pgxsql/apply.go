@@ -13,7 +13,7 @@ const (
 )
 
 // Apply - function to be used to access log and apply a timeout
-func apply(ctx context.Context, r *request, status *runtime.Status) (func(), context.Context) {
+func apply2(ctx context.Context, r *request, status *runtime.Status) (func(), context.Context) {
 	thresholdFlags := ""
 	start := time.Now()
 	newCtx := ctx

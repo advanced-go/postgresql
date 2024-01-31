@@ -25,10 +25,12 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	if isReady() {
 		return
 	}
+	if msg.Config == nil {
+		messaging.SendReply(msg, runtime.NewStatusError(runtime.StatusInvalidArgument, clientLoc, errors.New("error: strings map configuration is nil")))
+		return
+	}
 	start := time.Now()
-	rsc := accessResource(&msg)
-	credentials := accessCredentials(&msg)
-	err := clientStartup2(rsc, credentials)
+	err := clientStartup2(msg.Config)
 	if err != nil {
 		messaging.SendReply(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
 		return
@@ -37,15 +39,16 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 }
 
 // clientStartup - entry point for creating the pooling client and verifying a connection can be acquired
-func clientStartup2(rsc startupResource, credentials startupCredentials) error {
+func clientStartup2(cfg *runtime.StringsMap) error {
 	if isReady() {
 		return nil
 	}
-	if rsc.Uri == "" {
+	url, status := cfg.Get(uriConfigKey)
+	if !status.OK() {
 		return errors.New("database URL is empty")
 	}
 	// Create connection string with credentials
-	s, err := connectString(rsc.Uri, credentials)
+	s, err := connectString(url, cfg)
 	if err != nil {
 		return err
 	}
@@ -72,18 +75,23 @@ func clientShutdown() {
 	}
 }
 
-func connectString(url string, credentials startupCredentials) (string, error) {
+func connectString(url string, cfg *runtime.StringsMap) (string, error) {
+	user, status := cfg.Get(userConfigKey)
+	pswd, status0 := cfg.Get(pswdConfigKey)
 	// Username and password can be in the connect string Url
-	if credentials == nil {
+	if !status.OK() && !status0.OK() {
 		return url, nil
 	}
-	username, password, err := credentials()
-	if err != nil {
-		return "", errors.New(fmt.Sprintf("error accessing credentials: %v\n", err))
+	if !status.OK() {
+		return "", errors.New("error: user is not configured")
 	}
-	return fmt.Sprintf(url, username, password), nil
+	if !status0.OK() {
+		return "", errors.New("error: password is not configured")
+	}
+	return fmt.Sprintf(url, user, pswd), nil
 }
 
+/*
 // accessCredentials - access function for Credentials in a message
 func accessCredentials(msg *messaging.Message) startupCredentials {
 	if msg == nil || msg.Content == nil {
@@ -109,3 +117,6 @@ func accessResource(msg *messaging.Message) startupResource {
 	}
 	return startupResource{}
 }
+
+
+*/
