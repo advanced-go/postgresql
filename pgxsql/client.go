@@ -25,10 +25,6 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	if isReady() {
 		return
 	}
-	if msg.Config == nil {
-		messaging.SendReply(msg, runtime.NewStatusError(runtime.StatusInvalidArgument, clientLoc, errors.New("error: strings map configuration is nil")))
-		return
-	}
 	start := time.Now()
 	err := clientStartup2(msg.Config)
 	if err != nil {
@@ -42,6 +38,9 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 func clientStartup2(cfg *runtime.StringsMap) error {
 	if isReady() {
 		return nil
+	}
+	if cfg == nil {
+		return errors.New("error: strings map configuration is nil")
 	}
 	url, status := cfg.Get(uriConfigKey)
 	if !status.OK() {
