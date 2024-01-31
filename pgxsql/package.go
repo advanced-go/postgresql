@@ -18,16 +18,6 @@ const (
 	uriConfigKey  = "uri"
 )
 
-// startupCredentials - credentials function for authentication
-//type startupCredentials func() (user string, pswd string, err error)
-
-// StartupResource - PostgreSQL database URL for connectivity configuration
-// DATABASE_URL="postgres://{user}:{pswd}@{sub-domain}.{database}.cloud.timescale.com:{port}/{database}?sslmode=require"
-// https://pkg.go.dev/github.com/jackc/pgx/v5/pgtype
-//type startupResource struct {
-//	Uri string
-//}
-
 // Attr - key value pair
 type Attr struct {
 	Key string
