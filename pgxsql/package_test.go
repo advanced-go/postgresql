@@ -38,7 +38,7 @@ func ExampleNewStringsMap() {
 	fmt.Printf("test: Get(\"%v\") -> [urir:%v] [status:%v]\n", key, val, status)
 
 	//Output:
-	//test: NewStringsMap("file://[cwd]/runtimetest/config-map.txt") -> [err:<nil>]
+	//test: NewStringsMap("file://[cwd]/pgxsqltest/config-map.txt") -> [err:<nil>]
 	//test: Get("user") -> [user:bobs-your-uncle] [status:OK]
 	//test: Get("pswd") -> [pswd:let-me-in] [status:OK]
 	//test: Get("uri") -> [urir:postgres://{user}:{pswd}@{sub-domain}.{db-name}.cloud.timescale.com:31770/tsdb?sslmode=require] [status:OK]

@@ -32,9 +32,9 @@ func ExampleBuildRequest() {
 	fmt.Printf("test: buildQueryUri(%v) -> %v\n", rsc, uri)
 
 	//Output:
-	//test: buildInsertUri(exec-test-resource.dev) -> postgresql.region.zone:insert.exec-test-resource.dev
-	//test: buildQueryUri(query-test-resource.prod) -> postgresql.region.zone:query.query-test-resource.prod
-	//test: buildQueryUri(file://[cwd]/example-domain/activitytest/test.json) -> postgresql.region.zone:query.file://[cwd]/example-domain/activitytest/test.json
+	//test: buildInsertUri(exec-test-resource.dev) -> github/advanced-go/postgresql/pgxsql:insert.exec-test-resource.dev
+	//test: buildQueryUri(query-test-resource.prod) -> github/advanced-go/postgresql/pgxsql:query.query-test-resource.prod
+	//test: buildQueryUri(file://[cwd]/example-domain/activitytest/test.json) -> github/advanced-go/postgresql/pgxsql:query.file://[cwd]/example-domain/activitytest/test.json
 
 }
 

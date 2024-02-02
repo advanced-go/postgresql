@@ -14,19 +14,21 @@ const (
 // Query - function for a Query
 func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Status) {
 	url, override := lookup.Value(req.resource)
+	var newCtx context.Context
 
 	if req == nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(ctx)
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(newCtx)
 	}
+	defer apply(ctx, &newCtx, req, statusCode(&status))
 	if override {
 		// TO DO : create rows from file
 		return runtime.New[pgx.Rows](url, nil)
 	}
 	if dbClient == nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(ctx)
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(newCtx)
 	}
 	var err error
-	rows, err = dbClient.Query(ctx, buildSql(req), req.args)
+	rows, err = dbClient.Query(newCtx, buildSql(req), req.args)
 	if err != nil {
 		return nil, runtime.NewStatusError(runtime.StatusIOError, queryLoc, recast(err))
 	}

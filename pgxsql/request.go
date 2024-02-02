@@ -25,10 +25,10 @@ const (
 	deleteCmd = 3
 	pingCmd   = 4
 
-	queryRouteName  = "query"
-	insertRouteName = "insert"
-	updateRouteName = "update"
-	deleteRouteName = "delete"
+	//queryRouteName  = "query"
+	//insertRouteName = "insert"
+	//updateRouteName = "update"
+	//deleteRouteName = "delete"
 
 	nullExpectedCount = int64(-1)
 )
@@ -39,10 +39,10 @@ type request struct {
 	cmd           int
 	threshold     int
 
-	resource  string
-	template  string
-	uri       string
-	routeName string
+	resource       string
+	template       string
+	uri            string
+	controllerName string
 
 	values [][]any
 	attrs  []pgxdml.Attr
@@ -52,7 +52,7 @@ type request struct {
 	header http.Header
 }
 
-func newRequest(h http.Header, cmd, threshold int, resource, template, uri, routeName string) *request {
+func newRequest(h http.Header, cmd, threshold int, resource, template, uri, controllerName string) *request {
 	r := new(request)
 	r.expectedCount = nullExpectedCount
 	r.cmd = cmd
@@ -61,7 +61,7 @@ func newRequest(h http.Header, cmd, threshold int, resource, template, uri, rout
 	r.resource = resource
 	r.template = template
 	r.uri = uri
-	r.routeName = routeName
+	r.controllerName = controllerName
 
 	r.header = h
 	return r
@@ -97,8 +97,9 @@ func originUrn(nid, nss, resource string) string {
 	return fmt.Sprintf("%v.%v.%v:%v.%v", nid, "region", "zone", nss, resource)
 }
 
-func buildUri(nid string, nss, resource string) string {
-	return originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
+func buildUri(_, nss, resource string) string {
+	return fmt.Sprintf("%v:%v.%v", PkgPath, nss, resource)
+	//originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
 // buildQueryUri - build an uri with the Query NSS
@@ -127,28 +128,28 @@ func buildQueryUri(resource string) string {
 //}
 
 func newQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, selectCmd, queryThreshold, resource, template, buildQueryUri(resource), queryRouteName)
+	r := newRequest(h, selectCmd, queryThreshold, resource, template, buildQueryUri(resource), queryControllerName)
 	r.where = where
 	r.args = args
 	return r
 }
 
 func newQueryRequestFromValues(h http.Header, resource, template string, values map[string][]string, args ...any) *request {
-	r := newRequest(h, selectCmd, queryThreshold, resource, template, buildQueryUri(resource), queryRouteName)
+	r := newRequest(h, selectCmd, queryThreshold, resource, template, buildQueryUri(resource), queryControllerName)
 	r.where = buildWhere(values)
 	r.args = args
 	return r
 }
 
 func newInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) *request {
-	r := newRequest(h, insertCmd, insertThreshold, resource, template, buildUri(postgresNID, insertNSS, resource), insertRouteName)
+	r := newRequest(h, insertCmd, insertThreshold, resource, template, buildUri(postgresNID, insertNSS, resource), insertControllerName)
 	r.values = values
 	r.args = args
 	return r
 }
 
 func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, updateCmd, updateThreshold, resource, template, buildUri(postgresNID, updateNSS, resource), updateRouteName)
+	r := newRequest(h, updateCmd, updateThreshold, resource, template, buildUri(postgresNID, updateNSS, resource), updateControllerName)
 	r.attrs = attrs
 	r.where = where
 	r.args = args
@@ -156,16 +157,18 @@ func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.A
 }
 
 func newDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, deleteCmd, deleteThreshold, resource, template, buildUri(postgresNID, deleteNSS, resource), deleteRouteName)
+	r := newRequest(h, deleteCmd, deleteThreshold, resource, template, buildUri(postgresNID, deleteNSS, resource), deleteControllerName)
 	r.where = where
 	r.args = args
 	return r
 }
 
+/*
 func newPingRequest(h http.Header) *request {
 	r := newRequest(h, pingCmd, pingThreshold, "", "", PingUri, pingRouteName)
 	return r
 }
+*/
 
 // BuildWhere - build the []Attr based on the URL query parameters
 func buildWhere(values map[string][]string) []pgxdml.Attr {
