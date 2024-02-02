@@ -42,6 +42,6 @@ var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
 		clientShutdown()
 	case messaging.PingEvent:
 		start := time.Now()
-		messaging.SendReply(msg, messaging.Status{Code: http.StatusOK, Duration: time.Since(start)})
+		messaging.SendReply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
 	}
 }

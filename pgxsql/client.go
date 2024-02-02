@@ -28,10 +28,10 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	start := time.Now()
 	err := clientStartup2(msg.Config)
 	if err != nil {
-		messaging.SendReply(msg, messaging.Status{Code: http.StatusOK, Error: err, Duration: time.Since(start)})
+		messaging.SendReply(msg, messaging.NewStatusDurationError(http.StatusOK, time.Since(start), err))
 		return
 	}
-	messaging.SendReply(msg, messaging.Status{Code: http.StatusOK, Duration: time.Since(start)})
+	messaging.SendReply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
 }
 
 // clientStartup - entry point for creating the pooling client and verifying a connection can be acquired

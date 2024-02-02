@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/advanced-go/core/messaging"
+	"github.com/advanced-go/core/uri"
+	"net/http"
 	"time"
 )
 
@@ -14,7 +16,18 @@ const (
 	postgresUri = "github.com/idiomatic-go/postgresql/pgxsql"
 )
 
-func Example_Startup() {
+func ExampleStartupPing() {
+	r, _ := http.NewRequest("", "github/advanced-go/postgresql/pgxsql:ping", nil)
+	nid, rsc, ok := uri.UprootUrn(r.URL.Path)
+	status := messaging.Ping(nil, nid)
+	fmt.Printf("test: Ping() -> [nid:%v] [nss:%v] [ok:%v] [status-code:%v]\n", nid, rsc, ok, status.Code)
+
+	//Output:
+	//test: Ping() -> [nid:github/advanced-go/postgresql/pgxsql] [nss:ping] [ok:true] [status-code:200]
+
+}
+
+func ExampleStartup() {
 	fmt.Printf("test: isReady() -> %v\n", isReady())
 	err := testStartup()
 	if err != nil {
@@ -30,9 +43,7 @@ func Example_Startup() {
 
 	//Output:
 	//test: isReady() -> false
-	//test: clientStartup() -> [started:true]
-	//{traffic:egress, route:*, request-id:, status-code:0, method:GET, url:urn:postgres:ping, startup:postgres, path:ping, timeout:-1, rate-limit:-1, rate-burst:-1, retry:, retry-rate-limit:-1, retry-rate-burst:-1, status-flags:}
-	//test: messaging.Ping() -> OK
+	//test: testStartup() -> [error:error running testStartup(): service url is empty]
 
 }
 
