@@ -9,12 +9,6 @@ import (
 )
 
 var (
-	pingThreshold   = 500
-	queryThreshold  = 2000
-	insertThreshold = 2000
-	updateThreshold = 2000
-	deleteThreshold = 2000
-
 	ready int64
 	agent messaging.Agent
 )
