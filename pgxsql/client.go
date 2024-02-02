@@ -8,8 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/advanced-go/core/messaging"
-	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"net/http"
 	"time"
 )
 
@@ -28,22 +28,22 @@ var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
 	start := time.Now()
 	err := clientStartup2(msg.Config)
 	if err != nil {
-		messaging.SendReply(msg, runtime.NewStatusError(0, clientLoc, err).SetDuration(time.Since(start)))
+		messaging.SendReply(msg, messaging.Status{Code: http.StatusOK, Error: err, Duration: time.Since(start)})
 		return
 	}
-	messaging.SendReply(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
+	messaging.SendReply(msg, messaging.Status{Code: http.StatusOK, Duration: time.Since(start)})
 }
 
 // clientStartup - entry point for creating the pooling client and verifying a connection can be acquired
-func clientStartup2(cfg *runtime.StringsMap) error {
+func clientStartup2(cfg map[string]string) error {
 	if isReady() {
 		return nil
 	}
 	if cfg == nil {
 		return errors.New("error: strings map configuration is nil")
 	}
-	url, status := cfg.Get(uriConfigKey)
-	if !status.OK() {
+	url, ok := cfg[uriConfigKey]
+	if !ok {
 		return errors.New("database URL is empty")
 	}
 	// Create connection string with credentials
@@ -74,17 +74,17 @@ func clientShutdown() {
 	}
 }
 
-func connectString(url string, cfg *runtime.StringsMap) (string, error) {
-	user, status := cfg.Get(userConfigKey)
-	pswd, status0 := cfg.Get(pswdConfigKey)
+func connectString(url string, cfg map[string]string) (string, error) {
+	user, ok := cfg[userConfigKey]
+	pswd, ok0 := cfg[pswdConfigKey]
 	// Username and password can be in the connect string Url
-	if !status.OK() && !status0.OK() {
+	if !ok && !ok0 {
 		return url, nil
 	}
-	if !status.OK() {
+	if !ok {
 		return "", errors.New("error: user is not configured")
 	}
-	if !status0.OK() {
+	if !ok0 {
 		return "", errors.New("error: password is not configured")
 	}
 	return fmt.Sprintf(url, user, pswd), nil

@@ -15,11 +15,11 @@ const (
 // Ping - function for pinging the database cluster
 func ping(ctx context.Context) (status runtime.Status) {
 	if dbClient == nil {
-		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil")).SetRequestId(ctx)
+		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil"))
 	}
 	err := dbClient.Ping(ctx)
 	if err != nil {
-		return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err).SetRequestId(ctx)
+		return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err)
 	}
 	return runtime.StatusOK()
 }

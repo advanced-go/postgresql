@@ -2,7 +2,6 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/advanced-go/core/runtime"
 )
 
 func ExampleClientStartup() {
@@ -13,7 +12,7 @@ func ExampleClientStartup() {
 	}
 	fmt.Printf("test: ClientStartup() -> %v\n", err)
 
-	err = clientStartup2(runtime.NewEmptyStringsMap())
+	err = clientStartup2(make(map[string]string))
 	fmt.Printf("test: ClientStartup() -> %v\n", err)
 
 	//Output:

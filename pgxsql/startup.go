@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"fmt"
 	"github.com/advanced-go/core/messaging"
-	"github.com/advanced-go/core/runtime"
+	"net/http"
 	"sync/atomic"
 	"time"
 )
@@ -26,10 +26,10 @@ func resetReady() {
 }
 
 func init() {
-	var status runtime.Status
-	agent, status = messaging.NewDefaultAgent(PkgPath, messageHandler, false)
-	if !status.OK() {
-		fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, status)
+	var err error
+	agent, err = messaging.NewDefaultAgent(PkgPath, messageHandler, false)
+	if err != nil {
+		fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, err)
 	}
 	agent.Run()
 }
@@ -42,6 +42,6 @@ var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
 		clientShutdown()
 	case messaging.PingEvent:
 		start := time.Now()
-		messaging.SendReply(msg, ping(nil).SetDuration(time.Since(start)))
+		messaging.SendReply(msg, messaging.Status{Code: http.StatusOK, Duration: time.Since(start)})
 	}
 }

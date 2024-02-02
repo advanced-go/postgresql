@@ -17,7 +17,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Sta
 	var newCtx context.Context
 
 	if req == nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call : request is nil")).SetRequestId(newCtx)
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call : request is nil"))
 	}
 	defer apply(ctx, &newCtx, req, statusCode(&status))
 	if override {
@@ -25,7 +25,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status runtime.Sta
 		return runtime.New[pgx.Rows](url, nil)
 	}
 	if dbClient == nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil")).SetRequestId(newCtx)
+		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call: dbClient is nil"))
 	}
 	var err error
 	rows, err = dbClient.Query(newCtx, buildSql(req), req.args)
