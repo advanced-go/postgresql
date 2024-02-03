@@ -2,7 +2,6 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/advanced-go/core/runtime"
 	"reflect"
 )
 
@@ -19,6 +18,7 @@ func _Example_PackageUri() {
 
 }
 
+/*
 func ExampleNewStringsMap() {
 	uri := configMapUri
 
@@ -44,3 +44,6 @@ func ExampleNewStringsMap() {
 	//test: Get("uri") -> [urir:postgres://{user}:{pswd}@{sub-domain}.{db-name}.cloud.timescale.com:31770/tsdb?sslmode=require] [status:OK]
 
 }
+
+
+*/

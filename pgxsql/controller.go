@@ -22,8 +22,7 @@ const (
 
 var (
 	//go:embed resource/*
-	f embed.FS
-
+	f  embed.FS
 	cm *controller.Map
 )
 
@@ -39,12 +38,12 @@ func init() {
 	}
 }
 
-func statusCode(s *runtime.Status) access.StatusCodeFunc {
+func statusCode(s **runtime.Status) access.StatusCodeFunc {
 	return func() int {
 		if s == nil || *s == nil {
 			return http.StatusOK
 		}
-		return (*(s)).Code()
+		return (*(s)).Code
 	}
 }
 

@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
+	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5"
@@ -86,7 +87,7 @@ func ExampleQuery_StatusTimeout() {
 
 func ExampleQuery_Proxy() {
 	// Need to clear per test override
-	lookup.SetOverride(runtime.StatusOKUri) //setOverrideLookup([]string{"", ""})
+	lookup.SetOverride(io2.StatusOKUri) //setOverrideLookup([]string{"", ""})
 	req := newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil)
 	rows, status := query(nil, req)
 	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
@@ -167,7 +168,7 @@ func ExampleQuery_Conditions_Where() {
 
 }
 
-func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status runtime.Status) {
+func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status *runtime.Status) {
 	conditions, status = scanRows(results)
 	if status.OK() && len(conditions) == 0 {
 		return nil, runtime.NewStatus(http.StatusNotFound)
@@ -175,7 +176,7 @@ func processResults(results pgx.Rows, msg string) (conditions []TestConditions, 
 	return conditions, status
 }
 
-func scanRows(rows pgx.Rows) ([]TestConditions, runtime.Status) {
+func scanRows(rows pgx.Rows) ([]TestConditions, *runtime.Status) {
 	if rows == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, "", errors.New("invalid request: Rows interface is empty"))
 	}

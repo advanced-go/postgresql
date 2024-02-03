@@ -11,7 +11,7 @@ const (
 	statLoc = PkgPath + ":stat"
 )
 
-func stat(ctx context.Context) (*pgxpool.Stat, runtime.Status) {
+func stat(ctx context.Context) (*pgxpool.Stat, *runtime.Status) {
 	if dbClient == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, statLoc, errors.New("error on PostgreSQL stat call : dbClient is nil"))
 	}

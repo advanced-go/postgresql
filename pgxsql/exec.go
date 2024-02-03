@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 )
 
@@ -10,7 +11,7 @@ const (
 	execLoc = PkgPath + ":exec"
 )
 
-func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Status) {
+func exec(ctx context.Context, req *request) (tag CommandTag, status *runtime.Status) {
 	url, override := lookup.Value(req.resource)
 	var newCtx context.Context
 
@@ -19,7 +20,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Sta
 	}
 	defer apply(ctx, &newCtx, req, statusCode(&status))
 	if override {
-		return runtime.New[CommandTag](url, nil)
+		return io2.New[CommandTag](url, nil)
 	}
 	if dbClient == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : dbClient is nil"))
@@ -32,7 +33,8 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status runtime.Sta
 	cmd, err := dbClient.Exec(newCtx, buildSql(req), req.args)
 	if err != nil {
 		err0 = txn.Rollback(newCtx)
-		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, recast(err), err0)
+		// TODO: how to handle err0?
+		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, recast(err))
 	}
 	err = txn.Commit(newCtx)
 	if err != nil {

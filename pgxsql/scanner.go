@@ -17,7 +17,7 @@ type Scanner[T any] interface {
 }
 
 // Scan - templated function for scanning rows
-func Scan[T Scanner[T]](rows pgx.Rows) ([]T, runtime.Status) {
+func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *runtime.Status) {
 	if rows == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, scanLoc, errors.New("invalid request: rows interface is nil"))
 	}
