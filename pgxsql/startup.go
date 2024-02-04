@@ -10,7 +10,7 @@ import (
 
 var (
 	ready int64
-	agent messaging.Agent
+	agent *messaging.Agent
 )
 
 func isReady() bool {
