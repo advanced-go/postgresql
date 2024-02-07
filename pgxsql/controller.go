@@ -6,9 +6,7 @@ import (
 	"fmt"
 	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/controller"
-	"github.com/advanced-go/core/runtime"
 	"io/fs"
-	"net/http"
 )
 
 const (
@@ -34,15 +32,6 @@ func init() {
 	cm, err = controller.NewMap(buf)
 	if err != nil {
 		fmt.Printf("controller.init(\"%v\") failure: [%v]\n", PkgPath, err)
-	}
-}
-
-func statusCode(s **runtime.Status) access.StatusCodeFunc {
-	return func() int {
-		if s == nil || *s == nil {
-			return http.StatusOK
-		}
-		return (*(s)).Code
 	}
 }
 

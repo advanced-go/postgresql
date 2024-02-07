@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 )
@@ -18,7 +19,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *runtime.St
 	if req == nil {
 		return tag, runtime.NewStatusError(runtime.StatusInvalidArgument, execLoc, errors.New("error on PostgreSQL exec call : request is nil"))
 	}
-	defer apply(ctx, &newCtx, req, statusCode(&status))
+	defer apply(ctx, &newCtx, req, access.StatusCode(&status))
 	if override {
 		return io2.New[CommandTag](url, nil)
 	}

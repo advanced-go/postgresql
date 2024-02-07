@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	"github.com/jackc/pgx/v5"
@@ -20,7 +21,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *runtime.St
 	if req == nil {
 		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, queryLoc, errors.New("error on PostgreSQL database query call : request is nil"))
 	}
-	defer apply(ctx, &newCtx, req, statusCode(&status))
+	defer apply(ctx, &newCtx, req, access.StatusCode(&status))
 	if override {
 		// TO DO : create rows from file
 		return io2.New[pgx.Rows](url, nil)
