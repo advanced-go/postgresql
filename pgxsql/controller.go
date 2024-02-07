@@ -45,5 +45,5 @@ func apply(ctx context.Context, newCtx *context.Context, req *request, statusCod
 		c.Name = "error"
 		c.Duration = 0
 	}
-	return controller.Apply(ctx, newCtx, method(req), req.uri, c.Name, req.header, c.Duration, statusCode)
+	return controller.Apply(ctx, newCtx, access.NewRequest(req.header, method(req), req.uri), nil, c.Name, c.Duration, statusCode)
 }

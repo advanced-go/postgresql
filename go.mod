@@ -3,7 +3,7 @@ module github.com/advanced-go/postgresql
 go 1.21.4
 
 require (
-	github.com/advanced-go/core v0.0.0-20240207112942-b811ec6ef7c6
+	github.com/advanced-go/core v0.0.0-20240207161530-8a19566dd03b
 	github.com/jackc/pgx/v5 v5.5.0
 )
 
