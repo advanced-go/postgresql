@@ -34,7 +34,7 @@ func init() {
 	agent.Run()
 }
 
-var messageHandler messaging.MessageHandler = func(msg messaging.Message) {
+var messageHandler messaging.MessageHandler = func(msg *messaging.Message) {
 	switch msg.Event {
 	case messaging.StartupEvent:
 		clientStartup(msg)

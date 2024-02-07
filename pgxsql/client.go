@@ -21,7 +21,7 @@ const (
 	clientLoc = PkgPath + ":Startup"
 )
 
-var clientStartup messaging.MessageHandler = func(msg messaging.Message) {
+var clientStartup messaging.MessageHandler = func(msg *messaging.Message) {
 	if isReady() {
 		return
 	}

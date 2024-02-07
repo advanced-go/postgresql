@@ -13,7 +13,6 @@ import (
 
 const (
 	controllersPath      = "resource/controllers.json"
-	controllerLookup     = PkgPath + ":lookupController"
 	queryControllerName  = "postgresql-query"
 	insertControllerName = "postgresql-insert"
 	updateControllerName = "postgresql-update"
