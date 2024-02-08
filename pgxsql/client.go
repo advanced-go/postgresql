@@ -26,7 +26,7 @@ var clientStartup messaging.MessageHandler = func(msg *messaging.Message) {
 		return
 	}
 	start := time.Now()
-	err := clientStartup2(msg.Config)
+	err := clientStartup2(msg.Config())
 	if err != nil {
 		messaging.SendReply(msg, messaging.NewStatusDurationError(http.StatusOK, time.Since(start), err))
 		return

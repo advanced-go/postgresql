@@ -54,14 +54,9 @@ func testStartup() error {
 
 	m := make(map[string]string)
 	m[uriConfigKey] = serviceUrl
-	messaging.HostExchange.SendCtrl(&messaging.Message{
-		To:    PkgPath,
-		From:  "",
-		Event: messaging.StartupEvent,
-		//Status:  nil,
-		Config:  m,
-		ReplyTo: nil,
-	})
+	msg := messaging.NewMessage(PkgPath, "", messaging.StartupEvent)
+	msg.SetContent(messaging.ContentTypeConfig, m)
+	messaging.HostExchange.SendCtrl(msg)
 	time.Sleep(time.Second * 3)
 	return nil
 }

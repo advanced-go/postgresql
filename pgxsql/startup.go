@@ -35,7 +35,7 @@ func init() {
 }
 
 var messageHandler messaging.MessageHandler = func(msg *messaging.Message) {
-	switch msg.Event {
+	switch msg.Event() {
 	case messaging.StartupEvent:
 		clientStartup(msg)
 	case messaging.ShutdownEvent:
