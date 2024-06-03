@@ -22,7 +22,7 @@ func _Example_PackageUri() {
 func ExampleNewStringsMap() {
 	uri := configMapUri
 
-	m := runtime.NewStringsMap(uri)
+
 	fmt.Printf("test: NewStringsMap(\"%v\") -> [err:%v]\n", uri, m.Error())
 
 	key := userConfigKey

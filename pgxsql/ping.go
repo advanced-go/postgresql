@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/stdlib/core"
 	"net/http"
 )
 
@@ -13,15 +13,15 @@ const (
 )
 
 // Ping - function for pinging the database cluster
-func ping(ctx context.Context) (status *runtime.Status) {
+func ping(ctx context.Context) (status *core.Status) {
 	if dbClient == nil {
-		return runtime.NewStatusError(runtime.StatusInvalidArgument, pingLoc, errors.New("error on PostgreSQL ping call : dbClient is nil"))
+		return core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL ping call : dbClient is nil"))
 	}
 	err := dbClient.Ping(ctx)
 	if err != nil {
-		return runtime.NewStatusError(http.StatusInternalServerError, pingLoc, err)
+		return core.NewStatusError(http.StatusInternalServerError, err)
 	}
-	return runtime.StatusOK()
+	return core.StatusOK()
 }
 
 // Scrap

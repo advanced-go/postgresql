@@ -3,9 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/advanced-go/core/io2"
-	"github.com/advanced-go/core/runtime"
 	"github.com/advanced-go/postgresql/pgxdml"
+	"github.com/advanced-go/stdlib/core"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -87,7 +86,7 @@ func ExampleQuery_StatusTimeout() {
 
 func ExampleQuery_Proxy() {
 	// Need to clear per test override
-	lookup.SetOverride(io2.StatusOKUri) //setOverrideLookup([]string{"", ""})
+	//lookup.SetOverride(io2.StatusOKUri) //setOverrideLookup([]string{"", ""})
 	req := newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil)
 	rows, status := query(nil, req)
 	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
@@ -168,17 +167,17 @@ func ExampleQuery_Conditions_Where() {
 
 }
 
-func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status *runtime.Status) {
+func processResults(results pgx.Rows, msg string) (conditions []TestConditions, status *core.Status) {
 	conditions, status = scanRows(results)
 	if status.OK() && len(conditions) == 0 {
-		return nil, runtime.NewStatus(http.StatusNotFound)
+		return nil, core.NewStatus(http.StatusNotFound)
 	}
 	return conditions, status
 }
 
-func scanRows(rows pgx.Rows) ([]TestConditions, *runtime.Status) {
+func scanRows(rows pgx.Rows) ([]TestConditions, *core.Status) {
 	if rows == nil {
-		return nil, runtime.NewStatusError(runtime.StatusInvalidArgument, "", errors.New("invalid request: Rows interface is empty"))
+		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("invalid request: Rows interface is empty"))
 	}
 	var err error
 	var values []any
@@ -186,15 +185,15 @@ func scanRows(rows pgx.Rows) ([]TestConditions, *runtime.Status) {
 	for rows.Next() {
 		err = rows.Err()
 		if err != nil {
-			return nil, runtime.NewStatusError(0, "", err)
+			return nil, core.NewStatusError(0, err)
 		}
 		values, err = rows.Values()
 		if err != nil {
-			return nil, runtime.NewStatusError(0, "", err)
+			return nil, core.NewStatusError(0, err)
 		}
 		conditions = append(conditions, scanColumns(values))
 	}
-	return conditions, runtime.StatusOK()
+	return conditions, core.StatusOK()
 }
 
 func scanColumns(values []any) TestConditions {

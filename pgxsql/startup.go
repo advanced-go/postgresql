@@ -2,7 +2,9 @@ package pgxsql
 
 import (
 	"fmt"
-	"github.com/advanced-go/core/messaging"
+	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/stdlib/host"
+	"github.com/advanced-go/stdlib/messaging"
 	"net/http"
 	"sync/atomic"
 	"time"
@@ -26,22 +28,29 @@ func resetReady() {
 }
 
 func init() {
-	var err error
-	agent, err = messaging.NewDefaultAgent(PkgPath, messageHandler, false)
-	if err != nil {
-		fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, err)
+	a, err1 := host.RegisterControlAgent(PkgPath, messageHandler)
+	if err1 != nil {
+		fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, err1)
 	}
-	agent.Run()
+	a.Run()
+
+	//var err error
+	//agent, err = messaging.NewDefaultAgent(PkgPath, messageHandler, false)
+	//if err != nil {
+	//	fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, err)
+	//}
+	//agent.Run()
 }
 
-var messageHandler messaging.MessageHandler = func(msg *messaging.Message) {
+func messageHandler(msg *messaging.Message) {
 	switch msg.Event() {
 	case messaging.StartupEvent:
-		clientStartup(msg)
+		// TODO
+		//clientStartup(msg)
 	case messaging.ShutdownEvent:
 		clientShutdown()
 	case messaging.PingEvent:
 		start := time.Now()
-		messaging.SendReply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
+		messaging.SendReply(msg, core.NewStatusDuration(http.StatusOK, time.Since(start)))
 	}
 }

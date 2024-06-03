@@ -7,7 +7,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/advanced-go/core/messaging"
+	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/stdlib/messaging"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
 	"time"
@@ -21,17 +22,18 @@ const (
 	clientLoc = PkgPath + ":Startup"
 )
 
-var clientStartup messaging.MessageHandler = func(msg *messaging.Message) {
+func clientMessageHandler(msg *messaging.Message) {
 	if isReady() {
 		return
 	}
 	start := time.Now()
 	err := clientStartup2(msg.Config())
 	if err != nil {
-		messaging.SendReply(msg, messaging.NewStatusDurationError(http.StatusOK, time.Since(start), err))
+		// TODO
+		//messaging.SendReply(msg, messaging.NewStatusDurationError(http.StatusOK, time.Since(start), err))
 		return
 	}
-	messaging.SendReply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
+	messaging.SendReply(msg, core.NewStatusDuration(http.StatusOK, time.Since(start)))
 }
 
 // clientStartup - entry point for creating the pooling client and verifying a connection can be acquired
