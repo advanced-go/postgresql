@@ -17,7 +17,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 	if req == nil {
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL database query call : request is nil"))
 	}
-	if dbClient == nil {
+	if dbClient == nil && req.queryFunc == nil {
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL database query call: dbClient is nil"))
 	}
 	var err error
@@ -39,11 +39,6 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 	// TODO : determine if there was a timeout
 	log(start, time.Since(start), req, status, "")
 	return rows, status
-}
-
-func queryFunc(ctx context.Context, sql string, args ...any) (pgx.Rows, error) {
-
-	return nil, nil
 }
 
 // Scrap

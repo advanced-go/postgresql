@@ -48,6 +48,7 @@ func Readiness() *core.Status {
 // Query -  process a SQL select statement
 func Query(ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows pgx.Rows, status *core.Status) {
 	req := newQueryRequestFromValues(h, resource, template, values, args...)
+	req.queryFunc = accessQuery
 	return query(ctx, req)
 }
 

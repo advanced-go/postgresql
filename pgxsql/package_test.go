@@ -2,19 +2,23 @@ package pgxsql
 
 import (
 	"fmt"
-	"reflect"
 )
 
 const (
 	configMapUri = "file://[cwd]/pgxsqltest/config-map.txt"
 )
 
-func _Example_PackageUri() {
-	pkgPath := reflect.TypeOf(any(pkg{})).PkgPath()
-	fmt.Printf("test: PkgPath = \"%v\"\n", pkgPath)
+func ExampleQuery() {
+	rows, status := Query(nil, nil, "", "", nil)
+	if !status.OK() {
+		fmt.Printf("test: Query() -> [status:%v]\n", status)
+	} else {
+		entries, status1 := Scan[Entry](rows)
+		fmt.Printf("test: Query() -> [status:%v] [entries:%v]\n", status1, len(entries))
+	}
 
 	//Output:
-	//test: PkgPath = "github.com/advanced-go/postgresql/pgxsql"
+	//test: Query() -> [status:OK] [entries:2]
 
 }
 

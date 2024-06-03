@@ -39,7 +39,7 @@ func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *core.Status) {
 		}
 		t = append(t, val)
 		// Test this
-		rows.Close()
+		//rows.Close()
 	}
 	return t, core.StatusOK()
 }

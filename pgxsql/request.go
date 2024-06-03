@@ -100,11 +100,11 @@ func NewHttpRequest(r *request) *http.Request {
 }
 
 func setTimeout(ctx context.Context, req *request) (context.Context, context.CancelFunc) {
-	if _, ok := ctx.Deadline(); ok {
-		return ctx, nil
-	}
 	if ctx == nil {
 		ctx = context.Background()
+	}
+	if _, ok := ctx.Deadline(); ok {
+		return ctx, nil
 	}
 	return context.WithTimeout(ctx, req.duration)
 }
