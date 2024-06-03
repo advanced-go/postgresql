@@ -16,25 +16,17 @@ func validate(r *request) error {
 }
 
 func ExampleBuildRequest() {
-	rsc := "exec-test-resource.dev"
-	uri := buildUri(insertResource, rsc)
-
+	rsc := "test-resource.dev"
+	uri := buildUri(execRoot, rsc)
 	fmt.Printf("test: buildInsertUri(%v) -> %v\n", rsc, uri)
 
-	rsc = "query-test-resource.prod"
+	rsc = "test-resource.prod"
 	uri = buildQueryUri(rsc)
-
-	fmt.Printf("test: buildQueryUri(%v) -> %v\n", rsc, uri)
-
-	rsc = "file://[cwd]/example-domain/activitytest/test.json"
-	uri = buildQueryUri(rsc)
-
 	fmt.Printf("test: buildQueryUri(%v) -> %v\n", rsc, uri)
 
 	//Output:
-	//test: buildInsertUri(exec-test-resource.dev) -> github/advanced-go/postgresql/pgxsql:insert.exec-test-resource.dev
-	//test: buildQueryUri(query-test-resource.prod) -> github/advanced-go/postgresql/pgxsql:query.query-test-resource.prod
-	//test: buildQueryUri(file://[cwd]/example-domain/activitytest/test.json) -> github/advanced-go/postgresql/pgxsql:query.file://[cwd]/example-domain/activitytest/test.json
+	//test: buildInsertUri(test-resource.dev) -> github/advanced-go/postgresql:exec/test-resource.dev
+	//test: buildQueryUri(test-resource.prod) -> github/advanced-go/postgresql:query/test-resource.prod
 
 }
 

@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/stdlib/access"
 	"github.com/advanced-go/stdlib/core"
 	"time"
 )
@@ -16,36 +15,44 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	if dbClient == nil {
 		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : dbClient is nil"))
 	}
-	ctx1, cancel := setTimeout(ctx, req.duration)
+	ctx1, cancel := setTimeout(ctx, req)
 	if cancel != nil {
 		defer cancel()
 	}
 	var start = time.Now().UTC()
+	if req.execFunc != nil {
+		cmd, err := req.execFunc(ctx1, buildSql(req), req.args)
+		status = core.NewStatusError(core.StatusInvalidArgument, recast(err))
+		// TODO : determine if there was a timeout
+		log(start, time.Since(start), req, status, "")
+		return newCmdTag(cmd), status
+	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx1)
 	if err0 != nil {
-		status = core.NewStatusError(core.StatusInvalidArgument, err0)
+		status = core.NewStatusError(core.StatusTxnBeginError, err0)
 		// TODO : determine if there was a timeout
-		log(start, time.Since(start), req, status, access.Milliseconds(req.duration), "")
+		log(start, time.Since(start), req, status, "")
 		return tag, status
 	}
+	// Rollback is safe to call even if the tx is already closed, so if
+	// the tx commits successfully, this is a no-op
+	defer txn.Rollback(ctx1)
 	cmd, err := dbClient.Exec(ctx1, buildSql(req), req.args)
 	if err != nil {
-		err0 = txn.Rollback(ctx1)
-		// TODO: how to handle err0?
 		status = core.NewStatusError(core.StatusInvalidArgument, recast(err))
 		// TODO : determine if there was a timeout
-		log(start, time.Since(start), req, status, access.Milliseconds(req.duration), "")
-		return tag, status
+		log(start, time.Since(start), req, status, "")
+		return newCmdTag(cmd), status
 	}
 	err = txn.Commit(ctx1)
 	if err != nil {
-		status = core.NewStatusError(core.StatusInvalidArgument, err)
+		status = core.NewStatusError(core.StatusTxnCommitError, err)
 	} else {
 		status = core.StatusOK()
 	}
 	// TODO : determine if there was a timeout
-	log(start, time.Since(start), req, status, access.Milliseconds(req.duration), "")
+	log(start, time.Since(start), req, status, "")
 	return newCmdTag(cmd), core.StatusOK()
 }
 

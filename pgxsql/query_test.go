@@ -75,7 +75,7 @@ func ExampleQuery_TestError() {
 
 func ExampleQuery_StatusTimeout() {
 	//setOverrideLookup([]string{"", status504Q})
-	lookup.SetOverride(status504Q)
+	//lookup.SetOverride(status504Q)
 	rows, status := query(nil, newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil))
 	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
 

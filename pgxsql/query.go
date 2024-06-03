@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/stdlib/access"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/jackc/pgx/v5"
 	"time"
@@ -22,19 +21,23 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL database query call: dbClient is nil"))
 	}
 	var err error
-	ctx1, cancel := setTimeout(ctx, req.duration)
+	ctx1, cancel := setTimeout(ctx, req)
 	if cancel != nil {
 		defer cancel()
 	}
 	var start = time.Now().UTC()
-	rows, err = dbClient.Query(ctx1, buildSql(req), req.args)
+	if req.queryFunc != nil {
+		rows, err = req.queryFunc(ctx1, buildSql(req), req.args)
+	} else {
+		rows, err = dbClient.Query(ctx1, buildSql(req), req.args)
+	}
 	if err != nil {
 		status = core.NewStatusError(core.StatusIOError, recast(err))
 	} else {
 		status = core.StatusOK()
 	}
 	// TODO : determine if there was a timeout
-	log(start, time.Since(start), req, status, access.Milliseconds(req.duration), "")
+	log(start, time.Since(start), req, status, "")
 	return rows, status
 }
 

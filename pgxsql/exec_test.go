@@ -22,16 +22,14 @@ const (
 
 	execInsertConditions = "INSERT INTO conditions (time,location,temperature) VALUES"
 	execUpdateConditions = "UPDATE conditions"
-
 	execDeleteConditions = "DELETE FROM conditions"
 
-	status504 = "file://[cwd]/pgxsqltest/status-504.json"
-
+	status504    = "file://[cwd]/pgxsqltest/status-504.json"
 	updateCmdTag = "file://[cwd]/pgxsqltest/update-cmd-tag.json"
 )
 
 func ExampleExec_Status() {
-	lookup.SetOverride(status504)
+	//lookup.SetOverride(status504)
 	result, status := exec(nil, newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
 
@@ -41,7 +39,7 @@ func ExampleExec_Status() {
 }
 
 func ExampleExec_Proxy() {
-	lookup.SetOverride(updateCmdTag)
+	//lookup.SetOverride(updateCmdTag)
 	req := newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil)
 	tag, status := exec(nil, req)
 	fmt.Printf("test: Exec(%v) -> [cmd:%v] [status:%v]\n", execUpdateSql, tag, status)

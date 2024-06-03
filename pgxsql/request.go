@@ -1,24 +1,31 @@
 package pgxsql
 
 import (
+	"context"
 	"fmt"
+	"github.com/advanced-go/postgresql/module"
 	"github.com/advanced-go/postgresql/pgxdml"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"net/http"
 	"time"
 )
 
 const (
-	queryResource  = "query"
-	selectResource = "select"
-	insertResource = "insert"
-	updateResource = "update"
-	deleteResource = "delete"
-	pingResource   = "ping"
-	statResource   = "stat"
+	queryRoot = "query"
+	execRoot  = "exec"
+	pingRoot  = "ping"
+
+	selectMethod = "select"
+	insertMethod = "insert"
+	updateMethod = "update"
+	deleteMethod = "delete"
+	pingMethod   = "ping"
+	//statResource   = "stat"
 
 	postgresNID = "postgresql"
-	PingUri     = postgresNID + ":" + pingResource
-	StatUri     = postgresNID + ":" + statResource
+	//PingUri     = postgresNID + ":" + pingResource
+	//StatUri     = postgresNID + ":" + statResource
 
 	selectCmd = 0
 	insertCmd = 1
@@ -40,15 +47,17 @@ type request struct {
 	uri       string
 	routeName string
 
-	values [][]any
-	attrs  []pgxdml.Attr
-	where  []pgxdml.Attr
-	args   []any
-	error  error
-	header http.Header
+	values    [][]any
+	attrs     []pgxdml.Attr
+	where     []pgxdml.Attr
+	args      []any
+	error     error
+	header    http.Header
+	queryFunc func(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+	execFunc  func(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
 }
 
-func newRequest(h http.Header, cmd int, resource, template, uri, routeName string) *request {
+func newRequest(h http.Header, cmd int, resource, template, uri, routeName string, duration time.Duration) *request {
 	r := new(request)
 	r.expectedCount = nullExpectedCount
 	r.cmd = cmd
@@ -59,21 +68,23 @@ func newRequest(h http.Header, cmd int, resource, template, uri, routeName strin
 	r.routeName = routeName
 
 	r.header = h
+
+	r.duration = duration
 	return r
 }
 
 func method(r *request) string {
 	switch r.cmd {
 	case selectCmd:
-		return selectResource
+		return selectMethod
 	case insertCmd:
-		return insertResource
+		return insertMethod
 	case updateCmd:
-		return updateResource
+		return updateMethod
 	case deleteCmd:
-		return deleteResource
+		return deleteMethod
 	case pingCmd:
-		return pingResource
+		return pingMethod
 	}
 	return "unknown"
 }
@@ -88,14 +99,24 @@ func NewHttpRequest(r *request) *http.Request {
 	return req
 }
 
+func setTimeout(ctx context.Context, req *request) (context.Context, context.CancelFunc) {
+	if _, ok := ctx.Deadline(); ok {
+		return ctx, nil
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return context.WithTimeout(ctx, req.duration)
+}
+
 func buildUri(resource, path string) string {
-	return fmt.Sprintf("%v:%v.%v", PkgPath, resource, path)
+	return fmt.Sprintf("%v:%v/%v", module.Authority, resource, path)
 	//originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
 // buildQueryUri - build an uri with the Query NSS
 func buildQueryUri(path string) string {
-	return buildUri(queryResource, path)
+	return buildUri(queryRoot, path)
 }
 
 // buildInsertUri - build an uri with the Insert NSS
@@ -119,28 +140,28 @@ func buildQueryUri(path string) string {
 //}
 
 func newQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
+	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName, QueryTimeout)
 	r.where = where
 	r.args = args
 	return r
 }
 
 func newQueryRequestFromValues(h http.Header, resource, template string, values map[string][]string, args ...any) *request {
-	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
+	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName, QueryTimeout)
 	r.where = buildWhere(values)
 	r.args = args
 	return r
 }
 
 func newInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) *request {
-	r := newRequest(h, insertCmd, resource, template, buildUri(insertResource, resource), InsertRouteName)
+	r := newRequest(h, insertCmd, resource, template, buildUri(execRoot, resource), InsertRouteName, InsertTimeout)
 	r.values = values
 	r.args = args
 	return r
 }
 
 func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, updateCmd, resource, template, buildUri(updateResource, resource), UpdateRouteName)
+	r := newRequest(h, updateCmd, resource, template, buildUri(execRoot, resource), UpdateRouteName, UpdateTimeout)
 	r.attrs = attrs
 	r.where = where
 	r.args = args
@@ -148,18 +169,16 @@ func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.A
 }
 
 func newDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, deleteCmd, resource, template, buildUri(deleteResource, resource), DeleteRouteName)
+	r := newRequest(h, deleteCmd, resource, template, buildUri(execRoot, resource), DeleteRouteName, DeleteTimeout)
 	r.where = where
 	r.args = args
 	return r
 }
 
-/*
 func newPingRequest(h http.Header) *request {
-	r := newRequest(h, pingCmd, pingThreshold, "", "", PingUri, pingRouteName)
+	r := newRequest(h, pingCmd, "", "", buildUri(pingRoot, ""), PingRouteName, PingTimeout)
 	return r
 }
-*/
 
 // BuildWhere - build the []Attr based on the URL query parameters
 func buildWhere(values map[string][]string) []pgxdml.Attr {
