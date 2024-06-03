@@ -7,10 +7,6 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-const (
-	scanLoc = PkgPath + ":Scan"
-)
-
 // Scanner - templated interface for scanning rows
 type Scanner[T any] interface {
 	Scan(columnNames []string, values []any) (T, error)

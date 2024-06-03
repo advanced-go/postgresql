@@ -33,13 +33,6 @@ func init() {
 		fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, err1)
 	}
 	a.Run()
-
-	//var err error
-	//agent, err = messaging.NewDefaultAgent(PkgPath, messageHandler, false)
-	//if err != nil {
-	//	fmt.Printf("init(\"%v\") failure: [%v]\n", PkgPath, err)
-	//}
-	//agent.Run()
 }
 
 func messageHandler(msg *messaging.Message) {

@@ -41,6 +41,11 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 	return rows, status
 }
 
+func queryFunc(ctx context.Context, sql string, args ...any) (pgx.Rows, error) {
+
+	return nil, nil
+}
+
 // Scrap
 //url, override := lookup.Value(req.resource)
 //defer apply(ctx, &newCtx, req, access.StatusCode(&status))
