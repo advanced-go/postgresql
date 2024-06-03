@@ -22,11 +22,6 @@ const (
 	updateMethod = "update"
 	deleteMethod = "delete"
 	pingMethod   = "ping"
-	//statResource   = "stat"
-
-	postgresNID = "postgresql"
-	//PingUri     = postgresNID + ":" + pingResource
-	//StatUri     = postgresNID + ":" + statResource
 
 	selectCmd = 0
 	insertCmd = 1
@@ -111,7 +106,7 @@ func setTimeout(ctx context.Context, req *request) (context.Context, context.Can
 }
 
 func buildUri(resource, path string) string {
-	return fmt.Sprintf("%v://%v/%v:%v/%v", postgresScheme, "database-name", module.Authority, resource, path)
+	return fmt.Sprintf("%v://%v/%v/%v:%v/%v", postgresScheme, "host-name", "database-name", module.Authority, resource, path)
 	//originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
