@@ -1,17 +1,12 @@
 package pgxsql
 
 import (
-	"context"
 	"errors"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-const (
-	statLoc = PkgPath + ":stat"
-)
-
-func stat(ctx context.Context) (*pgxpool.Stat, *core.Status) {
+func stat() (*pgxpool.Stat, *core.Status) {
 	if dbClient == nil {
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL stat call : dbClient is nil"))
 	}

@@ -12,7 +12,7 @@ func ExamplePing() {
 		defer clientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", isReady())
 
-		status := ping(nil)
+		status := ping(nil, 0)
 		fmt.Printf("test: Ping(nil) -> %v\n", status)
 	}
 

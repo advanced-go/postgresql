@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
+	"time"
 )
 
 type pkg struct{}
@@ -15,6 +16,19 @@ const (
 	userConfigKey = "user"
 	pswdConfigKey = "pswd"
 	uriConfigKey  = "uri"
+
+	// Timeouts
+	QueryTimeout  = time.Second * 2
+	InsertTimeout = time.Second * 2
+	UpdateTimeout = time.Second * 2
+	DeleteTimeout = time.Second * 2
+	PingTimeout   = time.Second * 2
+
+	QueryRouteName  = "postgresql-query"
+	InsertRouteName = "postgresql-insert"
+	UpdateRouteName = "postgresql-update"
+	DeleteRouteName = "postgresql-delete"
+	PingRouteName   = "postgresql-ping"
 )
 
 // Attr - key value pair
@@ -34,33 +48,37 @@ func Readiness() *core.Status {
 // Query -  process a SQL select statement
 func Query(ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows pgx.Rows, status *core.Status) {
 	req := newQueryRequestFromValues(h, resource, template, values, args...)
+	req.duration = QueryTimeout
 	return query(ctx, req)
 }
 
 // Insert - execute a SQL insert statement
 func Insert(ctx context.Context, h http.Header, resource, template string, values [][]any, args ...any) (tag CommandTag, status *core.Status) {
 	req := newInsertRequest(h, resource, template, values, args...)
+	req.duration = InsertTimeout
 	return exec(ctx, req)
 }
 
 // Update - execute a SQL update statement
 func Update(ctx context.Context, h http.Header, resource, template string, where []Attr, args []Attr) (tag CommandTag, status *core.Status) {
 	req := newUpdateRequest(h, resource, template, convert(where), convert(args))
+	req.duration = UpdateTimeout
 	return exec(ctx, req)
 }
 
 // Delete - execute a SQL delete statement
 func Delete(ctx context.Context, h http.Header, resource, template string, where []Attr, args ...any) (tag CommandTag, status *core.Status) {
 	req := newDeleteRequest(h, resource, template, convert(where), args...)
+	req.duration = DeleteTimeout
 	return exec(ctx, req)
 }
 
 // Stat - retrieve core stats
-func Stat(ctx context.Context) (*pgxpool.Stat, *core.Status) {
-	return stat(ctx)
+func Stat() (*pgxpool.Stat, *core.Status) {
+	return stat()
 }
 
 // Ping - ping the database cluster
 func Ping(ctx context.Context) *core.Status {
-	return ping(ctx)
+	return ping(ctx, PingTimeout)
 }

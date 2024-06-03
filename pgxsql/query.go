@@ -3,8 +3,10 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/advanced-go/stdlib/access"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/jackc/pgx/v5"
+	"time"
 )
 
 const (
@@ -13,29 +15,36 @@ const (
 
 // Query - function for a Query
 func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Status) {
-	//url, override := lookup.Value(req.resource)
-	var newCtx context.Context
-
 	if req == nil {
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL database query call : request is nil"))
 	}
-	//defer apply(ctx, &newCtx, req, access.StatusCode(&status))
-	//if override {
-	//	// TO DO : create rows from file
-	//	return io2.New[pgx.Rows](url, nil)
-	//}
 	if dbClient == nil {
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL database query call: dbClient is nil"))
 	}
 	var err error
-	rows, err = dbClient.Query(newCtx, buildSql(req), req.args)
-	if err != nil {
-		return nil, core.NewStatusError(core.StatusIOError, recast(err))
+	ctx1, cancel := setTimeout(ctx, req.duration)
+	if cancel != nil {
+		defer cancel()
 	}
-	return rows, core.StatusOK()
+	var start = time.Now().UTC()
+	rows, err = dbClient.Query(ctx1, buildSql(req), req.args)
+	if err != nil {
+		status = core.NewStatusError(core.StatusIOError, recast(err))
+	} else {
+		status = core.StatusOK()
+	}
+	// TODO : determine if there was a timeout
+	log(start, time.Since(start), req, status, access.Milliseconds(req.duration), "")
+	return rows, status
 }
 
 // Scrap
+//url, override := lookup.Value(req.resource)
+//defer apply(ctx, &newCtx, req, access.StatusCode(&status))
+//if override {
+//	// TO DO : create rows from file
+//	return io2.New[pgx.Rows](url, nil)
+//}
 //var limited = false
 //var fn func()
 //

@@ -12,8 +12,8 @@ func ExampleStat() {
 		defer clientShutdown()
 		fmt.Printf("test: clientStartup() -> [started:%v]\n", isReady())
 
-		stat1, status := stat(nil)
-		fmt.Printf("test: Stat(nil) -> [status:%v] [stat:%v]\n", status, stat1 != nil)
+		stat1, status := stat()
+		fmt.Printf("test: Stat() -> [status:%v] [stat:%v]\n", status, stat1 != nil)
 	}
 
 	//Output:

@@ -4,31 +4,27 @@ import (
 	"fmt"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"net/http"
+	"time"
 )
 
 const (
-	queryNSS  = "query"
-	selectNSS = "select"
-	insertNSS = "insert"
-	updateNSS = "update"
-	deleteNSS = "delete"
-	pingNSS   = "ping"
-	statNSS   = "stat"
+	queryResource  = "query"
+	selectResource = "select"
+	insertResource = "insert"
+	updateResource = "update"
+	deleteResource = "delete"
+	pingResource   = "ping"
+	statResource   = "stat"
 
 	postgresNID = "postgresql"
-	PingUri     = postgresNID + ":" + pingNSS
-	StatUri     = postgresNID + ":" + statNSS
+	PingUri     = postgresNID + ":" + pingResource
+	StatUri     = postgresNID + ":" + statResource
 
 	selectCmd = 0
 	insertCmd = 1
 	updateCmd = 2
 	deleteCmd = 3
 	pingCmd   = 4
-
-	//queryRouteName  = "query"
-	//insertRouteName = "insert"
-	//updateRouteName = "update"
-	//deleteRouteName = "delete"
 
 	nullExpectedCount = int64(-1)
 )
@@ -37,11 +33,12 @@ const (
 type request struct {
 	expectedCount int64
 	cmd           int
+	duration      time.Duration
 
-	resource       string
-	template       string
-	uri            string
-	controllerName string
+	resource  string
+	template  string
+	uri       string
+	routeName string
 
 	values [][]any
 	attrs  []pgxdml.Attr
@@ -51,7 +48,7 @@ type request struct {
 	header http.Header
 }
 
-func newRequest(h http.Header, cmd int, resource, template, uri, controllerName string) *request {
+func newRequest(h http.Header, cmd int, resource, template, uri, routeName string) *request {
 	r := new(request)
 	r.expectedCount = nullExpectedCount
 	r.cmd = cmd
@@ -59,7 +56,7 @@ func newRequest(h http.Header, cmd int, resource, template, uri, controllerName 
 	r.resource = resource
 	r.template = template
 	r.uri = uri
-	r.controllerName = controllerName
+	r.routeName = routeName
 
 	r.header = h
 	return r
@@ -68,15 +65,15 @@ func newRequest(h http.Header, cmd int, resource, template, uri, controllerName 
 func method(r *request) string {
 	switch r.cmd {
 	case selectCmd:
-		return selectNSS
+		return selectResource
 	case insertCmd:
-		return insertNSS
+		return insertResource
 	case updateCmd:
-		return updateNSS
+		return updateResource
 	case deleteCmd:
-		return deleteNSS
+		return deleteResource
 	case pingCmd:
-		return pingNSS
+		return pingResource
 	}
 	return "unknown"
 }
@@ -91,18 +88,14 @@ func NewHttpRequest(r *request) *http.Request {
 	return req
 }
 
-func originUrn(nid, nss, resource string) string {
-	return fmt.Sprintf("%v.%v.%v:%v.%v", nid, "region", "zone", nss, resource)
-}
-
-func buildUri(_, nss, resource string) string {
-	return fmt.Sprintf("%v:%v.%v", PkgPath, nss, resource)
+func buildUri(resource, path string) string {
+	return fmt.Sprintf("%v:%v.%v", PkgPath, resource, path)
 	//originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
 // buildQueryUri - build an uri with the Query NSS
-func buildQueryUri(resource string) string {
-	return buildUri(postgresNID, queryNSS, resource)
+func buildQueryUri(path string) string {
+	return buildUri(queryResource, path)
 }
 
 // buildInsertUri - build an uri with the Insert NSS
@@ -126,28 +119,28 @@ func buildQueryUri(resource string) string {
 //}
 
 func newQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), queryControllerName)
+	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
 	r.where = where
 	r.args = args
 	return r
 }
 
 func newQueryRequestFromValues(h http.Header, resource, template string, values map[string][]string, args ...any) *request {
-	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), queryControllerName)
+	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
 	r.where = buildWhere(values)
 	r.args = args
 	return r
 }
 
 func newInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) *request {
-	r := newRequest(h, insertCmd, resource, template, buildUri(postgresNID, insertNSS, resource), insertControllerName)
+	r := newRequest(h, insertCmd, resource, template, buildUri(insertResource, resource), InsertRouteName)
 	r.values = values
 	r.args = args
 	return r
 }
 
 func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, updateCmd, resource, template, buildUri(postgresNID, updateNSS, resource), updateControllerName)
+	r := newRequest(h, updateCmd, resource, template, buildUri(updateResource, resource), UpdateRouteName)
 	r.attrs = attrs
 	r.where = where
 	r.args = args
@@ -155,7 +148,7 @@ func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.A
 }
 
 func newDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, deleteCmd, resource, template, buildUri(postgresNID, deleteNSS, resource), deleteControllerName)
+	r := newRequest(h, deleteCmd, resource, template, buildUri(deleteResource, resource), DeleteRouteName)
 	r.where = where
 	r.args = args
 	return r

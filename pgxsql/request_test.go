@@ -17,7 +17,7 @@ func validate(r *request) error {
 
 func ExampleBuildRequest() {
 	rsc := "exec-test-resource.dev"
-	uri := buildUri(postgresNID, insertNSS, rsc)
+	uri := buildUri(insertResource, rsc)
 
 	fmt.Printf("test: buildInsertUri(%v) -> %v\n", rsc, uri)
 
