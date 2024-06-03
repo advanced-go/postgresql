@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	queryRoot = "query"
-	execRoot  = "exec"
-	pingRoot  = "ping"
+	postgresScheme = "postgres"
+	queryRoot      = "query"
+	execRoot       = "exec"
+	pingRoot       = "ping"
 
 	selectMethod = "select"
 	insertMethod = "insert"
@@ -110,7 +111,7 @@ func setTimeout(ctx context.Context, req *request) (context.Context, context.Can
 }
 
 func buildUri(resource, path string) string {
-	return fmt.Sprintf("%v:%v/%v", module.Authority, resource, path)
+	return fmt.Sprintf("%v://%v/%v:%v/%v", postgresScheme, "database-name", module.Authority, resource, path)
 	//originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 

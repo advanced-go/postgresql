@@ -2,6 +2,8 @@ package pgxsql
 
 import (
 	"fmt"
+	"github.com/advanced-go/stdlib/core"
+	"net/http"
 )
 
 const (
@@ -9,7 +11,9 @@ const (
 )
 
 func ExampleQuery() {
-	rows, status := Query(nil, nil, "", "", nil)
+	h := make(http.Header)
+	h.Add(core.XAuthority, "github/advanced-go/timeseries")
+	rows, status := Query(nil, h, "test-access.dev", "", nil)
 	if !status.OK() {
 		fmt.Printf("test: Query() -> [status:%v]\n", status)
 	} else {
