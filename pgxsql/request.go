@@ -3,7 +3,6 @@ package pgxsql
 import (
 	"context"
 	"fmt"
-	"github.com/advanced-go/postgresql/module"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -106,7 +105,7 @@ func setTimeout(ctx context.Context, req *request) (context.Context, context.Can
 }
 
 func buildUri(resource, path string) string {
-	return fmt.Sprintf("%v://%v/%v/%v:%v/%v", postgresScheme, "host-name", "database-name", module.Authority, resource, path)
+	return fmt.Sprintf("%v://%v/%v/%v/%v", postgresScheme, "host-name", "database-name", resource, path)
 	//originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
