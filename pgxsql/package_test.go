@@ -2,6 +2,8 @@ package pgxsql
 
 import (
 	"fmt"
+	"github.com/advanced-go/postgresql/module"
+	"github.com/advanced-go/stdlib/core"
 	"net/http"
 )
 
@@ -11,6 +13,7 @@ const (
 
 func ExampleQuery() {
 	h := make(http.Header)
+	h.Add(core.XAuthority, module.Authority)
 	rows, status := Query(nil, h, "access-log", "", nil)
 	if !status.OK() {
 		fmt.Printf("test: Query() -> [status:%v]\n", status)

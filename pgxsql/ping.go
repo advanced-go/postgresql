@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
+	"github.com/advanced-go/stdlib/access"
 	"github.com/advanced-go/stdlib/core"
 	"net/http"
 	"time"
@@ -13,7 +14,7 @@ func ping(ctx context.Context, req *request) (status *core.Status) {
 	if dbClient == nil {
 		return core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL ping call : dbClient is nil"))
 	}
-	ctx1, cancel := setTimeout(ctx, req)
+	ctx1, cancel := req.setTimeout(ctx)
 	if cancel != nil {
 		defer cancel()
 	}
@@ -25,7 +26,7 @@ func ping(ctx context.Context, req *request) (status *core.Status) {
 		status = core.StatusOK()
 	}
 	// TODO : determine if there was a timeout
-	log(start, time.Since(start), req, status, "")
+	access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, "")
 	return
 }
 

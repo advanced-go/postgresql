@@ -68,7 +68,7 @@ func newRequest(h http.Header, cmd int, resource, template, uri, routeName strin
 	return r
 }
 
-func method(r *request) string {
+func (r *request) Method() string {
 	switch r.cmd {
 	case selectCmd:
 		return selectMethod
@@ -84,24 +84,24 @@ func method(r *request) string {
 	return "unknown"
 }
 
-func header(r *request) http.Header {
+func (r *request) Header() http.Header {
 	return r.header
 }
 
-func NewHttpRequest(r *request) *http.Request {
-	req, _ := http.NewRequest(method(r), r.uri, nil)
-	req.Header = r.header
-	return req
+func (r *request) Url() string {
+	//req, _ := http.NewRequest(method(r), r.uri, nil)
+	//req.Header = r.header
+	return r.uri
 }
 
-func setTimeout(ctx context.Context, req *request) (context.Context, context.CancelFunc) {
+func (r *request) setTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	if _, ok := ctx.Deadline(); ok {
 		return ctx, nil
 	}
-	return context.WithTimeout(ctx, req.duration)
+	return context.WithTimeout(ctx, r.duration)
 }
 
 func buildUri(root, resource string) string {
