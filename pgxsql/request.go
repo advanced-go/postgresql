@@ -104,14 +104,14 @@ func setTimeout(ctx context.Context, req *request) (context.Context, context.Can
 	return context.WithTimeout(ctx, req.duration)
 }
 
-func buildUri(resource, path string) string {
-	return fmt.Sprintf("%v://%v/%v/%v/%v", postgresScheme, "host-name", "database-name", resource, path)
+func buildUri(root, resource string) string {
+	return fmt.Sprintf("%v://%v/%v/%v/%v", postgresScheme, "host-name", "database-name", root, resource)
 	//originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
 }
 
 // buildQueryUri - build an uri with the Query NSS
-func buildQueryUri(path string) string {
-	return buildUri(queryRoot, path)
+func buildQueryUri(resource string) string {
+	return buildUri(queryRoot, resource)
 }
 
 // buildInsertUri - build an uri with the Insert NSS

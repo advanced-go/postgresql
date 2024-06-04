@@ -25,8 +25,8 @@ func ExampleBuildRequest() {
 	fmt.Printf("test: buildQueryUri(%v) -> %v\n", rsc, uri)
 
 	//Output:
-	//test: buildInsertUri(test-resource.dev) -> postgres://host-name/database-name/github/advanced-go/postgresql:exec/test-resource.dev
-	//test: buildQueryUri(test-resource.prod) -> postgres://host-name/database-name/github/advanced-go/postgresql:query/test-resource.prod
+	//test: buildInsertUri(test-resource.dev) -> postgres://host-name/database-name/exec/test-resource.dev
+	//test: buildQueryUri(test-resource.prod) -> postgres://host-name/database-name/query/test-resource.prod
 
 }
 

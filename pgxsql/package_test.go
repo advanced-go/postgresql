@@ -11,7 +11,7 @@ const (
 
 func ExampleQuery() {
 	h := make(http.Header)
-	rows, status := Query(nil, h, "test-access.dev", "", nil)
+	rows, status := Query(nil, h, "access-log", "", nil)
 	if !status.OK() {
 		fmt.Printf("test: Query() -> [status:%v]\n", status)
 	} else {
