@@ -52,6 +52,17 @@ func Query(ctx context.Context, h http.Header, resource, template string, values
 	return query(ctx, req)
 }
 
+// QueryT -  process a SQL select statement, returning a type
+func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
+	req := newQueryRequestFromValues(h, resource, template, values, args...)
+	req.queryFunc = accessQuery
+	r, status1 := query(ctx, req)
+	if !status1.OK() {
+		return nil, status1
+	}
+	return Scan[T](r)
+}
+
 // Insert - execute a SQL insert statement
 func Insert(ctx context.Context, h http.Header, resource, template string, values [][]any, args ...any) (tag CommandTag, status *core.Status) {
 	req := newInsertRequest(h, resource, template, values, args...)
