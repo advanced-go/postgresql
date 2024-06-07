@@ -9,10 +9,10 @@ import (
 )
 
 func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Status) {
+	reasonCode := ""
 	if req == nil {
 		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : request is nil"))
 	}
-
 	if dbClient == nil {
 		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : dbClient is nil"))
 	}
@@ -25,7 +25,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 		cmd, err := req.execFunc(ctx1, buildSql(req), req.args)
 		status = core.NewStatusError(core.StatusInvalidArgument, recast(err))
 		// TODO : determine if there was a timeout
-		access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, "")
+		access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, 0, 0, reasonCode)
 		return newCmdTag(cmd), status
 	}
 	// Transaction processing.
@@ -33,7 +33,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	if err0 != nil {
 		status = core.NewStatusError(core.StatusTxnBeginError, err0)
 		// TODO : determine if there was a timeout
-		access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, "")
+		access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, 0, 0, reasonCode)
 		return tag, status
 	}
 	// Rollback is safe to call even if the tx is already closed, so if
@@ -43,7 +43,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	if err != nil {
 		status = core.NewStatusError(core.StatusInvalidArgument, recast(err))
 		// TODO : determine if there was a timeout
-		access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, "")
+		access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, 0, 0, reasonCode)
 		return newCmdTag(cmd), status
 	}
 	err = txn.Commit(ctx1)
@@ -53,7 +53,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 		status = core.StatusOK()
 	}
 	// TODO : determine if there was a timeout
-	access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, "")
+	access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.routeName, "", req.duration, 0, 0, reasonCode)
 	return newCmdTag(cmd), core.StatusOK()
 }
 
