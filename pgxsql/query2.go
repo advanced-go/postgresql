@@ -27,8 +27,8 @@ type Entry struct {
 	RelatesTo string `json:"relates-to"`
 	Protocol  string `json:"proto"`
 	Method    string `json:"method"`
-	AuthFrom  string `json:"auth-from"`
-	AuthTo    string `json:"auth-to"`
+	From      string `json:"from"`
+	To        string `json:"to"`
 	Url       string `json:"url"`
 	Path      string `json:"path"`
 
@@ -36,13 +36,12 @@ type Entry struct {
 	Encoding   string `json:"encoding"`
 	Bytes      int64  `json:"bytes"`
 
-	Route          string  `json:"route"`
-	RouteTo        string  `json:"route-to"`
-	Threshold      int     `json:"threshold"`
-	ThresholdFlags string  `json:"threshold-flags"`
-	Timeout        int32   `json:"timeout"`
-	RateLimit      float64 `json:"rate-limit"`
-	RateBurst      int32   `json:"rate-burst"`
+	Route      string  `json:"route"`
+	RouteTo    string  `json:"route-to"`
+	Timeout    int32   `json:"timeout"`
+	RateLimit  float64 `json:"rate-limit"`
+	RateBurst  int32   `json:"rate-burst"`
+	ReasonCode string  `json:"rc"`
 }
 
 func (Entry) Scan(columnNames []string, values []any) (log Entry, err error) {
@@ -76,10 +75,10 @@ func (Entry) Scan(columnNames []string, values []any) (log Entry, err error) {
 			log.Protocol = values[i].(string)
 		case MethodName:
 			log.Method = values[i].(string)
-		case AuthFromName:
-			log.AuthFrom = values[i].(string)
-		case AuthToName:
-			log.AuthTo = values[i].(string)
+		case FromName:
+			log.From = values[i].(string)
+		case ToName:
+			log.To = values[i].(string)
 		case UrlName:
 			log.Url = values[i].(string)
 		case PathName:
@@ -96,16 +95,14 @@ func (Entry) Scan(columnNames []string, values []any) (log Entry, err error) {
 			log.Route = values[i].(string)
 		case RouteToName:
 			log.RouteTo = values[i].(string)
-		case ThresholdName:
-			log.Threshold = values[i].(int)
-		case ThresholdFlagsName:
-			log.ThresholdFlags = values[i].(string)
 		case TimeoutName:
 			log.Timeout = values[i].(int32)
 		case RateLimitName:
 			log.RateLimit = values[i].(float64)
 		case RateBurstName:
 			log.RateBurst = values[i].(int32)
+		case ReasonCodeName:
+			log.ReasonCode = values[i].(string)
 		default:
 			err = errors.New(fmt.Sprintf("invalid field name: %v", name))
 			return
@@ -131,8 +128,8 @@ func (a Entry) Values() []any {
 		a.RelatesTo,
 		a.Protocol,
 		a.Method,
-		a.AuthFrom,
-		a.AuthTo,
+		a.From,
+		a.To,
 		a.Url,
 		a.Path,
 
@@ -142,17 +139,16 @@ func (a Entry) Values() []any {
 
 		a.Route,
 		a.RouteTo,
-		a.Threshold,
-		a.ThresholdFlags,
 		a.Timeout,
 		a.RateLimit,
 		a.RateBurst,
+		a.ReasonCode,
 	}
 }
 
 var list = []Entry{
-	{time.Now().UTC(), 100, access.EgressTraffic, time.Now().UTC(), "us-west", "oregon", "dc1", "www.test-host.com", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "www.google.com", "", "https://www.google.com/search?q-golang", "/search", 200, "gzip", 12345, "google-search", "primary", 0, "", 500, 100, 10},
-	{time.Now().UTC(), 100, access.IngressTraffic, time.Now().UTC(), "us-west", "oregon", "dc1", "localhost:8081", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "github/advanced-go/search", "", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 200, "gzip", 12345, "search", "primary", 0, "", 500, 100, 10},
+	{time.Now().UTC(), 100, access.EgressTraffic, time.Now().UTC(), "us-west", "oregon", "dc1", "www.test-host.com", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "www.google.com", "", "https://www.google.com/search?q-golang", "/search", 200, "gzip", 12345, "google-search", "primary", 500, 100, 10, ""},
+	{time.Now().UTC(), 100, access.IngressTraffic, time.Now().UTC(), "us-west", "oregon", "dc1", "localhost:8081", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "github/advanced-go/search", "", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 504, "gzip", 12345, "search", "primary", 500, 100, 10, "TO"},
 }
 
 var fields = []pgconn.FieldDescription{
@@ -171,8 +167,8 @@ var fields = []pgconn.FieldDescription{
 	{RelatesToName, 0, 0, 0, 0, 0, 0},
 	{ProtocolName, 0, 0, 0, 0, 0, 0},
 	{MethodName, 0, 0, 0, 0, 0, 0},
-	{AuthFromName, 0, 0, 0, 0, 0, 0},
-	{AuthToName, 0, 0, 0, 0, 0, 0},
+	{FromName, 0, 0, 0, 0, 0, 0},
+	{ToName, 0, 0, 0, 0, 0, 0},
 	{UrlName, 0, 0, 0, 0, 0, 0},
 	{PathName, 0, 0, 0, 0, 0, 0},
 
@@ -182,11 +178,10 @@ var fields = []pgconn.FieldDescription{
 
 	{RouteName, 0, 0, 0, 0, 0, 0},
 	{RouteToName, 0, 0, 0, 0, 0, 0},
-	{ThresholdName, 0, 0, 0, 0, 0, 0},
-	{ThresholdFlagsName, 0, 0, 0, 0, 0, 0},
 	{TimeoutName, 0, 0, 0, 0, 0, 0},
 	{RateLimitName, 0, 0, 0, 0, 0, 0},
 	{RateBurstName, 0, 0, 0, 0, 0, 0},
+	{ReasonCodeName, 0, 0, 0, 0, 0, 0},
 }
 
 type accessRows struct {
@@ -240,8 +235,8 @@ func (r *accessRows) Values() ([]any, error) {
 		list[r.index].RelatesTo,
 		list[r.index].Protocol,
 		list[r.index].Method,
-		list[r.index].AuthFrom,
-		list[r.index].AuthTo,
+		list[r.index].From,
+		list[r.index].To,
 		list[r.index].Url,
 		list[r.index].Path,
 
@@ -251,18 +246,10 @@ func (r *accessRows) Values() ([]any, error) {
 
 		list[r.index].Route,
 		list[r.index].RouteTo,
-		list[r.index].Threshold,
-		list[r.index].ThresholdFlags,
 		list[r.index].Timeout,
 		list[r.index].RateLimit,
 		list[r.index].RateBurst,
-
-		list[r.index].RelatesTo,
-		list[r.index].Protocol,
-		list[r.index].Method,
-		list[r.index].AuthFrom,
-		list[r.index].AuthTo,
-		list[r.index].Url,
+		list[r.index].ReasonCode,
 	}, nil
 }
 func (r *accessRows) RawValues() [][]byte { return nil }

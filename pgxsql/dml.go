@@ -32,8 +32,8 @@ const (
 	RelatesToName = "relates_to"
 	ProtocolName  = "protocol"
 	MethodName    = "method"
-	AuthFromName  = "auth_from"
-	AuthToName    = "auth_to"
+	FromName      = "from"
+	ToName        = "to"
 	UrlName       = "url"
 	PathName      = "path"
 
@@ -41,11 +41,10 @@ const (
 	EncodingName   = "encoding"
 	BytesName      = "bytes"
 
-	RouteName          = "route"
-	RouteToName        = "route_to"
-	ThresholdName      = "threshold"
-	ThresholdFlagsName = "threshold_flags"
-	TimeoutName        = "timeout"
-	RateLimitName      = "rate_limit"
-	RateBurstName      = "rate_burst"
+	RouteName      = "route"
+	RouteToName    = "route_to"
+	TimeoutName    = "timeout"
+	RateLimitName  = "rate_limit"
+	RateBurstName  = "rate_burst"
+	ReasonCodeName = "rc"
 )
