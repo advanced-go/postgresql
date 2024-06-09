@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/advanced-go/stdlib/host"
 	"github.com/advanced-go/stdlib/messaging"
-	"net/http"
 	"time"
 )
 
@@ -16,13 +15,12 @@ const (
 )
 
 func ExampleStartupPing() {
-	r, _ := http.NewRequest("", PkgPath+":ping", nil)
-	status := messaging.Ping(nil, r.URL)
-	fmt.Printf("test: Ping() -> [status-code:%v]\n", status.Code)
+	status := host.Ping(PkgPath)
+	fmt.Printf("test: Ping() -> [status:%v]\n", status)
 
 	//Output:
-	//test: Ping() -> [status-code:200]
-
+	//test: Ping() -> [status:OK]
+	
 }
 
 func ExampleStartup() {

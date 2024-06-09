@@ -38,8 +38,10 @@ func init() {
 func messageHandler(msg *messaging.Message) {
 	switch msg.Event() {
 	case messaging.StartupEvent:
+		start := time.Now()
 		// TODO
 		//clientStartup(msg)
+		messaging.SendReply(msg, core.NewStatusDuration(http.StatusOK, time.Since(start)))
 	case messaging.ShutdownEvent:
 		clientShutdown()
 	case messaging.PingEvent:
