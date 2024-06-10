@@ -13,7 +13,7 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	if req == nil {
 		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : request is nil"))
 	}
-	if dbClient == nil {
+	if dbClient == nil && req.execFunc == nil {
 		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : dbClient is nil"))
 	}
 	ctx1, cancel := req.setTimeout(ctx)
@@ -23,7 +23,11 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	var start = time.Now().UTC()
 	if req.execFunc != nil {
 		cmd, err := req.execFunc(ctx1, buildSql(req), req)
-		status = core.NewStatusError(core.StatusInvalidArgument, err)
+		if err != nil {
+			status = core.NewStatusError(core.StatusInvalidArgument, err)
+		} else {
+			status = core.StatusOK()
+		}
 		// TODO : determine if there was a timeout
 		access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.header.Get(core.XFrom), req.routeName, "", req.duration, 0, 0, reasonCode)
 		return cmd, status
