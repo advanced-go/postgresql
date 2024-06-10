@@ -7,6 +7,7 @@ import (
 	"github.com/advanced-go/stdlib/io"
 	"github.com/advanced-go/stdlib/json"
 	"net/http"
+	"net/url"
 )
 
 const (
@@ -48,6 +49,20 @@ func ExampleInsert() {
 
 	//Output:
 	//test: Insert() -> [tag:{ 2 true false false false}] [status:OK] [count:6]
+
+}
+
+func ExampleQueryT() {
+	h := make(http.Header)
+	h.Set(core.XFrom, module.Authority)
+	values := make(url.Values)
+	values.Add(core.RegionKey, "*")
+	entries, status := QueryT[Entry](nil, h, "access-log", "", values)
+
+	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
+
+	//Output:
+	//test: QueryT() -> [status:OK] [entries:6]
 
 }
 
