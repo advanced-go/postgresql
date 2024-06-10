@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/advanced-go/postgresql/module"
 	"github.com/advanced-go/stdlib/core"
-	"github.com/advanced-go/stdlib/io"
 	"github.com/advanced-go/stdlib/json"
 	"net/http"
 	"net/url"
@@ -31,20 +30,15 @@ func ExampleAccessInsert() {
 }
 
 func ExampleInsert() {
-	buf, status := io.ReadFile(accessJson)
+	rows, status := json.New[[]Entry](accessJson, nil)
 	if !status.OK() {
 		fmt.Printf("test: io.ReadFile() -> [status:%v]\n", status)
 	} else {
-		rows, status1 := json.New[[]Entry](buf, nil)
-		if !status1.OK() {
-			fmt.Printf("test: json.New() -> [status:%v]\n", status1)
-		} else {
-			values := toValues(rows)
-			h := make(http.Header)
-			h.Set(core.XFrom, module.Authority)
-			tag, status2 := Insert(nil, h, "access-log", "", values)
-			fmt.Printf("test: Insert() -> [tag:%v] [status:%v] [count:%v]\n", tag, status2, len(list))
-		}
+		values := toValues(rows)
+		h := make(http.Header)
+		h.Set(core.XFrom, module.Authority)
+		tag, status2 := Insert(nil, h, "access-log", "", values)
+		fmt.Printf("test: Insert() -> [tag:%v] [status:%v] [count:%v]\n", tag, status2, len(list))
 	}
 
 	//Output:
