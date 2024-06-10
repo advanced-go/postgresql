@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgconn"
 	"net/http"
 	"time"
 )
@@ -49,7 +48,7 @@ type request struct {
 	error     error
 	header    http.Header
 	queryFunc func(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
-	execFunc  func(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
+	execFunc  func(ctx context.Context, sql string, req *request) (CommandTag, error)
 }
 
 func newRequest(h http.Header, cmd int, resource, template, uri, routeName string, duration time.Duration) *request {

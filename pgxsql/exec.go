@@ -22,11 +22,11 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	}
 	var start = time.Now().UTC()
 	if req.execFunc != nil {
-		cmd, err := req.execFunc(ctx1, buildSql(req), req.args)
-		status = core.NewStatusError(core.StatusInvalidArgument, recast(err))
+		cmd, err := req.execFunc(ctx1, buildSql(req), req)
+		status = core.NewStatusError(core.StatusInvalidArgument, err)
 		// TODO : determine if there was a timeout
 		access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.header.Get(core.XFrom), req.routeName, "", req.duration, 0, 0, reasonCode)
-		return newCmdTag(cmd), status
+		return cmd, status
 	}
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx1)

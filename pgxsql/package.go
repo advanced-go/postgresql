@@ -66,6 +66,7 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template
 // Insert - execute a SQL insert statement
 func Insert(ctx context.Context, h http.Header, resource, template string, values [][]any, args ...any) (tag CommandTag, status *core.Status) {
 	req := newInsertRequest(h, resource, template, values, args...)
+	req.execFunc = accessInsert
 	return exec(ctx, req)
 }
 
