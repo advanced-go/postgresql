@@ -15,7 +15,7 @@ func originFilter(values url.Values) []Entry {
 
 	filter := core.NewOrigin(values)
 	for _, e := range storage {
-		target := core.Origin{Region: e.Region, Zone: e.Zone, SubZone: e.SubZone, Host: e.Host, InstanceId: e.InstanceId}
+		target := core.Origin{Region: e.Region, Zone: e.Zone, SubZone: e.SubZone, Host: e.Host}
 		if core.OriginMatch(target, filter) {
 			result = append(result, e)
 		}
