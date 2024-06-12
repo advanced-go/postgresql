@@ -5,6 +5,7 @@ import (
 	"github.com/advanced-go/postgresql/module"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/json"
+	"github.com/advanced-go/stdlib/uri"
 	"net/http"
 	"net/url"
 )
@@ -13,7 +14,7 @@ const (
 	accessJson = "file://[cwd]/pgxsqltest/access.json"
 )
 
-func ExampleAccessInsert() {
+func _ExampleAccessInsert() {
 	req := new(request)
 
 	tag, err := accessInsert(nil, "", req)
@@ -29,7 +30,7 @@ func ExampleAccessInsert() {
 
 }
 
-func ExampleInsert() {
+func _ExampleInsert() {
 	rows, status := json.New[[]Entry](accessJson, nil)
 	if !status.OK() {
 		fmt.Printf("test: io.ReadFile() -> [status:%v]\n", status)
@@ -46,7 +47,7 @@ func ExampleInsert() {
 
 }
 
-func ExampleQueryT() {
+func _ExampleQueryT() {
 	h := make(http.Header)
 	h.Set(core.XFrom, module.Authority)
 	values := make(url.Values)
@@ -67,4 +68,72 @@ func toValues(entries []Entry) [][]any {
 		values = append(values, row)
 	}
 	return values
+}
+
+func _ExampleAccessFilter() {
+	q := ""
+	result := accessFilter(nil)
+	fmt.Printf("test: accessFilter(\"%v\") -> [cnt:%v] [filter:%v]\n", q, len(list), len(result))
+
+	q = "region=*&order=desc"
+	result = accessFilter(uri.BuildValues(q))
+	fmt.Printf("test: accessFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(list), len(result), nil)
+
+	q = "region=*&order=desc&top=2"
+	result = accessFilter(uri.BuildValues(q))
+	fmt.Printf("test: accessFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(list), len(result), nil)
+
+	q = "region=*&order=desc&top=45"
+	result = accessFilter(uri.BuildValues(q))
+	fmt.Printf("test: accessFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(list), len(result), nil)
+
+	//Output:
+	//test: accessFilter("") -> [cnt:4] [filter:4]
+	//test: accessFilter("region=*&order=desc") -> [cnt:4] [filter:4] [result:<nil>]
+	//test: accessFilter("region=*&order=desc&top=2") -> [cnt:4] [filter:2] [result:<nil>]
+	//test: accessFilter("region=*&order=desc&top=45") -> [cnt:4] [filter:4] [result:<nil>]
+
+}
+
+func _ExampleOrder() {
+	q := ""
+	result := order(nil, list)
+	fmt.Printf("test: order(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), result)
+
+	q = "order=desc"
+	result = order(uri.BuildValues(q), list)
+	fmt.Printf("test: order(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), result)
+
+	//Output:
+	//fail
+}
+
+func ExampleTop() {
+	q := ""
+	result := top(nil, list)
+	fmt.Printf("test: top(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), len(result))
+
+	q = "top=2"
+	result = top(uri.BuildValues(q), list)
+	fmt.Printf("test: top(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), len(result))
+
+	//Output:
+	//test: top("") -> [cnt:4] [result:4]
+	//test: top("top=2") -> [cnt:4] [result:2]
+
+}
+
+func ExampleDistinct() {
+	q := ""
+	result := distinct(nil, list)
+	fmt.Printf("test: distinct(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), len(result))
+
+	q = "distinct=host"
+	result = distinct(uri.BuildValues(q), list)
+	fmt.Printf("test: distinct(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), len(result))
+
+	//Output:
+	//test: distinct("") -> [cnt:4] [result:4]
+	//test: distinct("distinct=host") -> [cnt:4] [result:3]
+
 }

@@ -24,7 +24,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 	}
 	var start = time.Now().UTC()
 	if req.queryFunc != nil {
-		rows, err = req.queryFunc(ctx1, buildSql(req), req.args)
+		rows, err = req.queryFunc(ctx1, buildSql(req), req)
 	} else {
 		rows, err = dbClient.Query(ctx1, buildSql(req), req.args)
 	}

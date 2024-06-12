@@ -67,7 +67,7 @@ func (r *accessRows) Err() error { return nil }
 
 func (r *accessRows) Next() bool {
 	r.index++
-	return r.index != len(list)
+	return r.index != len(resultSet)
 }
 
 func (r *accessRows) Scan(dest ...any) error {
@@ -75,41 +75,44 @@ func (r *accessRows) Scan(dest ...any) error {
 }
 func (r *accessRows) Values() ([]any, error) {
 	return []any{
-		list[r.index].StartTime,
-		list[r.index].Duration,
-		list[r.index].Traffic,
-		list[r.index].CreatedTS,
+		resultSet[r.index].StartTime,
+		resultSet[r.index].Duration,
+		resultSet[r.index].Traffic,
+		resultSet[r.index].CreatedTS,
 
-		list[r.index].Region,
-		list[r.index].Zone,
-		list[r.index].SubZone,
-		list[r.index].Host,
-		list[r.index].InstanceId,
+		resultSet[r.index].Region,
+		resultSet[r.index].Zone,
+		resultSet[r.index].SubZone,
+		resultSet[r.index].Host,
+		resultSet[r.index].InstanceId,
 
-		list[r.index].RequestId,
-		list[r.index].RelatesTo,
-		list[r.index].Protocol,
-		list[r.index].Method,
-		list[r.index].From,
-		list[r.index].To,
-		list[r.index].Url,
-		list[r.index].Path,
+		resultSet[r.index].RequestId,
+		resultSet[r.index].RelatesTo,
+		resultSet[r.index].Protocol,
+		resultSet[r.index].Method,
+		resultSet[r.index].From,
+		resultSet[r.index].To,
+		resultSet[r.index].Url,
+		resultSet[r.index].Path,
 
-		list[r.index].StatusCode,
-		list[r.index].Encoding,
-		list[r.index].Bytes,
+		resultSet[r.index].StatusCode,
+		resultSet[r.index].Encoding,
+		resultSet[r.index].Bytes,
 
-		list[r.index].Route,
-		list[r.index].RouteTo,
-		list[r.index].Timeout,
-		list[r.index].RateLimit,
-		list[r.index].RateBurst,
-		list[r.index].ReasonCode,
+		resultSet[r.index].Route,
+		resultSet[r.index].RouteTo,
+		resultSet[r.index].Timeout,
+		resultSet[r.index].RateLimit,
+		resultSet[r.index].RateBurst,
+		resultSet[r.index].ReasonCode,
 	}, nil
 }
 func (r *accessRows) RawValues() [][]byte { return nil }
 
-func accessQuery(ctx context.Context, sql string, args ...any) (pgx.Rows, error) {
+var resultSet []Entry
+
+func accessQuery(ctx context.Context, sql string, req *request) (pgx.Rows, error) {
+	resultSet = accessFilter(req.values2)
 	rows := NewAccessRows()
 	return rows, nil
 }

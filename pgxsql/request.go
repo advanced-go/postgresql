@@ -42,12 +42,13 @@ type request struct {
 	routeName string
 
 	values    [][]any
+	values2   map[string][]string
 	attrs     []pgxdml.Attr
 	where     []pgxdml.Attr
 	args      []any
 	error     error
 	header    http.Header
-	queryFunc func(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+	queryFunc func(ctx context.Context, sql string, req *request) (pgx.Rows, error)
 	execFunc  func(ctx context.Context, sql string, req *request) (CommandTag, error)
 }
 
@@ -144,6 +145,7 @@ func newQueryRequestFromValues(h http.Header, resource, template string, values 
 	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName, QueryTimeout)
 	r.where = buildWhere(values)
 	r.args = args
+	r.values2 = values
 	return r
 }
 
