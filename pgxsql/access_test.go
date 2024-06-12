@@ -18,11 +18,11 @@ func _ExampleAccessInsert() {
 	req := new(request)
 
 	tag, err := accessInsert(nil, "", req)
-	fmt.Printf("test: accessInsert() -> [tag:%v] [err:%v] [count:%v]\n", tag, err, len(list))
+	fmt.Printf("test: accessInsert() -> [tag:%v] [err:%v] [count:%v]\n", tag, err, len(storage))
 
-	req.values = toValues(list)
+	req.values = toValues(storage)
 	tag, err = accessInsert(nil, "", req)
-	fmt.Printf("test: accessInsert() -> [tag:%v] [err:%v] [count:%v]\n", tag, err, len(list))
+	fmt.Printf("test: accessInsert() -> [tag:%v] [err:%v] [count:%v]\n", tag, err, len(storage))
 
 	//Output:
 	//test: accessInsert() -> [tag:{ 0 false false false false}] [err:request or request values is nil] [count:2]
@@ -39,7 +39,7 @@ func _ExampleInsert() {
 		h := make(http.Header)
 		h.Set(core.XFrom, module.Authority)
 		tag, status2 := Insert(nil, h, "access-log", "", values)
-		fmt.Printf("test: Insert() -> [tag:%v] [status:%v] [count:%v]\n", tag, status2, len(list))
+		fmt.Printf("test: Insert() -> [tag:%v] [status:%v] [count:%v]\n", tag, status2, len(storage))
 	}
 
 	//Output:
@@ -70,70 +70,27 @@ func toValues(entries []Entry) [][]any {
 	return values
 }
 
-func _ExampleAccessFilter() {
+func ExampleOriginFilter() {
 	q := ""
-	result := accessFilter(nil)
-	fmt.Printf("test: accessFilter(\"%v\") -> [cnt:%v] [filter:%v]\n", q, len(list), len(result))
+	result := originFilter(nil)
+	fmt.Printf("test: originFilter(\"%v\") -> [cnt:%v] [filter:%v]\n", q, len(storage), len(result))
 
 	q = "region=*&order=desc"
-	result = accessFilter(uri.BuildValues(q))
-	fmt.Printf("test: accessFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(list), len(result), nil)
+	result = originFilter(uri.BuildValues(q))
+	fmt.Printf("test: originFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(storage), len(result), nil)
 
 	q = "region=*&order=desc&top=2"
-	result = accessFilter(uri.BuildValues(q))
-	fmt.Printf("test: accessFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(list), len(result), nil)
+	result = originFilter(uri.BuildValues(q))
+	fmt.Printf("test: originFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(storage), len(result), nil)
 
 	q = "region=*&order=desc&top=45"
-	result = accessFilter(uri.BuildValues(q))
-	fmt.Printf("test: accessFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(list), len(result), nil)
+	result = originFilter(uri.BuildValues(q))
+	fmt.Printf("test: originFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(storage), len(result), nil)
 
 	//Output:
-	//test: accessFilter("") -> [cnt:4] [filter:4]
-	//test: accessFilter("region=*&order=desc") -> [cnt:4] [filter:4] [result:<nil>]
-	//test: accessFilter("region=*&order=desc&top=2") -> [cnt:4] [filter:2] [result:<nil>]
-	//test: accessFilter("region=*&order=desc&top=45") -> [cnt:4] [filter:4] [result:<nil>]
-
-}
-
-func _ExampleOrder() {
-	q := ""
-	result := order(nil, list)
-	fmt.Printf("test: order(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), result)
-
-	q = "order=desc"
-	result = order(uri.BuildValues(q), list)
-	fmt.Printf("test: order(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), result)
-
-	//Output:
-	//fail
-}
-
-func ExampleTop() {
-	q := ""
-	result := top(nil, list)
-	fmt.Printf("test: top(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), len(result))
-
-	q = "top=2"
-	result = top(uri.BuildValues(q), list)
-	fmt.Printf("test: top(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), len(result))
-
-	//Output:
-	//test: top("") -> [cnt:4] [result:4]
-	//test: top("top=2") -> [cnt:4] [result:2]
-
-}
-
-func ExampleDistinct() {
-	q := ""
-	result := distinct(nil, list)
-	fmt.Printf("test: distinct(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), len(result))
-
-	q = "distinct=host"
-	result = distinct(uri.BuildValues(q), list)
-	fmt.Printf("test: distinct(\"%v\") -> [cnt:%v] [result:%v]\n", q, len(list), len(result))
-
-	//Output:
-	//test: distinct("") -> [cnt:4] [result:4]
-	//test: distinct("distinct=host") -> [cnt:4] [result:3]
+	//test: originFilter("") -> [cnt:4] [filter:4]
+	//test: originFilter("region=*&order=desc") -> [cnt:4] [filter:4] [result:<nil>]
+	//test: originFilter("region=*&order=desc&top=2") -> [cnt:4] [filter:2] [result:<nil>]
+	//test: originFilter("region=*&order=desc&top=45") -> [cnt:4] [filter:4] [result:<nil>]
 
 }

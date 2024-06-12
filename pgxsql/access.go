@@ -5,9 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/advanced-go/stdlib/access"
-	"github.com/advanced-go/stdlib/core"
-	"net/url"
-	"strconv"
 	"time"
 )
 
@@ -147,7 +144,7 @@ func (a Entry) Values() []any {
 	}
 }
 
-var list = []Entry{
+var storage = []Entry{
 	{time.Date(2024, 6, 10, 7, 10, 35, 0, time.UTC), 100, access.EgressTraffic, time.Now().UTC(), "us-west", "oregon", "dc1", "www.test-host.com", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "www.google.com", "", "https://www.google.com/search?q-golang", "/search", 200, "gzip", 12345, "google-search", "primary", 500, 100, 10, ""},
 	{time.Date(2024, 6, 10, 7, 12, 35, 0, time.UTC), 100, access.IngressTraffic, time.Now().UTC(), "us-west", "oregon", "dc2", "localhost:8081", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "github/advanced-go/search", "", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 504, "gzip", 12345, "search", "primary", 500, 100, 10, "TO"},
 	{time.Date(2024, 6, 11, 8, 45, 2, 0, time.UTC), 100, access.EgressTraffic, time.Now().UTC(), "us-west", "oregon", "dc3", "www.test-host.com", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "www.google.com", "", "https://www.google.com/search?q-golang", "/search", 200, "gzip", 12345, "google-search", "primary", 500, 100, 10, ""},
@@ -166,93 +163,8 @@ func accessInsert(ctx context.Context, sql string, req *request) (CommandTag, er
 		e, err := entry.Scan(names, row)
 		if err == nil {
 			count++
-			list = append(list, e)
+			storage = append(storage, e)
 		}
 	}
 	return CommandTag{RowsAffected: int64(count), Insert: true}, nil
-}
-
-func accessFilter(values url.Values) []Entry {
-	if values == nil {
-		return list
-	}
-	var result []Entry
-
-	filter := core.NewOrigin(values)
-	for _, e := range list {
-		target := core.Origin{Region: e.Region, Zone: e.Zone, SubZone: e.SubZone, Host: e.Host, InstanceId: e.InstanceId}
-		if core.OriginMatch(target, filter) {
-			result = append(result, e)
-		}
-	}
-	if len(result) == 0 {
-		return result
-	}
-	result = order(values, result)
-	result = top(values, result)
-	return distinct(values, result)
-}
-
-func order(values url.Values, entries []Entry) []Entry {
-	if entries == nil || values == nil {
-		return entries
-	}
-	s := values.Get("order")
-	if s != "desc" {
-		return entries
-	}
-	var result []Entry
-
-	for index := len(entries) - 1; index >= 0; index-- {
-		result = append(result, entries[index])
-	}
-	return result
-}
-
-func top(values url.Values, entries []Entry) []Entry {
-	if entries == nil || values == nil {
-		return entries
-	}
-	s := values.Get("top")
-	if s == "" {
-		return entries
-	}
-	cnt, err := strconv.Atoi(s)
-	if err != nil {
-		fmt.Printf("top value is not valid: %v", s)
-	}
-	var result []Entry
-	for i, e := range entries {
-		if i < cnt {
-			result = append(result, e)
-		} else {
-			break
-		}
-	}
-	return result
-}
-
-func distinct(values url.Values, entries []Entry) []Entry {
-	if entries == nil || values == nil {
-		return entries
-	}
-	s := values.Get("distinct")
-	if s == "" {
-		return entries
-	}
-	if s != "host" {
-		return entries
-	}
-	m := make(map[string]string)
-	var result []Entry
-
-	for _, e := range entries {
-		_, ok := m[e.Host]
-		if ok {
-			continue
-		}
-		result = append(result, e)
-		m[e.Host] = e.Host
-	}
-	return result
 }

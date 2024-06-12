@@ -112,7 +112,7 @@ func (r *accessRows) RawValues() [][]byte { return nil }
 var resultSet []Entry
 
 func accessQuery(ctx context.Context, sql string, req *request) (pgx.Rows, error) {
-	resultSet = accessFilter(req.values2)
+	resultSet = originFilter(req.values2)
 	rows := NewAccessRows()
 	return rows, nil
 }
