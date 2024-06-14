@@ -1,7 +1,6 @@
 package pgxsql
 
 import (
-	"errors"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -14,8 +13,8 @@ type Scanner[T any] interface {
 
 // Scan - templated function for scanning rows
 func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *core.Status) {
-	if rows == nil {
-		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("invalid request: rows interface is nil"))
+	if rows == nil || rows.CommandTag().RowsAffected() == 0 {
+		return nil, core.StatusNotFound() //core.NewStatusError(core.StatusInvalidArgument, errors.New("invalid request: rows interface is nil"))
 	}
 	var s T
 	var t []T
@@ -40,6 +39,9 @@ func Scan[T Scanner[T]](rows pgx.Rows) ([]T, *core.Status) {
 		t = append(t, val)
 		// Test this
 		//rows.Close()
+	}
+	if len(t) == 0 {
+		return t, core.StatusNotFound()
 	}
 	return t, core.StatusOK()
 }
