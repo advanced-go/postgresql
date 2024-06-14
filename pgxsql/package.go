@@ -45,12 +45,18 @@ func Readiness() *core.Status {
 	return core.NewStatus(core.StatusNotStarted)
 }
 
+// QueryFunc - type declaration
+type QueryFunc func(context.Context, http.Header, string, string, map[string][]string, ...any) (pgx.Rows, *core.Status)
+
 // Query -  process a SQL select statement
 func Query(ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows pgx.Rows, status *core.Status) {
 	req := newQueryRequestFromValues(h, resource, template, values, args...)
 	req.queryFunc = accessQuery
 	return query(ctx, req)
 }
+
+// QueryFuncT - type declaration
+type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string, map[string][]string, ...any) ([]T, *core.Status)
 
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
@@ -63,6 +69,9 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template
 	return Scan[T](r)
 }
 
+// InsertFunc - type
+type InsertFunc func(context.Context, http.Header, string, string, [][]any, ...any) (CommandTag, *core.Status)
+
 // Insert - execute a SQL insert statement
 func Insert(ctx context.Context, h http.Header, resource, template string, values [][]any, args ...any) (tag CommandTag, status *core.Status) {
 	req := newInsertRequest(h, resource, template, values, args...)
@@ -70,11 +79,17 @@ func Insert(ctx context.Context, h http.Header, resource, template string, value
 	return exec(ctx, req)
 }
 
+// UpdateFunc - type
+type UpdateFunc func(context.Context, http.Header, string, string, []Attr, []Attr) (CommandTag, *core.Status)
+
 // Update - execute a SQL update statement
 func Update(ctx context.Context, h http.Header, resource, template string, where []Attr, args []Attr) (tag CommandTag, status *core.Status) {
 	req := newUpdateRequest(h, resource, template, convert(where), convert(args))
 	return exec(ctx, req)
 }
+
+// DeleteFunc - type
+type DeleteFunc func(context.Context, http.Header, string, string, []Attr, ...any) (CommandTag, *core.Status)
 
 // Delete - execute a SQL delete statement
 func Delete(ctx context.Context, h http.Header, resource, template string, where []Attr, args ...any) (tag CommandTag, status *core.Status) {
