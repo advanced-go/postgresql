@@ -144,7 +144,7 @@ func (a Entry) Values() []any {
 	}
 }
 
-func (Entry) InsertValues(entries []Entry) [][]any {
+func (Entry) Rows(entries []Entry) [][]any {
 	var values [][]any
 
 	for _, e := range entries {

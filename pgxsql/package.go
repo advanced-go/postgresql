@@ -79,6 +79,20 @@ func Insert(ctx context.Context, h http.Header, resource, template string, value
 	return exec(ctx, req)
 }
 
+// InsertFuncT - type
+type InsertFuncT[T Scanner[T]] func(context.Context, http.Header, string, string, []T, ...any) (CommandTag, *core.Status)
+
+// InsertT - execute a SQL insert statement
+func InsertT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, entries []T, args ...any) (tag CommandTag, status *core.Status) {
+	rows, status1 := Rows[T](entries)
+	if !status.OK() {
+		return CommandTag{}, status1
+	}
+	req := newInsertRequest(h, resource, template, rows, args...)
+	req.execFunc = accessInsert
+	return exec(ctx, req)
+}
+
 // UpdateFunc - type
 type UpdateFunc func(context.Context, http.Header, string, string, []Attr, []Attr) (CommandTag, *core.Status)
 

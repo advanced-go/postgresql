@@ -9,7 +9,16 @@ import (
 // Scanner - templated interface for scanning rows
 type Scanner[T any] interface {
 	Scan(columnNames []string, values []any) (T, error)
-	InsertValues(entries []T) [][]any
+	Rows([]T) [][]any
+}
+
+// Rows - templated function for creating rows
+func Rows[T Scanner[T]](entries []T) ([][]any, *core.Status) {
+	if len(entries) == 0 {
+		return nil, core.StatusNotFound()
+	}
+	var t T
+	return t.Rows(entries), core.StatusOK()
 }
 
 // Scan - templated function for scanning rows
