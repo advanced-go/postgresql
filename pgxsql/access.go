@@ -144,6 +144,15 @@ func (a Entry) Values() []any {
 	}
 }
 
+func (Entry) InsertValues(entries []Entry) [][]any {
+	var values [][]any
+
+	for _, e := range entries {
+		values = append(values, e.Values())
+	}
+	return values
+}
+
 var storage = []Entry{
 	{time.Date(2024, 6, 10, 7, 10, 35, 0, time.UTC), 100, access.EgressTraffic, time.Now().UTC(), "us-west", "oregon", "dc1", "www.test-host.com", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "www.google.com", "", "https://www.google.com/search?q-golang", "/search", 200, "gzip", 12345, "google-search", "primary", 500, 100, 10, ""},
 	{time.Date(2024, 6, 10, 7, 12, 35, 0, time.UTC), 100, access.IngressTraffic, time.Now().UTC(), "us-west", "oregon", "dc2", "localhost:8081", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "github/advanced-go/search", "", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 504, "gzip", 12345, "search", "primary", 500, 100, 10, "TO"},
