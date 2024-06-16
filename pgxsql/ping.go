@@ -30,8 +30,3 @@ func ping(ctx context.Context, req *request) (status *core.Status) {
 	access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.From(), req.routeName, "", req.duration, 0, 0, reasonCode)
 	return
 }
-
-// Scrap
-//var limited = false
-//var fn func()
-//
