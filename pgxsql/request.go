@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/advanced-go/postgresql/pgxdml"
+	"github.com/advanced-go/stdlib/core"
 	"github.com/jackc/pgx/v5"
 	"net/http"
 	"time"
@@ -47,7 +48,7 @@ type request struct {
 	where     []pgxdml.Attr
 	args      []any
 	error     error
-	header    http.Header
+	header2   http.Header
 	queryFunc func(ctx context.Context, sql string, req *request) (pgx.Rows, error)
 	execFunc  func(ctx context.Context, sql string, req *request) (CommandTag, error)
 }
@@ -62,7 +63,7 @@ func newRequest(h http.Header, cmd int, resource, template, uri, routeName strin
 	r.uri = uri
 	r.routeName = routeName
 
-	r.header = h
+	r.header2 = h
 
 	r.duration = duration
 	return r
@@ -85,12 +86,14 @@ func (r *request) Method() string {
 }
 
 func (r *request) Header() http.Header {
-	return r.header
+	return r.header2
+}
+
+func (r *request) From() string {
+	return r.header2.Get(core.XFrom)
 }
 
 func (r *request) Url() string {
-	//req, _ := http.NewRequest(method(r), r.uri, nil)
-	//req.Header = r.header
 	return r.uri
 }
 

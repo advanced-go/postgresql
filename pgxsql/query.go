@@ -35,7 +35,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 	}
 	// TODO : determine if there was a timeout
 	reasonCode := ""
-	access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.header.Get(core.XFrom), req.routeName, "", req.duration, 0, 0, reasonCode)
+	access.Log(access.EgressTraffic, start, time.Since(start), req, status, req.From(), req.routeName, "", req.duration, 0, 0, reasonCode)
 	return rows, status
 }
 
