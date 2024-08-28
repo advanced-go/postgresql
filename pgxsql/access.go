@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/advanced-go/stdlib/access"
@@ -151,6 +152,12 @@ func (Entry) Rows(entries []Entry) [][]any {
 		values = append(values, e.Values())
 	}
 	return values
+}
+
+func (Entry) Unmarshal(data []byte) ([]Entry, error) {
+	var t []Entry
+	err := json.Unmarshal(data, &t)
+	return t, err
 }
 
 var storage = []Entry{

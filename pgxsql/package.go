@@ -51,7 +51,7 @@ type QueryFunc func(context.Context, http.Header, string, string, map[string][]s
 // Query -  process a SQL select statement
 func Query(ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows pgx.Rows, status *core.Status) {
 	req := newQueryRequestFromValues(h, resource, template, values, args...)
-	req.queryFunc = accessQuery
+	//req.queryFunc = accessQuery
 	return query(ctx, req)
 }
 
@@ -60,8 +60,12 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
+	url := core.UrlFromContext(ctx)
+	if url != "" {
+		return Unmarshal[T](url)
+	}
 	req := newQueryRequestFromValues(h, resource, template, values, args...)
-	req.queryFunc = accessQuery
+	//req.queryFunc = accessQuery
 	r, status1 := query(ctx, req)
 	if !status1.OK() {
 		return nil, status1
@@ -75,7 +79,7 @@ type InsertFunc func(context.Context, http.Header, string, string, [][]any, ...a
 // Insert - execute a SQL insert statement
 func Insert(ctx context.Context, h http.Header, resource, template string, values [][]any, args ...any) (tag CommandTag, status *core.Status) {
 	req := newInsertRequest(h, resource, template, values, args...)
-	req.execFunc = accessInsert
+	//req.execFunc = accessInsert
 	return exec(ctx, req)
 }
 
@@ -89,7 +93,7 @@ func InsertT[T Scanner[T]](ctx context.Context, h http.Header, resource, templat
 		return CommandTag{}, status1
 	}
 	req := newInsertRequest(h, resource, template, rows, args...)
-	req.execFunc = accessInsert
+	//req.execFunc = accessInsert
 	return exec(ctx, req)
 }
 

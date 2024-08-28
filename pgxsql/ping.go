@@ -27,6 +27,6 @@ func ping(ctx context.Context, req *request) (status *core.Status) {
 	}
 	// TODO : determine if there was a timeout
 	reasonCode := ""
-	access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{FromAuthority: req.From(), RouteName: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: 0, RateBurst: 0, Code: reasonCode})
+	access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: 0, RateBurst: 0, Code: reasonCode})
 	return
 }

@@ -61,6 +61,21 @@ func _ExampleQueryT() {
 
 }
 
+func ExampleQueryT_URL() {
+	h := make(http.Header)
+	h.Set(core.XFrom, module.Authority)
+	values := make(url.Values)
+	values.Add(core.RegionKey, "*")
+	ctx := core.NewUrlContext(nil, accessJson)
+	entries, status := QueryT[Entry](ctx, h, "access-log", "", values)
+
+	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
+
+	//Output:
+	//test: QueryT() -> [status:OK] [entries:2]
+
+}
+
 func toValues(entries []Entry) [][]any {
 	var values [][]any
 	for _, e := range entries {
