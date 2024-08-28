@@ -6,7 +6,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
-	"time"
 )
 
 type pkg struct{}
@@ -16,13 +15,6 @@ const (
 	userConfigKey = "user"
 	pswdConfigKey = "pswd"
 	uriConfigKey  = "uri"
-
-	// Timeouts
-	QueryTimeout  = time.Second * 2
-	InsertTimeout = time.Second * 2
-	UpdateTimeout = time.Second * 2
-	DeleteTimeout = time.Second * 2
-	PingTimeout   = time.Second * 1
 
 	QueryRouteName  = "postgresql-query"
 	InsertRouteName = "postgresql-insert"
