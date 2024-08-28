@@ -18,15 +18,13 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL database query call: dbClient is nil"))
 	}
 	var err error
-	ctx1, cancel := req.setTimeout(ctx)
-	if cancel != nil {
-		defer cancel()
-	}
+	ctx = req.setTimeout(ctx)
+
 	var start = time.Now().UTC()
 	if req.queryFunc != nil {
-		rows, err = req.queryFunc(ctx1, buildSql(req), req)
+		rows, err = req.queryFunc(ctx, buildSql(req), req)
 	} else {
-		rows, err = dbClient.Query(ctx1, buildSql(req), req.args)
+		rows, err = dbClient.Query(ctx, buildSql(req), req.args)
 	}
 	if err != nil {
 		status = core.NewStatusError(core.StatusIOError, recast(err))
@@ -35,7 +33,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 	}
 	// TODO : determine if there was a timeout
 	reasonCode := ""
-	access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: 0, RateBurst: 0, Code: reasonCode})
+	access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: -1, RateBurst: -1, Code: reasonCode})
 	return rows, status
 }
 

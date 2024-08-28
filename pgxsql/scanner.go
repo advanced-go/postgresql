@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"errors"
 	"github.com/advanced-go/stdlib/core"
-	"github.com/advanced-go/stdlib/io"
+	"github.com/advanced-go/stdlib/json"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -11,25 +11,15 @@ import (
 // Scanner - templated interface for scanning rows
 type Scanner[T any] interface {
 	Scan(columnNames []string, values []any) (T, error)
-	Unmarshal(data []byte) ([]T, error)
 	Rows([]T) [][]any
 }
 
 // Unmarshal - templated function for JSON unmarshalling
-func Unmarshal[T Scanner[T]](url string) ([]T, *core.Status) {
-	if url == "" {
-		return []T{}, core.NewStatusError(core.StatusInvalidArgument, errors.New("error: URL is empty"))
+func Unmarshal[T Scanner[T]](t any) ([]T, *core.Status) {
+	if t == nil {
+		return []T{}, core.NewStatusError(core.StatusInvalidArgument, errors.New("error: source is nil"))
 	}
-	data, status := io.ReadFile(url)
-	if !status.OK() {
-		return []T{}, status
-	}
-	var t T
-	result, err := t.Unmarshal(data)
-	if err != nil {
-		return []T{}, core.NewStatusError(core.StatusJsonDecodeError, err)
-	}
-	return result, core.StatusOK()
+	return json.New[[]T](t, nil)
 }
 
 // Rows - templated function for creating rows

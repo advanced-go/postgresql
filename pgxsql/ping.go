@@ -14,12 +14,9 @@ func ping(ctx context.Context, req *request) (status *core.Status) {
 	if dbClient == nil {
 		return core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL ping call : dbClient is nil"))
 	}
-	ctx1, cancel := req.setTimeout(ctx)
-	if cancel != nil {
-		defer cancel()
-	}
+	ctx = req.setTimeout(ctx)
 	var start = time.Now().UTC()
-	err := dbClient.Ping(ctx1)
+	err := dbClient.Ping(ctx)
 	if err != nil {
 		status = core.NewStatusError(http.StatusInternalServerError, err)
 	} else {

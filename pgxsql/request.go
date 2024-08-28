@@ -53,7 +53,7 @@ type request struct {
 	execFunc  func(ctx context.Context, sql string, req *request) (CommandTag, error)
 }
 
-func newRequest(h http.Header, cmd int, resource, template, uri, routeName string, duration time.Duration) *request {
+func newRequest(h http.Header, cmd int, resource, template, uri, routeName string) *request {
 	r := new(request)
 	r.expectedCount = nullExpectedCount
 	r.cmd = cmd
@@ -65,7 +65,7 @@ func newRequest(h http.Header, cmd int, resource, template, uri, routeName strin
 
 	r.header2 = h
 
-	r.duration = duration
+	r.duration = -1
 	return r
 }
 
@@ -97,14 +97,14 @@ func (r *request) Url() string {
 	return r.uri
 }
 
-func (r *request) setTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
+func (r *request) setTimeout(ctx context.Context) context.Context {
 	if ctx == nil {
-		ctx = context.Background()
+		return context.Background()
 	}
-	if _, ok := ctx.Deadline(); ok {
-		return ctx, nil
+	if d, ok := ctx.Deadline(); ok {
+		r.duration = time.Until(d)
 	}
-	return context.WithTimeout(ctx, r.duration)
+	return ctx
 }
 
 func buildUri(root, resource string) string {
@@ -138,14 +138,14 @@ func buildQueryUri(resource string) string {
 //}
 
 func newQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName, QueryTimeout)
+	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
 	r.where = where
 	r.args = args
 	return r
 }
 
 func newQueryRequestFromValues(h http.Header, resource, template string, values map[string][]string, args ...any) *request {
-	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName, QueryTimeout)
+	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
 	r.where = buildWhere(values)
 	r.args = args
 	r.values2 = values
@@ -153,14 +153,14 @@ func newQueryRequestFromValues(h http.Header, resource, template string, values 
 }
 
 func newInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) *request {
-	r := newRequest(h, insertCmd, resource, template, buildUri(execRoot, resource), InsertRouteName, InsertTimeout)
+	r := newRequest(h, insertCmd, resource, template, buildUri(execRoot, resource), InsertRouteName)
 	r.values = values
 	r.args = args
 	return r
 }
 
 func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, updateCmd, resource, template, buildUri(execRoot, resource), UpdateRouteName, UpdateTimeout)
+	r := newRequest(h, updateCmd, resource, template, buildUri(execRoot, resource), UpdateRouteName)
 	r.attrs = attrs
 	r.where = where
 	r.args = args
@@ -168,14 +168,14 @@ func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.A
 }
 
 func newDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, deleteCmd, resource, template, buildUri(execRoot, resource), DeleteRouteName, DeleteTimeout)
+	r := newRequest(h, deleteCmd, resource, template, buildUri(execRoot, resource), DeleteRouteName)
 	r.where = where
 	r.args = args
 	return r
 }
 
 func newPingRequest(h http.Header) *request {
-	r := newRequest(h, pingCmd, "", "", buildUri(pingRoot, ""), PingRouteName, PingTimeout)
+	r := newRequest(h, pingCmd, "", "", buildUri(pingRoot, ""), PingRouteName)
 	return r
 }
 

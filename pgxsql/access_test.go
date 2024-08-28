@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	accessJson = "file://[cwd]/pgxsqltest/access.json"
+	accessJson   = "file://[cwd]/pgxsqltest/access.json"
+	accessStatus = "file://[cwd]/pgxsqltest/status-504.json"
 )
 
 func _ExampleAccessInsert() {
@@ -73,6 +74,26 @@ func ExampleQueryT_URL() {
 
 	//Output:
 	//test: QueryT() -> [status:OK] [entries:2]
+
+}
+
+func ExampleQueryT_URL_Status() {
+	h := make(http.Header)
+	h.Set(core.XFrom, module.Authority)
+	values := make(url.Values)
+	values.Add(core.RegionKey, "*")
+
+	ctx := core.NewUrlContext(nil, accessStatus)
+	entries, status := QueryT[Entry](ctx, h, "access-log", "", values)
+	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
+
+	ctx = core.NewUrlContext(nil, json.StatusNotFoundUri)
+	entries, status = QueryT[Entry](ctx, h, "access-log", "", values)
+	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
+
+	//Output:
+	//test: QueryT() -> [status:Timeout [error 1]] [entries:0]
+	//test: QueryT() -> [status:Not Found] [entries:0]
 
 }
 
