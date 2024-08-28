@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-type pkg struct{}
-
 const (
 	PkgPath       = "github/advanced-go/postgresql/pgxsql"
 	userConfigKey = "user"
