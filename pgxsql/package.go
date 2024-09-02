@@ -51,7 +51,7 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
-	ex := core.ExchangeFromContext(ctx)
+	ex := core.ExchangeOverrideFromContext(ctx)
 	if ex != nil {
 		if ex.Response() != "" {
 			return Unmarshal[T](ex.Response())
@@ -84,7 +84,7 @@ type InsertFuncT[T Scanner[T]] func(context.Context, http.Header, string, string
 
 // InsertT - execute a SQL insert statement
 func InsertT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, entries []T, args ...any) (tag CommandTag, status *core.Status) {
-	ex := core.ExchangeFromContext(ctx)
+	ex := core.ExchangeOverrideFromContext(ctx)
 	if ex != nil {
 		if ex.Response() != "" {
 			return NewCommandTag(ex.Response()), core.StatusOK()

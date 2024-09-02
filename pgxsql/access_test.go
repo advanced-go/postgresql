@@ -67,7 +67,7 @@ func ExampleQueryT_URL() {
 	h.Set(core.XFrom, module.Authority)
 	values := make(url.Values)
 	values.Add(core.RegionKey, "*")
-	ctx := core.NewUrlContext(nil, accessJson)
+	ctx := core.NewExchangeOverrideContext(nil, core.NewExchangeOverride("", accessJson, ""))
 	entries, status := QueryT[Entry](ctx, h, "access-log", "", values)
 
 	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
@@ -83,11 +83,11 @@ func ExampleQueryT_URL_Status() {
 	values := make(url.Values)
 	values.Add(core.RegionKey, "*")
 
-	ctx := core.NewUrlContext(nil, accessStatus)
+	ctx := core.NewExchangeOverrideContext(nil, core.NewExchangeOverride("", "", accessStatus))
 	entries, status := QueryT[Entry](ctx, h, "access-log", "", values)
 	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
 
-	ctx = core.NewUrlContext(nil, json.StatusNotFoundUri)
+	ctx = core.NewExchangeOverrideContext(nil, core.NewExchangeOverride("", "", json.StatusNotFoundUri))
 	entries, status = QueryT[Entry](ctx, h, "access-log", "", values)
 	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
 
