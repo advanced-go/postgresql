@@ -1,6 +1,6 @@
 {
   "sql":"update test",
-  "rows-affected": 0,
+  "rows-affected": 123,
   "insert": false,
   "update": true,
   "delete": false,

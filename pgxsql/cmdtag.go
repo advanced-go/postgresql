@@ -1,6 +1,9 @@
 package pgxsql
 
-import "github.com/jackc/pgx/v5/pgconn"
+import (
+	"github.com/advanced-go/stdlib/json"
+	"github.com/jackc/pgx/v5/pgconn"
+)
 
 // CommandTag - results from an Exec command
 type CommandTag struct {
@@ -21,4 +24,12 @@ func newCmdTag(tag pgconn.CommandTag) CommandTag {
 		Delete:       tag.Delete(),
 		Select:       tag.Select(),
 	}
+}
+
+func NewCommandTag(url string) CommandTag {
+	tag, status := json.New[CommandTag](url, nil)
+	if !status.OK() {
+		return CommandTag{}
+	}
+	return tag
 }

@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/stdlib/json"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
@@ -50,9 +51,14 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
-	url := core.UrlFromContext(ctx)
-	if url != "" {
-		return Unmarshal[T](url)
+	ex := core.ExchangeFromContext(ctx)
+	if ex != nil {
+		if ex.Response() != "" {
+			return Unmarshal[T](ex.Response())
+		}
+		if ex.Status() != "" {
+			return nil, json.NewStatusFrom(ex.Status())
+		}
 	}
 	req := newQueryRequestFromValues(h, resource, template, values, args...)
 	//req.queryFunc = accessQuery
@@ -78,6 +84,16 @@ type InsertFuncT[T Scanner[T]] func(context.Context, http.Header, string, string
 
 // InsertT - execute a SQL insert statement
 func InsertT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, entries []T, args ...any) (tag CommandTag, status *core.Status) {
+	ex := core.ExchangeFromContext(ctx)
+	if ex != nil {
+		if ex.Response() != "" {
+			return NewCommandTag(ex.Response()), core.StatusOK()
+		}
+		if ex.Status() != "" {
+			return CommandTag{}, json.NewStatusFrom(ex.Status())
+		}
+	}
+
 	rows, status1 := Rows[T](entries)
 	if !status.OK() {
 		return CommandTag{}, status1
