@@ -2,11 +2,13 @@ package pgxsql
 
 import (
 	"context"
+	"github.com/advanced-go/stdlib/access"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/json"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
+	"time"
 )
 
 const (
@@ -51,17 +53,20 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
+	req := newQueryRequestFromValues(h, resource, template, values, args...)
 	ex := core.ExchangeOverrideFromContext(ctx)
 	if ex != nil {
+		var start = time.Now().UTC()
+		ctx = req.setTimeout(ctx)
 		if ex.Response() != "" {
-			return Unmarshal[T](ex.Response())
+			rows, status = Unmarshal[T](ex.Response())
 		}
 		if ex.Status() != "" {
-			return nil, json.NewStatusFrom(ex.Status())
+			status = json.NewStatusFrom(ex.Status())
 		}
+		access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: -1, RateBurst: -1})
+		return
 	}
-	req := newQueryRequestFromValues(h, resource, template, values, args...)
-	//req.queryFunc = accessQuery
 	r, status1 := query(ctx, req)
 	if !status1.OK() {
 		return nil, status1
