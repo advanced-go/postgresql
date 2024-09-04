@@ -1,42 +1,43 @@
-package pgxsql
+package access
 
 import (
 	"context"
+	"github.com/advanced-go/postgresql/pgxsql"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 var fields = []pgconn.FieldDescription{
-	{StartTimeName, 0, 0, 0, 0, 0, 0},
-	{DurationName, 0, 0, 0, 0, 0, 0},
-	{TrafficName, 0, 0, 0, 0, 0, 0},
-	{CreatedTSName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.StartTimeName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.DurationName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.TrafficName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.CreatedTSName, 0, 0, 0, 0, 0, 0},
 
-	{RegionName, 0, 0, 0, 0, 0, 0},
-	{ZoneName, 0, 0, 0, 0, 0, 0},
-	{SubZoneName, 0, 0, 0, 0, 0, 0},
-	{HostName, 0, 0, 0, 0, 0, 0},
-	{InstanceIdName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.RegionName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.ZoneName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.SubZoneName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.HostName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.InstanceIdName, 0, 0, 0, 0, 0, 0},
 
-	{RequestIdName, 0, 0, 0, 0, 0, 0},
-	{RelatesToName, 0, 0, 0, 0, 0, 0},
-	{ProtocolName, 0, 0, 0, 0, 0, 0},
-	{MethodName, 0, 0, 0, 0, 0, 0},
-	{FromName, 0, 0, 0, 0, 0, 0},
-	{ToName, 0, 0, 0, 0, 0, 0},
-	{UrlName, 0, 0, 0, 0, 0, 0},
-	{PathName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.RequestIdName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.RelatesToName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.ProtocolName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.MethodName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.FromName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.ToName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.UrlName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.PathName, 0, 0, 0, 0, 0, 0},
 
-	{StatusCodeName, 0, 0, 0, 0, 0, 0},
-	{EncodingName, 0, 0, 0, 0, 0, 0},
-	{BytesName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.StatusCodeName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.EncodingName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.BytesName, 0, 0, 0, 0, 0, 0},
 
-	{RouteName, 0, 0, 0, 0, 0, 0},
-	{RouteToName, 0, 0, 0, 0, 0, 0},
-	{TimeoutName, 0, 0, 0, 0, 0, 0},
-	{RateLimitName, 0, 0, 0, 0, 0, 0},
-	{RateBurstName, 0, 0, 0, 0, 0, 0},
-	{ReasonCodeName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.RouteName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.RouteToName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.TimeoutName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.RateLimitName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.RateBurstName, 0, 0, 0, 0, 0, 0},
+	{pgxsql.ReasonCodeName, 0, 0, 0, 0, 0, 0},
 }
 
 type accessRows struct {
@@ -111,8 +112,8 @@ func (r *accessRows) RawValues() [][]byte { return nil }
 
 var resultSet []Entry
 
-func accessQuery(ctx context.Context, sql string, req *request) (pgx.Rows, error) {
-	resultSet = originFilter(req.values2)
+func accessQuery(ctx context.Context, sql string, req *pgxsql.request) (pgx.Rows, error) {
+	resultSet = pgxsql.originFilter(req.values2)
 	rows := NewAccessRows()
 	return rows, nil
 }

@@ -1,8 +1,9 @@
-package pgxsql
+package access
 
 import (
 	"fmt"
 	"github.com/advanced-go/postgresql/module"
+	"github.com/advanced-go/postgresql/pgxsql"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/json"
 	"github.com/advanced-go/stdlib/uri"
@@ -16,7 +17,7 @@ const (
 )
 
 func _ExampleAccessInsert() {
-	req := new(request)
+	req := new(pgxsql.request)
 
 	tag, err := accessInsert(nil, "", req)
 	fmt.Printf("test: accessInsert() -> [tag:%v] [err:%v] [count:%v]\n", tag, err, len(storage))
@@ -39,7 +40,7 @@ func _ExampleInsert() {
 		values := toValues(rows)
 		h := make(http.Header)
 		h.Set(core.XFrom, module.Authority)
-		tag, status2 := Insert(nil, h, "access-log", "", values)
+		tag, status2 := pgxsql.Insert(nil, h, "access-log", "", values)
 		fmt.Printf("test: Insert() -> [tag:%v] [status:%v] [count:%v]\n", tag, status2, len(storage))
 	}
 
@@ -53,7 +54,7 @@ func _ExampleQueryT() {
 	h.Set(core.XFrom, module.Authority)
 	values := make(url.Values)
 	values.Add(core.RegionKey, "*")
-	entries, status := QueryT[Entry](nil, h, "access-log", "", values)
+	entries, status := pgxsql.QueryT[Entry](nil, h, "access-log", "", values)
 
 	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
 
@@ -68,7 +69,7 @@ func ExampleQueryT_URL() {
 	values := make(url.Values)
 	values.Add(core.RegionKey, "*")
 	ctx := core.NewExchangeOverrideContext(nil, core.NewExchangeOverride("", accessJson, ""))
-	entries, status := QueryT[Entry](ctx, h, "access-log", "", values)
+	entries, status := pgxsql.QueryT[Entry](ctx, h, "access-log", "", values)
 
 	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
 
@@ -84,11 +85,11 @@ func ExampleQueryT_URL_Status() {
 	values.Add(core.RegionKey, "*")
 
 	ctx := core.NewExchangeOverrideContext(nil, core.NewExchangeOverride("", "", accessStatus))
-	entries, status := QueryT[Entry](ctx, h, "access-log", "", values)
+	entries, status := pgxsql.QueryT[Entry](ctx, h, "access-log", "", values)
 	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
 
 	ctx = core.NewExchangeOverrideContext(nil, core.NewExchangeOverride("", "", json.StatusNotFoundUri))
-	entries, status = QueryT[Entry](ctx, h, "access-log", "", values)
+	entries, status = pgxsql.QueryT[Entry](ctx, h, "access-log", "", values)
 	fmt.Printf("test: QueryT() -> [status:%v] [entries:%v]\n", status, len(entries))
 
 	//Output:
@@ -108,19 +109,19 @@ func toValues(entries []Entry) [][]any {
 
 func ExampleOriginFilter() {
 	q := ""
-	result := originFilter(nil)
+	result := pgxsql.originFilter(nil)
 	fmt.Printf("test: originFilter(\"%v\") -> [cnt:%v] [filter:%v]\n", q, len(storage), len(result))
 
 	q = "region=*&order=desc"
-	result = originFilter(uri.BuildValues(q))
+	result = pgxsql.originFilter(uri.BuildValues(q))
 	fmt.Printf("test: originFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(storage), len(result), nil)
 
 	q = "region=*&order=desc&top=2"
-	result = originFilter(uri.BuildValues(q))
+	result = pgxsql.originFilter(uri.BuildValues(q))
 	fmt.Printf("test: originFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(storage), len(result), nil)
 
 	q = "region=*&order=desc&top=45"
-	result = originFilter(uri.BuildValues(q))
+	result = pgxsql.originFilter(uri.BuildValues(q))
 	fmt.Printf("test: originFilter(\"%v\") -> [cnt:%v] [filter:%v] [result:%v]\n", q, len(storage), len(result), nil)
 
 	//Output:

@@ -1,4 +1,4 @@
-package pgxsql
+package access
 
 import (
 	"fmt"

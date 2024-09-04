@@ -1,31 +1,8 @@
 package pgxsql
 
-import (
-	"fmt"
-	"github.com/advanced-go/postgresql/module"
-	"github.com/advanced-go/stdlib/core"
-	"net/http"
-)
-
 const (
 	configMapUri = "file://[cwd]/pgxsqltest/config-map.txt"
 )
-
-func ExampleQuery() {
-	h := make(http.Header)
-	h.Add(core.XAuthority, module.Authority)
-	rows, status := Query(nil, h, "access-log", "", nil)
-	if !status.OK() {
-		fmt.Printf("test: Query() -> [status:%v]\n", status)
-	} else {
-		entries, status1 := Scan[Entry](rows)
-		fmt.Printf("test: Query() -> [status:%v] [entries:%v]\n", status1, len(entries))
-	}
-
-	//Output:
-	//test: Query() -> [status:OK] [entries:2]
-
-}
 
 /*
 func ExampleNewStringsMap() {

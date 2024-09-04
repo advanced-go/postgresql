@@ -14,18 +14,14 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 	if req == nil {
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL database query call : request is nil"))
 	}
-	if dbClient == nil && req.queryFunc == nil {
+	if dbClient == nil {
 		return nil, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL database query call: dbClient is nil"))
 	}
 	var err error
-	ctx = req.setTimeout(ctx)
-
 	var start = time.Now().UTC()
-	if req.queryFunc != nil {
-		rows, err = req.queryFunc(ctx, buildSql(req), req)
-	} else {
-		rows, err = dbClient.Query(ctx, buildSql(req), req.args)
-	}
+
+	ctx = req.setTimeout(ctx)
+	rows, err = dbClient.Query(ctx, buildSql(req), req.args)
 	if err != nil {
 		status = core.NewStatusError(core.StatusIOError, recast(err))
 	} else {

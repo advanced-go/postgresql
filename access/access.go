@@ -1,9 +1,10 @@
-package pgxsql
+package access
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/advanced-go/postgresql/pgxsql"
 	"github.com/advanced-go/stdlib/access"
 	"time"
 )
@@ -45,61 +46,61 @@ type Entry struct {
 func (Entry) Scan(columnNames []string, values []any) (log Entry, err error) {
 	for i, name := range columnNames {
 		switch name {
-		case StartTimeName:
+		case pgxsql.StartTimeName:
 			log.StartTime = values[i].(time.Time)
-		case DurationName:
+		case pgxsql.DurationName:
 			log.Duration = values[i].(int64)
-		case TrafficName:
+		case pgxsql.TrafficName:
 			log.Traffic = values[i].(string)
-		case CreatedTSName:
+		case pgxsql.CreatedTSName:
 			log.CreatedTS = values[i].(time.Time)
 
-		case RegionName:
+		case pgxsql.RegionName:
 			log.Region = values[i].(string)
-		case ZoneName:
+		case pgxsql.ZoneName:
 			log.Zone = values[i].(string)
-		case SubZoneName:
+		case pgxsql.SubZoneName:
 			log.SubZone = values[i].(string)
-		case HostName:
+		case pgxsql.HostName:
 			log.Host = values[i].(string)
-		case InstanceIdName:
+		case pgxsql.InstanceIdName:
 			log.InstanceId = values[i].(string)
 
-		case RequestIdName:
+		case pgxsql.RequestIdName:
 			log.RequestId = values[i].(string)
-		case RelatesToName:
+		case pgxsql.RelatesToName:
 			log.RelatesTo = values[i].(string)
-		case ProtocolName:
+		case pgxsql.ProtocolName:
 			log.Protocol = values[i].(string)
-		case MethodName:
+		case pgxsql.MethodName:
 			log.Method = values[i].(string)
-		case FromName:
+		case pgxsql.FromName:
 			log.From = values[i].(string)
-		case ToName:
+		case pgxsql.ToName:
 			log.To = values[i].(string)
-		case UrlName:
+		case pgxsql.UrlName:
 			log.Url = values[i].(string)
-		case PathName:
+		case pgxsql.PathName:
 			log.Path = values[i].(string)
 
-		case StatusCodeName:
+		case pgxsql.StatusCodeName:
 			log.StatusCode = values[i].(int32)
-		case EncodingName:
+		case pgxsql.EncodingName:
 			log.Encoding = values[i].(string)
-		case BytesName:
+		case pgxsql.BytesName:
 			log.Bytes = values[i].(int64)
 
-		case RouteName:
+		case pgxsql.RouteName:
 			log.Route = values[i].(string)
-		case RouteToName:
+		case pgxsql.RouteToName:
 			log.RouteTo = values[i].(string)
-		case TimeoutName:
+		case pgxsql.TimeoutName:
 			log.Timeout = values[i].(int32)
-		case RateLimitName:
+		case pgxsql.RateLimitName:
 			log.RateLimit = values[i].(float64)
-		case RateBurstName:
+		case pgxsql.RateBurstName:
 			log.RateBurst = values[i].(int32)
-		case ReasonCodeName:
+		case pgxsql.ReasonCodeName:
 			log.ReasonCode = values[i].(string)
 		default:
 			err = errors.New(fmt.Sprintf("invalid field name: %v", name))
@@ -160,13 +161,13 @@ var storage = []Entry{
 	{time.Date(2024, 6, 12, 16, 55, 15, 0, time.UTC), 100, access.IngressTraffic, time.Now().UTC(), "us-west", "oregon", "dc4", "localhost:8080", "123456", "req-id", "relate-to", "HTTP/1.1", "GET", "github/advanced-go/search", "", "http://localhost:8081/advanced-go/search:google?q-golang", "/search", 504, "gzip", 12345, "search", "primary", 500, 100, 10, "TO"},
 }
 
-func accessInsert(ctx context.Context, sql string, req *request) (CommandTag, error) {
+func accessInsert(ctx context.Context, sql string, req *pgxsql.request) (pgxsql.CommandTag, error) {
 	if req == nil || req.values == nil {
-		return CommandTag{}, errors.New("request or request values is nil")
+		return pgxsql.CommandTag{}, errors.New("request or request values is nil")
 	}
 	var entry Entry
 	var count = 0
-	names := createColumnNames(fields)
+	names := pgxsql.createColumnNames(fields)
 
 	for _, row := range req.values {
 		e, err := entry.Scan(names, row)
@@ -175,5 +176,5 @@ func accessInsert(ctx context.Context, sql string, req *request) (CommandTag, er
 			storage = append(storage, e)
 		}
 	}
-	return CommandTag{RowsAffected: int64(count), Insert: true}, nil
+	return pgxsql.CommandTag{RowsAffected: int64(count), Insert: true}, nil
 }

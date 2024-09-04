@@ -1,13 +1,14 @@
-package pgxsql
+package access
 
 import (
 	"fmt"
+	"github.com/advanced-go/postgresql/pgxsql"
 	"github.com/advanced-go/stdlib/uri"
 )
 
 func ExampleAccessQuery_All() {
-	rows, _ := accessQuery(nil, "", new(request))
-	entries, status := Scan[Entry](rows)
+	rows, _ := accessQuery(nil, "", new(pgxsql.request))
+	entries, status := pgxsql.Scan[Entry](rows)
 	fmt.Printf("test: accessQuery() -> [status:%v] [entries:%v]\n", status, len(entries)) //entries)
 
 	//Output:
@@ -16,10 +17,10 @@ func ExampleAccessQuery_All() {
 }
 
 func ExampleAccessQuery_Distinct() {
-	req := new(request)
+	req := new(pgxsql.request)
 	req.values2 = uri.BuildValues("region=*&distinct=host")
 	rows, _ := accessQuery(nil, "", req)
-	entries, status := Scan[Entry](rows)
+	entries, status := pgxsql.Scan[Entry](rows)
 	fmt.Printf("test: accessQuery() -> [status:%v] [entries:%v]\n", status, len(entries)) //entries)
 
 	//Output:

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/advanced-go/postgresql/pgxdml"
 	"github.com/advanced-go/stdlib/core"
-	"github.com/jackc/pgx/v5"
 	"net/http"
 	"time"
 )
@@ -42,15 +41,13 @@ type request struct {
 	uri       string
 	routeName string
 
-	values    [][]any
-	values2   map[string][]string
-	attrs     []pgxdml.Attr
-	where     []pgxdml.Attr
-	args      []any
-	error     error
-	header2   http.Header
-	queryFunc func(ctx context.Context, sql string, req *request) (pgx.Rows, error)
-	execFunc  func(ctx context.Context, sql string, req *request) (CommandTag, error)
+	values  [][]any
+	values2 map[string][]string
+	attrs   []pgxdml.Attr
+	where   []pgxdml.Attr
+	args    []any
+	error   error
+	header2 http.Header
 }
 
 func newRequest(h http.Header, cmd int, resource, template, uri, routeName string) *request {
