@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	protocol       = "message-based"
 	postgresScheme = "postgres"
 	queryRoot      = "query"
 	execRoot       = "exec"
@@ -93,6 +94,10 @@ func (r *request) From() string {
 
 func (r *request) Url() string {
 	return r.uri
+}
+
+func (r *request) Protocol() string {
+	return protocol
 }
 
 func (r *request) setTimeout(ctx context.Context) context.Context {
