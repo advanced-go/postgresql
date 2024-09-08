@@ -9,16 +9,17 @@ import (
 )
 
 func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Status) {
+	start := time.Now().UTC()
 	reasonCode := ""
+
 	if req == nil {
 		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : request is nil"))
 	}
 	if dbClient == nil {
+		access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: 0, RateBurst: 0, Code: reasonCode})
 		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : dbClient is nil"))
 	}
 	ctx = req.setTimeout(ctx)
-
-	var start = time.Now().UTC()
 
 	// Transaction processing.
 	txn, err0 := dbClient.Begin(ctx)
