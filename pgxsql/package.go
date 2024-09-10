@@ -2,13 +2,11 @@ package pgxsql
 
 import (
 	"context"
-	"github.com/advanced-go/stdlib/access"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/json"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
-	"time"
 )
 
 const (
@@ -56,7 +54,7 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template
 	req := newQueryRequestFromValues(h, resource, template, values, args...)
 	ex := core.ExchangeOverrideFromContext(ctx)
 	if ex != nil {
-		var start = time.Now().UTC()
+		//var start = time.Now().UTC()
 		ctx = req.setTimeout(ctx)
 		if ex.Response() != "" {
 			rows, status = Unmarshal[T](ex.Response())
@@ -64,7 +62,7 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template
 		if ex.Status() != "" {
 			status = json.NewStatusFrom(ex.Status())
 		}
-		access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: -1, RateBurst: -1})
+		//access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: -1, RateBurst: -1})
 		return
 	}
 	r, status1 := query(ctx, req)
