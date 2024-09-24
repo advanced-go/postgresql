@@ -65,7 +65,7 @@ const (
 )
 
 func ExampleQuery_TestError() {
-	result, status := query(nil, newQueryRequest(nil, queryErrorRsc, queryErrorSql, nil))
+	result, status := query(nil, newQueryRequest(queryErrorRsc, queryErrorSql, nil))
 	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryErrorSql, result, status)
 
 	//Output:
@@ -76,7 +76,7 @@ func ExampleQuery_TestError() {
 func ExampleQuery_StatusTimeout() {
 	//setOverrideLookup([]string{"", status504Q})
 	//lookup.SetOverride(status504Q)
-	rows, status := query(nil, newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil))
+	rows, status := query(nil, newQueryRequest(queryRowsRsc, queryRowsSql, nil))
 	fmt.Printf("test: query(nil,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
 
 	//Output:
@@ -87,7 +87,7 @@ func ExampleQuery_StatusTimeout() {
 func ExampleQuery_Proxy() {
 	// Need to clear per test override
 	//lookup.SetOverride(io2.StatusOKUri) //setOverrideLookup([]string{"", ""})
-	req := newQueryRequest(nil, queryRowsRsc, queryRowsSql, nil)
+	req := newQueryRequest(queryRowsRsc, queryRowsSql, nil)
 	rows, status := query(nil, req)
 	fmt.Printf("test: query(ctx,%v) -> [rows:%v] [status:%v]\n", queryRowsSql, rows, status)
 
@@ -102,7 +102,7 @@ func ExampleQuery_Conditions_Error() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer clientShutdown()
-		req := newQueryRequest(nil, queryRowsRsc, queryConditionsError, nil)
+		req := newQueryRequest(queryRowsRsc, queryConditionsError, nil)
 		rows, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditionsError, status)
@@ -125,7 +125,7 @@ func ExampleQuery_Conditions() {
 		fmt.Printf("test: testStartup() -> [error:%v]\n", err)
 	} else {
 		defer clientShutdown()
-		req := newQueryRequest(nil, queryRowsRsc, queryConditions, nil)
+		req := newQueryRequest(queryRowsRsc, queryConditions, nil)
 		results, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditions, status)
@@ -150,7 +150,7 @@ func ExampleQuery_Conditions_Where() {
 		defer clientShutdown()
 
 		where := []pgxdml.Attr{{"location", "garage"}}
-		req := newQueryRequest(nil, queryRowsRsc, queryConditionsWhere, where)
+		req := newQueryRequest(queryRowsRsc, queryConditionsWhere, where)
 		results, status := query(nil, req)
 		if !status.OK() {
 			fmt.Printf("test: query(nil,%v) -> [status:%v]\n", queryConditionsWhere, status)

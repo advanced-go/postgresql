@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/advanced-go/postgresql/module"
 	"github.com/advanced-go/postgresql/pgxdml"
-	"github.com/advanced-go/stdlib/core"
-	"net/http"
 	"time"
 )
 
@@ -49,10 +47,9 @@ type request struct {
 	where   []pgxdml.Attr
 	args    []any
 	error   error
-	header2 http.Header
 }
 
-func newRequest(h http.Header, cmd int, resource, template, uri, routeName string) *request {
+func newRequest(cmd int, resource, template, uri, routeName string) *request {
 	r := new(request)
 	r.expectedCount = nullExpectedCount
 	r.cmd = cmd
@@ -61,9 +58,6 @@ func newRequest(h http.Header, cmd int, resource, template, uri, routeName strin
 	r.template = template
 	r.uri = uri
 	r.routeName = routeName
-
-	r.header2 = h
-
 	r.duration = -1
 	return r
 }
@@ -82,14 +76,6 @@ func (r *request) Method() string {
 		return pingMethod
 	}
 	return "unknown"
-}
-
-func (r *request) Header() http.Header {
-	return r.header2
-}
-
-func (r *request) From() string {
-	return r.header2.Get(core.XFrom)
 }
 
 func (r *request) Url() string {
@@ -140,45 +126,45 @@ func buildQueryUri(resource string) string {
 //	return buildUri(postgresNID, queryNSS, resource)
 //}
 
-func newQueryRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
+func newQueryRequest(resource, template string, where []pgxdml.Attr, args ...any) *request {
+	r := newRequest(selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
 	r.where = where
 	r.args = args
 	return r
 }
 
-func newQueryRequestFromValues(h http.Header, resource, template string, values map[string][]string, args ...any) *request {
-	r := newRequest(h, selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
+func newQueryRequestFromValues(resource, template string, values map[string][]string, args ...any) *request {
+	r := newRequest(selectCmd, resource, template, buildQueryUri(resource), QueryRouteName)
 	r.where = buildWhere(values)
 	r.args = args
 	r.values2 = values
 	return r
 }
 
-func newInsertRequest(h http.Header, resource, template string, values [][]any, args ...any) *request {
-	r := newRequest(h, insertCmd, resource, template, buildUri(execRoot, resource), InsertRouteName)
+func newInsertRequest(resource, template string, values [][]any, args ...any) *request {
+	r := newRequest(insertCmd, resource, template, buildUri(execRoot, resource), InsertRouteName)
 	r.values = values
 	r.args = args
 	return r
 }
 
-func newUpdateRequest(h http.Header, resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, updateCmd, resource, template, buildUri(execRoot, resource), UpdateRouteName)
+func newUpdateRequest(resource, template string, attrs []pgxdml.Attr, where []pgxdml.Attr, args ...any) *request {
+	r := newRequest(updateCmd, resource, template, buildUri(execRoot, resource), UpdateRouteName)
 	r.attrs = attrs
 	r.where = where
 	r.args = args
 	return r
 }
 
-func newDeleteRequest(h http.Header, resource, template string, where []pgxdml.Attr, args ...any) *request {
-	r := newRequest(h, deleteCmd, resource, template, buildUri(execRoot, resource), DeleteRouteName)
+func newDeleteRequest(resource, template string, where []pgxdml.Attr, args ...any) *request {
+	r := newRequest(deleteCmd, resource, template, buildUri(execRoot, resource), DeleteRouteName)
 	r.where = where
 	r.args = args
 	return r
 }
 
-func newPingRequest(h http.Header) *request {
-	r := newRequest(h, pingCmd, "", "", buildUri(pingRoot, ""), PingRouteName)
+func newPingRequest() *request {
+	r := newRequest(pingCmd, "", "", buildUri(pingRoot, ""), PingRouteName)
 	return r
 }
 

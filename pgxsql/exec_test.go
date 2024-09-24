@@ -30,7 +30,7 @@ const (
 
 func ExampleExec_Status() {
 	//lookup.SetOverride(status504)
-	result, status := exec(nil, newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil))
+	result, status := exec(nil, newUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil))
 	fmt.Printf("test: Exec(ctx,%v) -> [tag:%v] [status:%v]\n", execUpdateSql, result, status)
 
 	//Output:
@@ -40,7 +40,7 @@ func ExampleExec_Status() {
 
 func ExampleExec_Proxy() {
 	//lookup.SetOverride(updateCmdTag)
-	req := newUpdateRequest(nil, execUpdateRsc, execUpdateSql, nil, nil)
+	req := newUpdateRequest(execUpdateRsc, execUpdateSql, nil, nil)
 	tag, status := exec(nil, req)
 	fmt.Printf("test: Exec(%v) -> [cmd:%v] [status:%v]\n", execUpdateSql, tag, status)
 
@@ -60,7 +60,7 @@ func ExampleExec_Insert() {
 			Location:    "plano",
 			Temperature: 101.33,
 		}
-		req := newInsertRequest(nil, execInsertRsc, execInsertConditions, pgxdml.NewInsertValues([]any{pgxdml.TimestampFn, cond.Location, cond.Temperature}))
+		req := newInsertRequest(execInsertRsc, execInsertConditions, pgxdml.NewInsertValues([]any{pgxdml.TimestampFn, cond.Location, cond.Temperature}))
 
 		results, status := exec(nil, req)
 		if !status.OK() {
@@ -83,7 +83,7 @@ func ExampleExec_Update() {
 		defer clientShutdown()
 		attrs := []pgxdml.Attr{{"Temperature", 45.1234}}
 		where := []pgxdml.Attr{{"Location", "plano"}}
-		req := newUpdateRequest(nil, execUpdateRsc, execUpdateConditions, attrs, where)
+		req := newUpdateRequest(execUpdateRsc, execUpdateConditions, attrs, where)
 
 		results, status := exec(nil, req)
 		if !status.OK() {
@@ -105,7 +105,7 @@ func ExampleExec_Delete() {
 	} else {
 		defer clientShutdown()
 		where := []pgxdml.Attr{{"Location", "plano"}}
-		req := newDeleteRequest(nil, execDeleteRsc, execDeleteConditions, where)
+		req := newDeleteRequest(execDeleteRsc, execDeleteConditions, where)
 
 		results, status := exec(nil, req)
 		if !status.OK() {

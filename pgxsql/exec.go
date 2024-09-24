@@ -3,21 +3,15 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/stdlib/access"
 	"github.com/advanced-go/stdlib/core"
-	"time"
 )
 
 func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Status) {
-	start := time.Now().UTC()
-	reasonCode := ""
-
 	if req == nil {
 		return tag, core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : request is nil"))
 	}
 	if dbClient == nil {
 		status = core.NewStatusError(core.StatusInvalidArgument, errors.New("error on PostgreSQL exec call : dbClient is nil"))
-		access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: 0, RateBurst: 0, Code: reasonCode})
 		return
 	}
 	ctx = req.setTimeout(ctx)
@@ -26,8 +20,6 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	txn, err0 := dbClient.Begin(ctx)
 	if err0 != nil {
 		status = core.NewStatusError(core.StatusTxnBeginError, err0)
-		// TODO : determine if there was a timeout
-		access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: 0, RateBurst: 0, Code: reasonCode})
 		return tag, status
 	}
 	// Rollback is safe to call even if the tx is already closed, so if
@@ -36,8 +28,6 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	cmd, err := dbClient.Exec(ctx, buildSql(req), req.args)
 	if err != nil {
 		status = core.NewStatusError(core.StatusInvalidArgument, recast(err))
-		// TODO : determine if there was a timeout
-		access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: 0, RateBurst: 0, Code: reasonCode})
 		return newCmdTag(cmd), status
 	}
 	err = txn.Commit(ctx)
@@ -46,8 +36,6 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 	} else {
 		status = core.StatusOK()
 	}
-	// TODO : determine if there was a timeout
-	access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: 0, RateBurst: 0, Code: reasonCode})
 	return newCmdTag(cmd), core.StatusOK()
 }
 

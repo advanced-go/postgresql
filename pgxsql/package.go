@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
+	"time"
 )
 
 const (
@@ -41,9 +42,11 @@ type QueryFunc func(context.Context, http.Header, string, string, map[string][]s
 
 // Query -  process a SQL select statement
 func Query(ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows pgx.Rows, status *core.Status) {
-	req := newQueryRequestFromValues(h, resource, template, values, args...)
-	//req.queryFunc = accessQuery
-	return query(ctx, req)
+	req := newQueryRequestFromValues(resource, template, values, args...)
+	start := time.Now().UTC()
+	rows, status = query(ctx, req)
+	log(start, h, req, status)
+	return rows, status
 }
 
 // QueryFuncT - type declaration
@@ -51,7 +54,7 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
-	req := newQueryRequestFromValues(h, resource, template, values, args...)
+	req := newQueryRequestFromValues(resource, template, values, args...)
 	ex := core.ExchangeOverrideFromContext(ctx)
 	if ex != nil {
 		//var start = time.Now().UTC()
@@ -62,10 +65,11 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template
 		if ex.Status() != "" {
 			status = json.NewStatusFrom(ex.Status())
 		}
-		//access.Log(access.EgressTraffic, start, time.Since(start), req, status, access.Routing{From: req.From(), Route: req.routeName, To: ""}, access.Controller{Timeout: req.duration, RateLimit: -1, RateBurst: -1})
 		return
 	}
+	start := time.Now().UTC()
 	r, status1 := query(ctx, req)
+	log(start, h, req, status1)
 	if !status1.OK() {
 		return nil, status1
 	}
@@ -77,8 +81,11 @@ type InsertFunc func(context.Context, http.Header, string, string, [][]any, ...a
 
 // Insert - execute a SQL insert statement
 func Insert(ctx context.Context, h http.Header, resource, template string, values [][]any, args ...any) (tag CommandTag, status *core.Status) {
-	req := newInsertRequest(h, resource, template, values, args...)
-	return exec(ctx, req)
+	req := newInsertRequest(resource, template, values, args...)
+	start := time.Now().UTC()
+	tag, status = exec(ctx, req)
+	log(start, h, req, status)
+	return tag, status
 }
 
 // InsertFuncT - type
@@ -95,13 +102,15 @@ func InsertT[T Scanner[T]](ctx context.Context, h http.Header, resource, templat
 			return CommandTag{}, json.NewStatusFrom(ex.Status())
 		}
 	}
-
 	rows, status1 := Rows[T](entries)
 	if !status.OK() {
 		return CommandTag{}, status1
 	}
-	req := newInsertRequest(h, resource, template, rows, args...)
-	return exec(ctx, req)
+	req := newInsertRequest(resource, template, rows, args...)
+	start := time.Now().UTC()
+	tag, status = exec(ctx, req)
+	log(start, h, req, status)
+	return tag, status
 }
 
 // UpdateFunc - type
@@ -109,8 +118,11 @@ type UpdateFunc func(context.Context, http.Header, string, string, []Attr, []Att
 
 // Update - execute a SQL update statement
 func Update(ctx context.Context, h http.Header, resource, template string, where []Attr, args []Attr) (tag CommandTag, status *core.Status) {
-	req := newUpdateRequest(h, resource, template, convert(where), convert(args))
-	return exec(ctx, req)
+	req := newUpdateRequest(resource, template, convert(where), convert(args))
+	start := time.Now().UTC()
+	tag, status = exec(ctx, req)
+	log(start, h, req, status)
+	return tag, status
 }
 
 // DeleteFunc - type
@@ -118,8 +130,11 @@ type DeleteFunc func(context.Context, http.Header, string, string, []Attr, ...an
 
 // Delete - execute a SQL delete statement
 func Delete(ctx context.Context, h http.Header, resource, template string, where []Attr, args ...any) (tag CommandTag, status *core.Status) {
-	req := newDeleteRequest(h, resource, template, convert(where), args...)
-	return exec(ctx, req)
+	req := newDeleteRequest(resource, template, convert(where), args...)
+	start := time.Now().UTC()
+	tag, status = exec(ctx, req)
+	log(start, h, req, status)
+	return tag, status
 }
 
 // Stat - retrieve Pgx pool stats
@@ -129,6 +144,9 @@ func Stat() (*pgxpool.Stat, *core.Status) {
 
 // Ping - ping the database cluster
 func Ping(ctx context.Context, h http.Header) *core.Status {
-	req := newPingRequest(h)
-	return ping(ctx, req)
+	req := newPingRequest()
+	start := time.Now().UTC()
+	status := ping(ctx, req)
+	log(start, h, req, status)
+	return status
 }
