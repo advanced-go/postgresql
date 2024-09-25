@@ -103,7 +103,7 @@ func InsertT[T Scanner[T]](ctx context.Context, h http.Header, resource, templat
 		}
 	}
 	rows, status1 := Rows[T](entries)
-	if !status.OK() {
+	if !status1.OK() {
 		return CommandTag{}, status1
 	}
 	req := newInsertRequest(resource, template, rows, args...)
