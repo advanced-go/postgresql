@@ -56,7 +56,9 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
 	req := newQueryRequestFromValues(resource, template, values, args...)
 	ex := core.ExchangeOverrideFromContext(ctx)
+	start := time.Now().UTC()
 	if ex != nil {
+		status = core.StatusOK()
 		//var start = time.Now().UTC()
 		ctx = req.setTimeout(ctx)
 		if ex.Response() != "" {
@@ -65,9 +67,9 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template
 		if ex.Status() != "" {
 			status = json.NewStatusFrom(ex.Status())
 		}
+		log(start, h, req, status)
 		return
 	}
-	start := time.Now().UTC()
 	r, status1 := query(ctx, req)
 	log(start, h, req, status1)
 	if !status1.OK() {
