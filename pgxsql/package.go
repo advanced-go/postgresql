@@ -2,6 +2,7 @@ package pgxsql
 
 import (
 	"context"
+	"github.com/advanced-go/postgresql/module"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/json"
 	"github.com/jackc/pgx/v5"
@@ -55,11 +56,11 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 // QueryT -  process a SQL select statement, returning a type
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
 	req := newQueryRequestFromValues(resource, template, values, args...)
+	req.Header().Set(core.XTo, module.Authority)
 	ex := core.ExchangeOverrideFromContext(ctx)
 	start := time.Now().UTC()
 	if ex != nil {
 		status = core.StatusOK()
-		//var start = time.Now().UTC()
 		ctx = req.setTimeout(ctx)
 		if ex.Response() != "" {
 			rows, status = Unmarshal[T](ex.Response())

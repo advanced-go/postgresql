@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/advanced-go/postgresql/module"
 	"github.com/advanced-go/postgresql/pgxdml"
+	"net/http"
 	"time"
 )
 
@@ -47,6 +48,7 @@ type request struct {
 	where   []pgxdml.Attr
 	args    []any
 	error   error
+	h       http.Header
 }
 
 func newRequest(cmd int, resource, template, uri, routeName string) *request {
@@ -59,7 +61,12 @@ func newRequest(cmd int, resource, template, uri, routeName string) *request {
 	r.uri = uri
 	r.routeName = routeName
 	r.duration = -1
+	r.h = make(http.Header)
 	return r
+}
+
+func (r *request) Header() http.Header {
+	return r.h
 }
 
 func (r *request) Method() string {
