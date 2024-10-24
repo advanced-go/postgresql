@@ -1,7 +1,7 @@
 package pgxsql
 
 const (
-	configMapUri = "file://[cwd]/pgxsqltest/config-map.txt"
+	configMapUri = "file://[cwd]/resource/config-map.txt"
 )
 
 /*

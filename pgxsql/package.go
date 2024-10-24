@@ -3,6 +3,7 @@ package pgxsql
 import (
 	"context"
 	"github.com/advanced-go/common/core"
+	"github.com/advanced-go/common/jsonx"
 	"github.com/advanced-go/postgresql/module"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -57,26 +58,23 @@ func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template
 	req := newQueryRequestFromValues(resource, template, values, args...)
 	req.Header().Set(core.XTo, module.Authority)
 	start := time.Now().UTC()
-	/*
-		ex := core.ExchangeOverrideFromContext(ctx)
-		if ex != nil {
-			status = core.StatusOK()
-			ctx = req.setTimeout(ctx)
-			if ex.Response() != "" {
-				rows, status = Unmarshal[T](ex.Response())
-			}
-			if ex.Status() != "" {
-				status = json.NewStatusFrom(ex.Status())
-			}
-			log(start, h, req, status)
-			return
+	_, resp, status1 := core.ExchangeHeaders(h)
+	if resp != "" || status1 != "" {
+		status = core.StatusOK()
+		ctx = req.setTimeout(ctx)
+		if resp != "" {
+			rows, status = Unmarshal[T](resp)
 		}
-
-	*/
-	r, status1 := query(ctx, req)
-	log(start, h, req, status1)
-	if !status1.OK() {
-		return nil, status1
+		if status1 != "" {
+			status = jsonx.NewStatusFrom(status1)
+		}
+		log(start, h, req, status)
+		return
+	}
+	r, status2 := query(ctx, req)
+	log(start, h, req, status2)
+	if !status2.OK() {
+		return nil, status2
 	}
 	return Scan[T](r)
 }
