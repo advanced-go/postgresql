@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
+	"github.com/advanced-go/common/core"
 	"github.com/advanced-go/postgresql/pgxdml"
-	"github.com/advanced-go/stdlib/core"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	status504Q = "file://[cwd]/pgxsqltest/status-504.json"
+	status504Q = "file://[cwd]/resource/status-504.json"
 )
 
 type TestConditions struct {

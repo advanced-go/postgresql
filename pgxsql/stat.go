@@ -2,7 +2,7 @@ package pgxsql
 
 import (
 	"errors"
-	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/common/core"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

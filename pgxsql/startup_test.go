@@ -3,8 +3,8 @@ package pgxsql
 import (
 	"errors"
 	"fmt"
-	"github.com/advanced-go/stdlib/host"
-	"github.com/advanced-go/stdlib/messaging"
+	"github.com/advanced-go/common/host"
+	"github.com/advanced-go/common/messaging"
 	"time"
 )
 
@@ -20,7 +20,7 @@ func ExampleStartupPing() {
 
 	//Output:
 	//test: Ping() -> [status:OK]
-	
+
 }
 
 func ExampleStartup() {

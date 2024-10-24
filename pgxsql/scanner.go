@@ -2,8 +2,8 @@ package pgxsql
 
 import (
 	"errors"
-	"github.com/advanced-go/stdlib/core"
-	"github.com/advanced-go/stdlib/json"
+	"github.com/advanced-go/common/core"
+	"github.com/advanced-go/common/jsonx"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -19,7 +19,7 @@ func Unmarshal[T Scanner[T]](t any) ([]T, *core.Status) {
 	if t == nil {
 		return []T{}, core.NewStatusError(core.StatusInvalidArgument, errors.New("error: source is nil"))
 	}
-	return json.New[[]T](t, nil)
+	return jsonx.New[[]T](t, nil)
 }
 
 // Rows - templated function for creating rows

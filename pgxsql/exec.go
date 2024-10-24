@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/common/core"
 )
 
 func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Status) {

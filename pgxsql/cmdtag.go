@@ -1,7 +1,7 @@
 package pgxsql
 
 import (
-	"github.com/advanced-go/stdlib/json"
+	"github.com/advanced-go/common/jsonx"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -27,7 +27,7 @@ func newCmdTag(tag pgconn.CommandTag) CommandTag {
 }
 
 func NewCommandTag(url string) CommandTag {
-	tag, status := json.New[CommandTag](url, nil)
+	tag, status := jsonx.New[CommandTag](url, nil)
 	if !status.OK() {
 		return CommandTag{}
 	}

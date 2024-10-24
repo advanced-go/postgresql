@@ -6,7 +6,7 @@ import (
 
 var (
 	//var cmdJson = "{\"sql\":\"select * from table\",\"rows-affected\":123,\"insert\":false,\"update\":true,\"delete\":false,\"select\":false}"
-	updateCmdTag2 = "file://[cwd]/pgxsqltest/update-cmd-tag.json"
+	updateCmdTag2 = "file://[cwd]/resource/update-cmd-tag.json"
 )
 
 func ExampleNewCommandTag() {

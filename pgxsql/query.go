@@ -3,7 +3,7 @@ package pgxsql
 import (
 	"context"
 	"errors"
-	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/common/core"
 	"github.com/jackc/pgx/v5"
 )
 

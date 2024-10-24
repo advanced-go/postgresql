@@ -1,8 +1,8 @@
 package pgxsql
 
 import (
-	"github.com/advanced-go/stdlib/access"
-	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/common/access"
+	"github.com/advanced-go/common/core"
 	"net/http"
 	"time"
 )

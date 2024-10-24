@@ -2,9 +2,8 @@ package pgxsql
 
 import (
 	"context"
+	"github.com/advanced-go/common/core"
 	"github.com/advanced-go/postgresql/module"
-	"github.com/advanced-go/stdlib/core"
-	"github.com/advanced-go/stdlib/json"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"net/http"
@@ -57,20 +56,23 @@ type QueryFuncT[T Scanner[T]] func(context.Context, http.Header, string, string,
 func QueryT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, values map[string][]string, args ...any) (rows []T, status *core.Status) {
 	req := newQueryRequestFromValues(resource, template, values, args...)
 	req.Header().Set(core.XTo, module.Authority)
-	ex := core.ExchangeOverrideFromContext(ctx)
 	start := time.Now().UTC()
-	if ex != nil {
-		status = core.StatusOK()
-		ctx = req.setTimeout(ctx)
-		if ex.Response() != "" {
-			rows, status = Unmarshal[T](ex.Response())
+	/*
+		ex := core.ExchangeOverrideFromContext(ctx)
+		if ex != nil {
+			status = core.StatusOK()
+			ctx = req.setTimeout(ctx)
+			if ex.Response() != "" {
+				rows, status = Unmarshal[T](ex.Response())
+			}
+			if ex.Status() != "" {
+				status = json.NewStatusFrom(ex.Status())
+			}
+			log(start, h, req, status)
+			return
 		}
-		if ex.Status() != "" {
-			status = json.NewStatusFrom(ex.Status())
-		}
-		log(start, h, req, status)
-		return
-	}
+
+	*/
 	r, status1 := query(ctx, req)
 	log(start, h, req, status1)
 	if !status1.OK() {
@@ -96,15 +98,7 @@ type InsertFuncT[T Scanner[T]] func(context.Context, http.Header, string, string
 
 // InsertT - execute a SQL insert statement
 func InsertT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, entries []T, args ...any) (tag CommandTag, status *core.Status) {
-	ex := core.ExchangeOverrideFromContext(ctx)
-	if ex != nil {
-		if ex.Response() != "" {
-			return NewCommandTag(ex.Response()), core.StatusOK()
-		}
-		if ex.Status() != "" {
-			return CommandTag{}, json.NewStatusFrom(ex.Status())
-		}
-	}
+	// TODO : add header test content overrides
 	rows, status1 := Rows[T](entries)
 	if !status1.OK() {
 		return CommandTag{}, status1
