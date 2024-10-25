@@ -105,7 +105,7 @@ func (r *request) setTimeout(ctx context.Context) context.Context {
 
 func buildUri(root, resource string) string {
 	return fmt.Sprintf("%v://%v/%v:%v/%v/%v", postgresScheme, "host-name", module.Authority, "database-name", root, resource)
-	//originUrn(nid, nss, resource) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, resource)
+	//originUrn(nid, nss, test) //fmt.Sprintf("urn:%v.%v.%v:%v.%v", nid, o.Region, o.Zone, nss, test)
 }
 
 // buildQueryUri - build an uri with the Query NSS
@@ -114,23 +114,23 @@ func buildQueryUri(resource string) string {
 }
 
 // buildInsertUri - build an uri with the Insert NSS
-//func buildInsertUri(resource string) string {
-//	return buildUri(postgresNID, insertNSS, resource)
+//func buildInsertUri(test string) string {
+//	return buildUri(postgresNID, insertNSS, test)
 //}
 
 // buildUpdateUri - build an uri with the Update NSS
-//func buildUpdateUri(resource string) string {
-//	return buildUri(postgresNID, updateNSS, resource)
+//func buildUpdateUri(test string) string {
+//	return buildUri(postgresNID, updateNSS, test)
 //}
 
 // buildDeleteUri - build an uri with the Delete NSS
-//func buildDeleteUri(resource string) string {
-//	return buildUri(postgresNID, deleteNSS, resource)
+//func buildDeleteUri(test string) string {
+//	return buildUri(postgresNID, deleteNSS, test)
 //}
 
 // buildFileUri - build an uri with the Query NSS
-//func buildFileUri(resource string) string {
-//	return buildUri(postgresNID, queryNSS, resource)
+//func buildFileUri(test string) string {
+//	return buildUri(postgresNID, queryNSS, test)
 //}
 
 func newQueryRequest(resource, template string, where []pgxdml.Attr, args ...any) *request {

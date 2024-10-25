@@ -1,8 +1,0 @@
-{
-  "sql":"update test",
-  "rows-affected": 123,
-  "insert": false,
-  "update": true,
-  "delete": false,
-  "select": false
-}

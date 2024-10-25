@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	status504Q = "file://[cwd]/resource/status-504.json"
+	status504Q = "file://[cwd]/test/status-504.json"
 )
 
 type TestConditions struct {

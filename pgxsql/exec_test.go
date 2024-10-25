@@ -24,8 +24,8 @@ const (
 	execUpdateConditions = "UPDATE conditions"
 	execDeleteConditions = "DELETE FROM conditions"
 
-	status504    = "file://[cwd]/pgxsqltest/status-504.json"
-	updateCmdTag = "file://[cwd]/pgxsqltest/update-cmd-tag.json"
+	status504    = "file://[cwd]/test/status-504.json"
+	updateCmdTag = "file://[cwd]/test/update-cmd-tag.json"
 )
 
 func ExampleExec_Status() {

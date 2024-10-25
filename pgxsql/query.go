@@ -29,7 +29,7 @@ func query(ctx context.Context, req *request) (rows pgx.Rows, status *core.Statu
 }
 
 // Scrap
-//url, override := lookup.Value(req.resource)
+//url, override := lookup.Value(req.test)
 //defer apply(ctx, &newCtx, req, access.StatusCode(&status))
 //if override {
 //	// TO DO : create rows from file

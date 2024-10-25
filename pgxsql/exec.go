@@ -45,5 +45,5 @@ func exec(ctx context.Context, req *request) (tag CommandTag, status *core.Statu
 //	return io2.New[CommandTag](url, nil)
 //}
 //
-//url, override := lookup.Value(req.resource)
+//url, override := lookup.Value(req.test)
 //var newCtx context.Context

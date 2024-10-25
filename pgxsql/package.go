@@ -96,7 +96,15 @@ type InsertFuncT[T Scanner[T]] func(context.Context, http.Header, string, string
 
 // InsertT - execute a SQL insert statement
 func InsertT[T Scanner[T]](ctx context.Context, h http.Header, resource, template string, entries []T, args ...any) (tag CommandTag, status *core.Status) {
-	// TODO : add header test content overrides
+	_, _, stat1 := core.ExchangeHeaders(h)
+	if stat1 != "" {
+		start := time.Now().UTC()
+		req := newInsertRequest(resource, template, nil, args...)
+		ctx = req.setTimeout(ctx)
+		status = jsonx.NewStatusFrom(stat1)
+		log(start, h, req, status)
+		return
+	}
 	rows, status1 := Rows[T](entries)
 	if !status1.OK() {
 		return CommandTag{}, status1

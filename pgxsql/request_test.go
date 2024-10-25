@@ -16,22 +16,22 @@ func validate(r *request) error {
 }
 
 func ExampleBuildRequest() {
-	rsc := "test-resource.dev"
+	rsc := "test-test.dev"
 	uri := buildUri(execRoot, rsc)
 	fmt.Printf("test: buildInsertUri(%v) -> %v\n", rsc, uri)
 
-	rsc = "test-resource.prod"
+	rsc = "test-test.prod"
 	uri = buildQueryUri(rsc)
 	fmt.Printf("test: buildQueryUri(%v) -> %v\n", rsc, uri)
 
 	//Output:
-	//test: buildInsertUri(test-resource.dev) -> postgres://host-name/github/advanced-go/postgresql:database-name/exec/test-resource.dev
-	//test: buildQueryUri(test-resource.prod) -> postgres://host-name/github/advanced-go/postgresql:database-name/query/test-resource.prod
+	//test: buildInsertUri(test-test.dev) -> postgres://host-name/github/advanced-go/postgresql:database-name/exec/test-test.dev
+	//test: buildQueryUri(test-test.prod) -> postgres://host-name/github/advanced-go/postgresql:database-name/query/test-test.prod
 
 }
 
 func ExampleRequest_Validate() {
-	uri := "urn:postgres:query.resource"
+	uri := "urn:postgres:query.test"
 	sql := "select * from table"
 	req := request{}
 
@@ -70,7 +70,7 @@ func ExampleRequest_Validate() {
 
 	//Output:
 	//test: Validate(empty) -> invalid argument: request Uri is empty
-	//test: Validate(urn:postgres:query.resource) -> invalid argument: request template is empty
+	//test: Validate(urn:postgres:query.test) -> invalid argument: request template is empty
 	//test: Validate(select * from table) -> invalid argument: request Uri is empty
 	//test: Validate(all) -> <nil>
 

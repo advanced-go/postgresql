@@ -106,7 +106,7 @@ func accessCredentials(msg *messaging.Message) startupCredentials {
 	return nil
 }
 
-// accessResource - access function for a resource in a message
+// accessResource - access function for a test in a message
 func accessResource(msg *messaging.Message) startupResource {
 	if msg == nil || msg.Content == nil {
 		return startupResource{}
